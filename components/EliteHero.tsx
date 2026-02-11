@@ -11,11 +11,8 @@ const EliteHero: React.FC = () => {
     <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Radial glow from center-left */}
         <div className="absolute top-1/3 -left-1/4 w-[800px] h-[800px] rounded-full bg-zilla-neon/5 blur-[150px]" />
-        {/* Secondary glow */}
         <div className="absolute bottom-1/4 right-0 w-[600px] h-[600px] rounded-full bg-zilla-neon/3 blur-[120px]" />
-        {/* Data flow lines */}
         <div className="absolute inset-0 opacity-20">
           {[...Array(8)].map((_, i) => (
             <div
@@ -44,46 +41,38 @@ const EliteHero: React.FC = () => {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zilla-charcoal/50 border border-zilla-neon/20 mb-8">
               <span className="w-2 h-2 rounded-full bg-zilla-neon animate-pulse" />
-              <span className="text-sm text-gray-300">Application-based access</span>
+              <span className="text-sm text-gray-300">Revenue Systems & Attribution for Ecommerce</span>
             </div>
 
             {/* Main Headline */}
             <h1 className="font-display">
               <span
-                className={`block text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-bold text-white leading-none tracking-tight transition-all duration-700 delay-200 ${
+                className={`block text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight tracking-tight transition-all duration-700 delay-200 ${
                   mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'
                 }`}
               >
-                Crush leaks.
+                We Install Revenue Visibility.
               </span>
               <span
-                className={`block text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-zilla-neon leading-tight tracking-tight mt-2 transition-all duration-700 delay-400 ${
+                className={`block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-zilla-neon leading-tight tracking-tight mt-3 transition-all duration-700 delay-400 ${
                   mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'
                 }`}
               >
-                Scale BIG
+                Then Build the Systems to Scale It.
               </span>
             </h1>
 
-            {/* Subheadline / Body Copy */}
+            {/* Subheadline */}
             <div
-              className={`mt-8 space-y-6 transition-all duration-700 delay-500 ${
+              className={`mt-8 space-y-4 transition-all duration-700 delay-500 ${
                 mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
               }`}
             >
               <p className="text-xl md:text-2xl text-gray-300 leading-relaxed max-w-xl font-light">
-                A new era is here in ecommerce. One-man and small teams are scaling faster than ever,
-                keeping pace with and beating corporate giants.
+                We go into your business, set up clean tracking across the full funnel, identify exactly where revenue is leaking, and build the systems to fix it.
               </p>
               <p className="text-lg text-gray-400 leading-relaxed max-w-xl">
-                Traditional growth hits a ceiling. Hiring more people creates more complexity.
-                The old playbook plateaus while costs keep climbing. Meanwhile, AI-powered
-                operators are moving 10x faster with leaner teams.
-              </p>
-              <p className="text-lg text-gray-400 leading-relaxed max-w-xl">
-                At Growzilla, we have cracked the AI code to make this leverage accessible.
-                We are the exclusive community where experienced ecommerce builders plug into
-                AI systems that think, decide, and execute like entire teams.
+                Not a dashboard. Not a report. Hands-on systems work for Shopify operators doing $500K–$30M.
               </p>
             </div>
 
@@ -97,72 +86,125 @@ const EliteHero: React.FC = () => {
                 href="#book-call"
                 className="btn-zilla text-center text-lg px-8 py-4"
               >
-                Book Your Review Call
+                Book a Strategy Call
               </a>
               <a
-                href="/apply"
+                href="#how-it-works"
                 className="btn-zilla-outline text-center text-lg px-8 py-4"
               >
-                Apply to Join
+                See How We Work
+              </a>
+              <a
+                href="/tools/brand-intelligence"
+                className="text-center text-lg px-8 py-4 text-zilla-neon hover:text-white transition-colors font-medium"
+              >
+                Free Brand Analysis →
               </a>
             </div>
 
-            {/* Trust indicators */}
+            {/* Trust chips */}
             <div
-              className={`mt-12 flex flex-wrap items-center gap-8 transition-all duration-700 delay-900 ${
+              className={`mt-10 flex flex-wrap items-center gap-3 transition-all duration-700 delay-900 ${
                 mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
               }`}
             >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-zilla-charcoal border border-zilla-neon/20 flex items-center justify-center">
-                  <svg className="w-5 h-5 text-zilla-neon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              {['Shopify Focused', 'Attribution & Funnel Analysis', 'Systems That Scale'].map((chip) => (
+                <span
+                  key={chip}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zilla-charcoal/40 border border-gray-800/50 text-sm text-gray-400"
+                >
+                  <svg className="w-3.5 h-3.5 text-zilla-neon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                   </svg>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-white">Vetted Members</p>
-                  <p className="text-xs text-gray-500">Application required</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-zilla-charcoal border border-zilla-neon/20 flex items-center justify-center">
-                  <svg className="w-5 h-5 text-zilla-neon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-white">AI-Powered</p>
-                  <p className="text-xs text-gray-500">Systems that scale</p>
-                </div>
-              </div>
+                  {chip}
+                </span>
+              ))}
             </div>
           </div>
 
-          {/* Right Column - Calendly Widget */}
+          {/* Right Column - Product Preview */}
           <div
-            id="book-call"
             className={`relative transition-all duration-1000 delay-300 ${
               mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
           >
-            {/* Glow effect behind widget */}
+            {/* Glow effect behind preview */}
             <div className="absolute -inset-4 bg-zilla-neon/5 rounded-2xl blur-xl" />
 
-            {/* Widget container */}
+            {/* Dashboard preview container */}
             <div className="relative bg-zilla-surface/80 backdrop-blur-sm rounded-2xl border border-zilla-neon/10 overflow-hidden">
-              <div className="p-6 border-b border-gray-800/50">
-                <h3 className="text-lg font-semibold text-white">Ecommerce AI Systems Review</h3>
-                <p className="text-sm text-gray-400 mt-1">
-                  Discover how AI can transform your operations
-                </p>
+              {/* Browser chrome */}
+              <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-800/50">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-gray-700" />
+                  <div className="w-3 h-3 rounded-full bg-gray-700" />
+                  <div className="w-3 h-3 rounded-full bg-gray-700" />
+                </div>
+                <div className="flex-1 ml-3">
+                  <div className="bg-zilla-charcoal/60 rounded-md px-3 py-1.5 text-xs text-gray-500 font-mono max-w-xs">
+                    growzilla.xyz/dashboard
+                  </div>
+                </div>
               </div>
 
-              {/* Calendly inline widget */}
-              <div
-                className="calendly-inline-widget"
-                data-url="https://calendly.com/albert-elmgart/ecommerce-ai-systems-review"
-                style={{ minWidth: '320px', height: '700px' }}
-              />
+              {/* Dashboard mockup */}
+              <div className="p-6 space-y-4">
+                {/* Top stats row */}
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { label: 'Attributed Revenue', value: '$142,380', change: '+12.4%' },
+                    { label: 'Funnel Leakage', value: '3 found', change: 'Action needed' },
+                    { label: 'ROAS (true)', value: '4.2x', change: '+0.8x' },
+                  ].map((stat) => (
+                    <div key={stat.label} className="bg-zilla-charcoal/40 rounded-lg p-3 border border-gray-800/30">
+                      <p className="text-[10px] text-gray-500 uppercase tracking-wider">{stat.label}</p>
+                      <p className="text-lg font-semibold text-white mt-1 font-mono">{stat.value}</p>
+                      <p className="text-xs text-zilla-neon mt-0.5">{stat.change}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Chart area */}
+                <div className="bg-zilla-charcoal/40 rounded-lg p-4 border border-gray-800/30">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider">Revenue by Channel (attributed)</p>
+                    <p className="text-xs text-gray-600">Last 30 days</p>
+                  </div>
+                  {/* Simplified bar chart */}
+                  <div className="space-y-2">
+                    {[
+                      { channel: 'Meta Ads', width: '78%', value: '$68.2K' },
+                      { channel: 'Google', width: '52%', value: '$45.1K' },
+                      { channel: 'Klaviyo', width: '34%', value: '$22.8K' },
+                      { channel: 'Organic', width: '18%', value: '$6.3K' },
+                    ].map((bar) => (
+                      <div key={bar.channel} className="flex items-center gap-3">
+                        <span className="text-[11px] text-gray-500 w-16 flex-shrink-0">{bar.channel}</span>
+                        <div className="flex-1 bg-zilla-black/50 rounded-full h-2 overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-zilla-neon/60 to-zilla-neon rounded-full"
+                            style={{ width: bar.width }}
+                          />
+                        </div>
+                        <span className="text-[11px] text-gray-400 font-mono w-14 text-right">{bar.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Alert row */}
+                <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg p-3 flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg className="w-3 h-3 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-amber-300">Revenue Leak Detected</p>
+                    <p className="text-[11px] text-gray-500 mt-0.5">Cart→Checkout drop-off up 23% on mobile. Estimated $4,200/mo impact.</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

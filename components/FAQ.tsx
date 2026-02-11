@@ -1,75 +1,113 @@
-import React, { useState } from 'react';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import React, { useEffect, useState, useRef } from 'react';
 
 const faqs = [
   {
-    question: 'What happens on a diagnostic call?',
-    answer: 'A focused 20-minute conversation where we learn about your brand, your current challenges, and where you want to go. We identify 2-3 immediate areas of concern and explain our diagnostic process. No sales pressure—just a clear conversation.',
+    question: 'What exactly do you do?',
+    answer:
+      'We install clean attribution across your full funnel, identify where revenue is leaking, and build systems to fix it. Think of us as a revenue systems partner—we connect your tools, find the problems, and implement the solutions with you.',
   },
   {
-    question: 'How do you identify bottlenecks?',
-    answer: 'We use proprietary methods to examine your traffic patterns, conversion flows, and customer journey. We look at where visitors drop off, what causes friction, and which parts of your funnel underperform. The result is a clear picture of where revenue is being lost.',
+    question: 'How is this different from an agency?',
+    answer:
+      'Agencies run campaigns. We build systems. We don\'t manage your ads or send you monthly slide decks. We scope tight, specific interventions—attribution fixes, funnel repairs, tracking infrastructure—and implement them. The systems stay with you.',
   },
   {
-    question: 'What size brands do you work with?',
-    answer: 'We work with Shopify brands doing $10K to $1M+ per month. Whether you are trying to break through a plateau or scale to the next level, our approach is tailored to your specific situation and growth stage.',
+    question: 'What does the engagement look like?',
+    answer:
+      'Month-to-month. We start with a strategy call, then connect your tools and deliver a scoped analysis within 48 hours. From there, we build and implement together on a weekly cadence. No long-term contracts. Results or you leave.',
   },
   {
-    question: 'How is this different from agencies or consultants?',
-    answer: 'Most consultants offer opinions. We offer diagnosis backed by data. Every recommendation we make is grounded in evidence from your store, not generic best practices. We focus on sustainable improvements—not quick fixes that create new problems.',
+    question: 'What kind of businesses do you work with?',
+    answer:
+      'Shopify stores with existing traffic and revenue—typically $500K to $30M annually. You need data for us to analyze. If you\'re earlier stage, we\'ll tell you honestly on the strategy call.',
   },
   {
-    question: 'How quickly will I see results?',
-    answer: 'Many clients see measurable improvements within 2-4 weeks of implementing our recommendations. More significant strategic changes typically show results within 60-90 days. The timeline depends on the complexity of the bottlenecks we identify.',
-  },
-  {
-    question: 'Can I implement independently after the audit?',
-    answer: 'Absolutely. We provide a clear, prioritized roadmap that your team can execute without us. For brands that want ongoing support, we offer continued partnership—but it is never required.',
+    question: 'Do you replace our existing tools?',
+    answer:
+      'No. We connect them. Shopify, Meta, Google, Klaviyo, GA4—we unify the data from tools you already use into a single source of truth. No new software to learn.',
   },
 ];
 
 const FAQ: React.FC = () => {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [isVisible, setIsVisible] = useState(false);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <section id="faq" className="py-16 sm:py-20 bg-white">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6">
-        <div className="text-center mb-10 sm:mb-14">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+    <section
+      ref={sectionRef}
+      className="relative py-24 lg:py-32 overflow-hidden"
+    >
+      {/* Background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
+      </div>
+
+      <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div
+          className={`text-center mb-12 lg:mb-16 transition-all duration-700 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+        >
+          <span className="inline-block px-4 py-1.5 rounded-full bg-zilla-neon/10 border border-zilla-neon/20 text-zilla-neon text-sm font-medium mb-6">
+            FAQ
+          </span>
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight">
             Common Questions
           </h2>
-          <p className="text-base sm:text-lg text-gray-600">
-            What you should know before we talk.
-          </p>
         </div>
-        <div className="space-y-3 sm:space-y-4">
+
+        {/* FAQ Items */}
+        <div className="space-y-3">
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="border border-gray-200 rounded-xl overflow-hidden hover:border-green-200 transition-colors duration-200"
+              className={`transition-all duration-500 ${
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+              }`}
+              style={{ transitionDelay: `${150 + index * 80}ms` }}
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full flex items-center justify-between p-4 sm:p-5 text-left bg-white hover:bg-gray-50 transition-colors"
+                className="w-full text-left p-5 rounded-xl bg-zilla-surface/50 border border-gray-800/50 hover:border-zilla-neon/20 transition-colors duration-200"
               >
-                <span className="font-semibold text-gray-900 text-sm sm:text-base pr-4">
-                  {faq.question}
-                </span>
-                <ChevronDownIcon
-                  className={`w-5 h-5 text-gray-500 flex-shrink-0 transition-transform duration-200 ${
-                    openIndex === index ? 'rotate-180' : ''
-                  }`}
-                />
+                <div className="flex items-center justify-between gap-4">
+                  <h3 className="text-base font-medium text-white">{faq.question}</h3>
+                  <svg
+                    className={`w-5 h-5 text-gray-500 flex-shrink-0 transition-transform duration-200 ${
+                      openIndex === index ? 'rotate-180' : ''
+                    }`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+                {openIndex === index && (
+                  <p className="mt-3 text-sm text-gray-400 leading-relaxed pr-8">
+                    {faq.answer}
+                  </p>
+                )}
               </button>
-              <div
-                className={`overflow-hidden transition-all duration-200 ${
-                  openIndex === index ? 'max-h-96' : 'max-h-0'
-                }`}
-              >
-                <p className="px-4 sm:px-5 pb-4 sm:pb-5 text-sm sm:text-base text-gray-600 leading-relaxed">
-                  {faq.answer}
-                </p>
-              </div>
             </div>
           ))}
         </div>

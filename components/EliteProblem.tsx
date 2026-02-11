@@ -4,42 +4,42 @@ const problems = [
   {
     icon: (
       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+      </svg>
+    ),
+    title: 'Fragmented Attribution',
+    description:
+      'Meta says one thing, Google another, Shopify something else. No single source of truth. You\'re making spending decisions on conflicting data.',
+  },
+  {
+    icon: (
+      <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
       </svg>
     ),
-    title: 'Revenue Plateaus',
+    title: 'No Funnel Visibility',
     description:
-      'Despite your skills and relentless effort, growth stalls. The tactics that got you here no longer move the needle. You are working harder for diminishing returns.',
+      'You can see top-line revenue but can\'t trace where customers drop off or why. The gap between ad click and purchase is a black box.',
   },
   {
     icon: (
       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     ),
-    title: 'Hiring Does Not Scale',
+    title: 'Revenue Leaks Stay Hidden',
     description:
-      'Every new hire adds communication overhead, training time, and coordination costs. The complexity grows exponentially while output grows linearly at best.',
+      'Without clean tracking, you\'re optimizing blind. Money leaks at checkout, in email flows, across device types—and you don\'t see it.',
   },
   {
     icon: (
       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
       </svg>
     ),
-    title: 'Big Players Have AI Advantages',
+    title: 'Tools Don\'t Talk',
     description:
-      'Large organizations deploy AI at scale for data analysis, personalization, and automation. They have teams you cannot afford. The gap widens every quarter.',
-  },
-  {
-    icon: (
-      <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-    title: 'Speed Kills Competition',
-    description:
-      'While you spend weeks analyzing data and making decisions, AI-powered competitors test, learn, and iterate in hours. The market does not wait.',
+      '5–8 tools, none connected. You\'re spending hours on manual reconciliation instead of growing your business.',
   },
 ];
 
@@ -74,7 +74,6 @@ const EliteProblem: React.FC = () => {
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-800 to-transparent" />
-        {/* Subtle red/danger tint for problem section */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] rounded-full bg-zilla-danger/3 blur-[200px]" />
       </div>
 
@@ -86,14 +85,14 @@ const EliteProblem: React.FC = () => {
           }`}
         >
           <span className="inline-block px-4 py-1.5 rounded-full bg-zilla-danger/10 border border-zilla-danger/20 text-zilla-danger text-sm font-medium mb-6">
-            The Problem
+            The Reality
           </span>
           <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight">
-            The Old Way No Longer Scales
+            You Have the Data. You Don&apos;t Have the Diagnosis.
           </h2>
           <p className="mt-6 text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
-            The ecommerce landscape has fundamentally shifted. Traditional growth strategies
-            are hitting walls that no amount of hustle can break through.
+            You&apos;re paying for 5–8 different tools. Each shows you a piece of the picture.
+            None of them tells you where the money is actually leaking.
           </p>
         </div>
 
@@ -135,9 +134,7 @@ const EliteProblem: React.FC = () => {
           }`}
         >
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            The question is not <span className="text-white font-medium">if</span> AI will transform ecommerce.
-            The question is whether <span className="text-white font-medium">you</span> will be the one wielding it,
-            or the one being disrupted by it.
+            The solution isn&apos;t more data. It&apos;s <span className="text-white font-medium">clean attribution</span>, <span className="text-white font-medium">full-funnel visibility</span>, and someone who can <span className="text-white font-medium">actually fix what&apos;s broken</span>.
           </p>
         </div>
       </div>

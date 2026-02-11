@@ -1,58 +1,70 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import {
-  MagnifyingGlassIcon,
-  ChartBarIcon,
-  CursorArrowRaysIcon,
-  PaintBrushIcon,
+  LinkIcon,
+  CpuChipIcon,
+  ClipboardDocumentListIcon,
+  ArrowPathIcon,
 } from '@heroicons/react/24/outline';
 
 /**
- * FeatureShowcase - Modular cards highlighting unique Growzilla differentiators
- * Based on research: Triple Whale lacks ICP detection, Peel lacks real-time alerts
- * Competitive gaps exploited: No competitor offers proactive leak detection + ICP AI
+ * FeatureShowcase - "How It Works" 4-step process explanation
+ * Revised: Clear mechanism explanation, not feature hype
+ * Focus: Connect → Analyze → Recommend → Learn
  */
 export const FeatureShowcase: React.FC = () => {
-  const features = [
+  const steps = [
     {
-      icon: MagnifyingGlassIcon,
-      iconBg: 'bg-zilla-shopify/10',
-      iconColor: 'text-zilla-shopify',
-      title: 'ICP Archetype Detection',
-      description: 'AI identifies your perfect customer profile automatically.',
-      benefit: 'Stop wasting ad $ on wrong audiences',
-      roi: '+47% ROAS improvement',
-      stat: 'Unique to Growzilla'
+      icon: LinkIcon,
+      step: '01',
+      title: 'Connect Your Existing Tools',
+      description: 'One-click connection to Shopify. API connections to Meta, Google, Klaviyo, and your other tools.',
+      details: 'We don\'t replace your stack—we connect it.',
+      bullets: [
+        '90-second Shopify installation',
+        'No developer required',
+        'Your data stays in your tools',
+      ],
+      color: 'shopify'
     },
     {
-      icon: ChartBarIcon,
-      iconBg: 'bg-zilla-electric/10',
-      iconColor: 'text-zilla-electric',
-      title: 'Pareto 80/20 Optimization',
-      description: 'Auto-surfaces the 20% of products driving 80% of revenue.',
-      benefit: 'Focus where it matters most',
-      roi: '3.2x faster optimization',
-      stat: 'Real-time alerts'
+      icon: CpuChipIcon,
+      step: '02',
+      title: 'Continuous Analysis Begins',
+      description: 'Within 24 hours, Growzilla has analyzed your funnel, ad performance, product conversion, and customer segments.',
+      details: 'This runs continuously. Not once—always.',
+      bullets: [
+        'Where traffic drops off',
+        'Which campaigns drive profit',
+        'Which products convert vs. just attract',
+      ],
+      color: 'electric'
     },
     {
-      icon: CursorArrowRaysIcon,
-      iconBg: 'bg-zilla-gold/10',
-      iconColor: 'text-zilla-gold',
-      title: 'Ad Targeting Prescriptions',
-      description: 'Get exact audience params to feed Meta/TikTok/Google.',
-      benefit: 'No more guesswork campaigns',
-      roi: '-58% wasted spend',
-      stat: 'Copy-paste ready'
+      icon: ClipboardDocumentListIcon,
+      step: '03',
+      title: 'Ranked Recommendations',
+      description: 'Every week, you receive a prioritized list of issues—ranked by expected revenue impact—with specific actions to take.',
+      details: 'Not "your conversion is low." Exactly what\'s wrong and what to do.',
+      bullets: [
+        'Specific recommendations',
+        'Expected outcome per fix',
+        'Priority ranking by impact',
+      ],
+      color: 'gold'
     },
     {
-      icon: PaintBrushIcon,
-      iconBg: 'bg-zilla-danger/10',
-      iconColor: 'text-zilla-danger',
-      title: 'Store Redesign Recommendations',
-      description: 'AI detects UX friction and conversion killers.',
-      benefit: 'Get actionable fixes instantly',
-      roi: '+15-30% CVR lift',
-      stat: 'Proven templates'
+      icon: ArrowPathIcon,
+      step: '04',
+      title: 'The System Learns',
+      description: 'When you implement a recommendation, mark it complete. Growzilla tracks the outcome and future recommendations get smarter.',
+      details: 'You\'re building a system that learns your business.',
+      bullets: [
+        'Track implementation results',
+        'Calibrate to your business',
+        'Recommendations improve over time',
+      ],
+      color: 'shopify'
     }
   ];
 
@@ -64,116 +76,110 @@ export const FeatureShowcase: React.FC = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
         {/* Section header */}
         <motion.div
+          id="how-it-works"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-16 scroll-mt-20"
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            <span className="text-white">Powered by AI </span>
-            <span className="text-transparent bg-clip-text bg-zilla-gradient">That Never Sleeps</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
+            <span className="text-white">How It Actually Works</span>
           </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Features Triple Whale, Peel & Northbeam <span className="text-zilla-danger font-semibold">don't have</span>
+          <p className="text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed">
+            Growzilla is an analytical layer that sits on top of your existing tools.
+            It connects your data, identifies conversion friction, and generates prioritized recommendations.
           </p>
         </motion.div>
 
-        {/* Feature grid */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          {features.map((feature, index) => {
-            const Icon = feature.icon;
+        {/* Step grid */}
+        <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+          {steps.map((step, index) => {
+            const Icon = step.icon;
 
             return (
               <motion.div
-                key={feature.title}
+                key={step.title}
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                whileHover={{ scale: 1.02 }}
                 className="group relative"
               >
-                <div className="relative h-full bg-zilla-charcoal rounded-2xl p-8 border border-zilla-muted hover:border-zilla-shopify/50 transition-all duration-300 overflow-hidden">
-                  {/* Animated background gradient on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-zilla-shopify/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
+                <div className="relative h-full bg-zilla-charcoal rounded-2xl p-8 border border-zilla-muted hover:border-zilla-shopify/30 transition-all duration-300 overflow-hidden">
                   {/* Content */}
                   <div className="relative z-10">
-                    {/* Icon */}
-                    <div className={`inline-flex p-4 rounded-xl ${feature.iconBg} mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                      <Icon className={`w-8 h-8 ${feature.iconColor}`} />
-                    </div>
-
-                    {/* Title */}
-                    <h3 className="text-2xl font-bold text-white mb-3">
-                      {feature.title}
-                    </h3>
-
-                    {/* Description */}
-                    <p className="text-gray-300 mb-4 leading-relaxed">
-                      {feature.description}
-                    </p>
-
-                    {/* Benefit */}
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-zilla-surface border border-zilla-shopify/20 mb-4">
-                      <span className="text-sm text-zilla-shopify font-medium">
-                        ✓ {feature.benefit}
+                    {/* Step number + Icon */}
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className={`inline-flex p-3 rounded-xl bg-zilla-${step.color}/10`}>
+                        <Icon className={`w-6 h-6 text-zilla-${step.color}`} />
+                      </div>
+                      <span className={`text-sm font-mono text-zilla-${step.color} uppercase tracking-wider`}>
+                        Step {step.step}
                       </span>
                     </div>
 
-                    {/* Stats row */}
-                    <div className="flex items-center justify-between pt-6 border-t border-zilla-muted/30">
-                      <div>
-                        <div className="text-2xl font-bold text-zilla-shopify">
-                          {feature.roi}
-                        </div>
-                        <div className="text-xs text-gray-500 uppercase tracking-wide">
-                          Average Impact
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="inline-flex px-3 py-1 rounded-full bg-zilla-gold/10 border border-zilla-gold/30">
-                          <span className="text-xs font-semibold text-zilla-gold">
-                            {feature.stat}
-                          </span>
-                        </div>
-                      </div>
+                    {/* Title */}
+                    <h3 className="text-xl font-bold text-white mb-3">
+                      {step.title}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-gray-400 mb-4 leading-relaxed text-sm">
+                      {step.description}
+                    </p>
+
+                    {/* Bullets */}
+                    <ul className="space-y-2 mb-4">
+                      {step.bullets.map((bullet, i) => (
+                        <li key={i} className="flex items-center gap-2 text-sm text-gray-500">
+                          <span className={`w-1 h-1 rounded-full bg-zilla-${step.color}`} />
+                          {bullet}
+                        </li>
+                      ))}
+                    </ul>
+
+                    {/* Details */}
+                    <div className="pt-4 border-t border-zilla-muted/30">
+                      <p className="text-sm text-gray-500 italic">
+                        {step.details}
+                      </p>
                     </div>
                   </div>
-
-                  {/* Glow effect on hover */}
-                  <div className={`absolute inset-0 ${feature.iconBg} opacity-0 group-hover:opacity-20 blur-2xl transition-opacity duration-300 -z-10`} />
                 </div>
               </motion.div>
             );
           })}
         </div>
 
-        {/* Bottom stats */}
+        {/* Timeline to value */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="mt-16 text-center"
+          className="mt-16"
         >
-          <div className="inline-flex items-center gap-8 px-8 py-6 rounded-2xl bg-zilla-surface border border-zilla-shopify/20">
-            <div>
-              <div className="text-4xl font-bold text-zilla-shopify">90s</div>
-              <div className="text-sm text-gray-400">Installation Time</div>
+          <h3 className="text-center text-lg font-medium text-gray-400 mb-8">Timeline to Value</h3>
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-0">
+            <div className="flex flex-col items-center px-8 py-6">
+              <div className="text-3xl font-bold text-zilla-shopify mb-1">Day 1</div>
+              <div className="text-sm text-gray-400 text-center">90-second installation</div>
             </div>
-            <div className="w-px h-12 bg-zilla-muted" />
-            <div>
-              <div className="text-4xl font-bold text-zilla-electric">5min</div>
-              <div className="text-sm text-gray-400">First Insights</div>
+            <div className="hidden md:block w-16 h-px bg-gradient-to-r from-zilla-shopify/50 to-zilla-electric/50" />
+            <div className="flex flex-col items-center px-8 py-6">
+              <div className="text-3xl font-bold text-zilla-electric mb-1">Week 1</div>
+              <div className="text-sm text-gray-400 text-center">First ranked recommendations</div>
             </div>
-            <div className="w-px h-12 bg-zilla-muted" />
-            <div>
-              <div className="text-4xl font-bold text-zilla-gold">24/7</div>
-              <div className="text-sm text-gray-400">AI Monitoring</div>
+            <div className="hidden md:block w-16 h-px bg-gradient-to-r from-zilla-electric/50 to-zilla-gold/50" />
+            <div className="flex flex-col items-center px-8 py-6">
+              <div className="text-3xl font-bold text-zilla-gold mb-1">Month 1</div>
+              <div className="text-sm text-gray-400 text-center">Median 23% CVR improvement</div>
             </div>
           </div>
+          <p className="text-center text-xs text-gray-500 mt-4">
+            Results for operators who implement recommendations. Your results may vary based on traffic volume and baseline.
+          </p>
         </motion.div>
       </div>
     </section>

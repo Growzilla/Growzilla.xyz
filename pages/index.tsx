@@ -8,15 +8,18 @@ import EliteSolution from '../components/EliteSolution';
 import EliteHowItWorks from '../components/EliteHowItWorks';
 import EliteTeam from '../components/EliteTeam';
 import EliteCTA from '../components/EliteCTA';
+import LogoMarquee from '../components/LogoMarquee';
+import ProofSection from '../components/ProofSection';
+import FAQ from '../components/FAQ';
 
 const GrowzillaPage: React.FC = () => {
   return (
     <>
       <Head>
-        <title>Growzilla | Crush Leaks. Scale BIG. - AI-Powered Ecommerce Growth</title>
+        <title>Growzilla | Revenue Systems & Attribution for Ecommerce</title>
         <meta
           name="description"
-          content="The exclusive community where experienced ecommerce builders plug into AI systems to achieve exponential scaling. Crush leaks, beat giants, and transform your operations."
+          content="We install revenue visibility, find where money leaks, and build systems to fix it. Revenue systems and attribution for Shopify stores doing $500K-$30M."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="robots" content="index, follow" />
@@ -24,19 +27,19 @@ const GrowzillaPage: React.FC = () => {
         {/* Open Graph */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://growzilla.xyz" />
-        <meta property="og:title" content="Growzilla | Crush Leaks. Scale BIG." />
+        <meta property="og:title" content="Growzilla | Revenue Systems & Attribution for Ecommerce" />
         <meta
           property="og:description"
-          content="The exclusive community where experienced ecommerce builders plug into AI systems to achieve exponential scaling. Your transformer moment awaits."
+          content="We install clean attribution, find where revenue leaks, and build the systems to scale it. For Shopify stores doing $500K-$30M."
         />
         <meta property="og:image" content="/og-image.png" />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Growzilla | Crush Leaks. Scale BIG." />
+        <meta name="twitter:title" content="Growzilla | Revenue Systems & Attribution" />
         <meta
           name="twitter:description"
-          content="AI-powered ecommerce growth for serious operators. Join the exclusive community."
+          content="Revenue visibility and attribution systems for Shopify stores. We find where money leaks and build systems to fix it."
         />
         <meta name="twitter:image" content="/twitter-image.png" />
 
@@ -60,22 +63,14 @@ const GrowzillaPage: React.FC = () => {
       />
 
       <EliteLayout>
-        {/* Hero Section with "Crush leaks." / "Scale BIG" */}
         <EliteHero />
-
-        {/* Problem Section: "The Old Way No Longer Scales" */}
+        <LogoMarquee />
         <EliteProblem />
-
-        {/* Solution Section: "Plug Into AI Leverage With Growzilla" */}
         <EliteSolution />
-
-        {/* How It Works: Apply -> Review -> Join -> Transform */}
+        <ProofSection />
         <EliteHowItWorks />
-
-        {/* Team Section */}
         <EliteTeam />
-
-        {/* Final CTA with Calendly */}
+        <FAQ />
         <EliteCTA />
       </EliteLayout>
     </>

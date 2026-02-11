@@ -2,42 +2,35 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 /**
- * ProblemAgitation - 3-card leak showcase dramatizing merchant pain points
- * Research-backed data:
- * - 7-8 figure merchants lose $237K+/year to murky GA4 data & channel misattribution
- * - Mobile converts at 1.8% vs desktop 3.9% (Shopify benchmarks 2025)
- * - Revenue leaks from poor tracking make optimization impossible
- *
- * Sources: ecommercefastlane.com/littledata-shopify-review, blendcommerce.com/shopify/ecommerce-conversion-rate-benchmarks
+ * ProblemAgitation - 3-card problem showcase for experienced operators
+ * Revised copy: Calm, operational, no fear-mongering
+ * Focus: Fragmented data architecture, lack of actionable insights, time drain
  */
 export const ProblemAgitation: React.FC = () => {
-  const leaks = [
+  const problems = [
     {
-      icon: '💸',
-      title: 'Wasted Ad Spend',
-      stat: '-$237K/Year Lost',
-      description: 'Murky GA4 data. Wrong channel attribution. Post-iOS 14 tracking holes.',
-      details: 'Burning budget on guesswork. Core numbers are wrong.',
-      color: 'danger',
-      animation: 'leak-drip'
+      number: '01',
+      title: 'Fragmented Attribution',
+      headline: 'Your Tools Give You Different Numbers',
+      description: 'Meta says ROAS is 3.2. Google says 2.4. Your dashboard says 2.8. Shopify shows something else entirely.',
+      insight: 'Without connected data, you\'re making significant spending decisions based on incomplete information.',
+      color: 'shopify'
     },
     {
-      icon: '🛒',
-      title: 'Conversion Friction',
-      stat: '1.8% Mobile CVR',
-      description: 'Mobile converts at 1.8% vs desktop 3.9%. Hidden cart abandonment at 93%.',
-      details: '70-80% of traffic is mobile. You\'re losing millions.',
-      color: 'warning',
-      animation: 'shake'
+      number: '02',
+      title: 'Dashboards Without Direction',
+      headline: 'You Can See the Problem. You Can\'t See the Fix.',
+      description: 'Your analytics show conversion dropped 12% last month. They don\'t show which pages are causing drop-off or what to change first.',
+      insight: 'More data isn\'t the answer. Diagnosis is.',
+      color: 'electric'
     },
     {
-      icon: '📊',
-      title: 'Blind Optimization',
-      stat: 'Guesswork = Death',
-      description: 'Optimizing ad spend on guesswork. Not ground truth.',
-      details: 'Broken tracking = skewed reports = impossible decisions.',
-      color: 'electric',
-      animation: 'glitch'
+      number: '03',
+      title: 'The Hidden Cost: Your Time',
+      headline: 'Every Week, You\'re Doing an Agency\'s Job',
+      description: 'You spend 3-5 hours checking dashboards, cross-referencing data, and trying to figure out what\'s actually happening.',
+      insight: 'That\'s 150-250 hours per year of your attention—spent on work that should be automated.',
+      color: 'gold'
     }
   ];
 
@@ -58,94 +51,67 @@ export const ProblemAgitation: React.FC = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            <span className="text-white">Your Store is </span>
-            <span className="text-zilla-danger">Bleeding Revenue</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
+            <span className="text-white">The Real Problem Isn't Your Data.</span>
+            <br />
+            <span className="text-transparent bg-clip-text bg-zilla-gradient">It's Your Data Architecture.</span>
           </h2>
-          <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
-            7-8 figure merchants are losing <span className="text-zilla-danger font-bold">$237K+/year</span> to these leaks
+          <p className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+            You're paying for 5-8 different tools. Each one shows you a piece of the picture.
+            None of them shows you the full picture—or tells you what to do about it.
           </p>
         </motion.div>
 
-        {/* 3-card leak showcase */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {leaks.map((leak, index) => (
+        {/* 3-card problem showcase */}
+        <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          {problems.map((problem, index) => (
             <motion.div
-              key={leak.title}
+              key={problem.title}
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.15 }}
-              whileHover={{ y: -8 }}
               className="group"
             >
-              <div className="relative h-full bg-zilla-surface rounded-2xl p-8 border border-zilla-muted hover:border-zilla-shopify/40 transition-all duration-300">
-                {/* Dripping animation overlay */}
-                <div className="absolute top-0 left-0 right-0 h-full overflow-hidden rounded-2xl pointer-events-none">
-                  {[...Array(3)].map((_, i) => (
-                    <div
-                      key={i}
-                      className={`absolute w-1 bg-gradient-to-b from-zilla-${leak.color}/60 to-transparent rounded-full animate-${leak.animation}`}
-                      style={{
-                        left: `${20 + i * 30}%`,
-                        height: '80px',
-                        animationDelay: `${i * 0.5}s`,
-                        animationDuration: '2s',
-                        animationIterationCount: 'infinite'
-                      }}
-                    />
-                  ))}
+              <div className="relative h-full bg-zilla-surface rounded-2xl p-8 border border-zilla-muted hover:border-zilla-shopify/30 transition-all duration-300">
+                {/* Number badge */}
+                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zilla-${problem.color}/10 border border-zilla-${problem.color}/20 mb-6`}>
+                  <span className={`text-xs font-mono text-zilla-${problem.color}`}>{problem.number}</span>
+                  <span className="text-xs text-gray-400 uppercase tracking-wide">{problem.title}</span>
                 </div>
 
-                {/* Icon */}
-                <div className="text-6xl mb-4 group-hover:animate-shake">
-                  {leak.icon}
-                </div>
-
-                {/* Title */}
-                <h3 className="text-2xl font-bold text-white mb-2">
-                  {leak.title}
+                {/* Headline */}
+                <h3 className="text-xl font-bold text-white mb-4 leading-snug">
+                  {problem.headline}
                 </h3>
 
-                {/* Stat */}
-                <div className={`text-3xl font-bold text-zilla-${leak.color} mb-4`}>
-                  {leak.stat}
-                </div>
-
                 {/* Description */}
-                <p className="text-gray-300 mb-3 leading-relaxed">
-                  {leak.description}
+                <p className="text-gray-400 mb-6 leading-relaxed text-sm">
+                  {problem.description}
                 </p>
 
-                {/* Details */}
-                <p className="text-sm text-gray-500 italic">
-                  {leak.details}
-                </p>
-
-                {/* Counter effect */}
-                <div className="absolute bottom-6 right-6 opacity-10 group-hover:opacity-20 transition-opacity">
-                  <div className={`text-8xl font-black text-zilla-${leak.color}`}>
-                    {index + 1}
-                  </div>
+                {/* Insight */}
+                <div className="pt-4 border-t border-zilla-muted/30">
+                  <p className="text-sm text-gray-500 leading-relaxed">
+                    {problem.insight}
+                  </p>
                 </div>
-
-                {/* Glow on hover */}
-                <div className={`absolute inset-0 bg-zilla-${leak.color}/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10`} />
               </div>
             </motion.div>
           ))}
         </div>
 
-        {/* Bottom CTA teaser */}
+        {/* Bottom insight */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="text-center mt-16"
+          className="text-center mt-16 max-w-3xl mx-auto"
         >
-          <p className="text-xl text-gray-400">
-            Sound familiar? <span className="text-zilla-shopify font-semibold">Growzilla crushes these leaks instantly.</span>
+          <p className="text-lg text-gray-400 leading-relaxed">
+            You already have the data you need. It's scattered across tools that don't communicate.
+            <span className="text-white"> The solution isn't more data—it's a system that connects what you already have.</span>
           </p>
         </motion.div>
       </div>

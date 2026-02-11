@@ -1,20 +1,33 @@
 import React from 'react';
-import { LockClosedIcon, SparklesIcon } from '@heroicons/react/24/solid';
+import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';
 
 /**
- * ExclusivityTeaser - Creates elite club feel inspired by Superhuman's waitlist strategy
- * Research: Superhuman's 180K waitlist drove viral demand through exclusivity
- * Conversion impact: Scarcity + status signaling increases perceived value
+ * ICPQualification - Clear "who this is for" section
+ * Revised: Replaced fake exclusivity with honest ICP qualification
+ * Focus: Help visitors self-qualify, reduce bad-fit signups
  */
 export const ExclusivityTeaser: React.FC = () => {
-  return (
-    <section className="relative py-24 overflow-hidden bg-gradient-to-b from-zilla-black via-zilla-dark to-zilla-black">
-      {/* Background effects */}
-      <div className="absolute inset-0 bg-grid-zilla opacity-20" style={{ backgroundSize: '50px 50px' }} />
+  const isFor = [
+    'Established ecommerce businesses ($500K-$10M revenue)',
+    'Operators already using Shopify + ad platforms + email tools',
+    'Decision-makers who want recommendations, not more dashboards',
+    'Teams without dedicated data analysts',
+    'People who will actually implement the recommendations',
+  ];
 
-      {/* Radial glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-zilla-radial-intense opacity-60" />
+  const notFor = [
+    'Brand new stores without meaningful traffic',
+    'Operators who prefer building their own dashboards',
+    'Businesses needing enterprise compliance (SOC2, custom SLAs)',
+    'Anyone looking for a "set it and forget it" solution',
+    'Platforms other than Shopify (for now)',
+  ];
+
+  return (
+    <section className="relative py-24 overflow-hidden bg-zilla-dark">
+      {/* Background grid */}
+      <div className="absolute inset-0 bg-grid-zilla opacity-10" style={{ backgroundSize: '50px 50px' }} />
 
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6">
         <motion.div
@@ -22,111 +35,79 @@ export const ExclusivityTeaser: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center"
+          className="text-center mb-12"
         >
-          {/* Lock + Crown Icon */}
-          <div className="inline-flex items-center justify-center gap-3 mb-6">
-            <div className="relative">
-              <LockClosedIcon className="w-12 h-12 text-zilla-shopify drop-shadow-zilla" />
-              <SparklesIcon className="w-5 h-5 text-zilla-gold absolute -top-1 -right-1 animate-pulse" />
-            </div>
-          </div>
-
-          {/* Headline */}
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-            <span className="text-white">MEMBERS </span>
-            <span className="text-transparent bg-clip-text bg-zilla-gradient">ONLY</span>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <span className="text-white">Is Growzilla Right For You?</span>
           </h2>
-
-          {/* Subheadline */}
-          <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-8 leading-relaxed">
-            Growzilla isn't for everyone. Join{' '}
-            <span className="text-zilla-shopify font-semibold">180+ elite merchants</span>
-            {' '}who've unlocked{' '}
-            <span className="text-zilla-electric font-semibold">$47M+ in hidden revenue</span>.
+          <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+            We're not for everyone. Here's how to know if we're a fit.
           </p>
+        </motion.div>
 
-          {/* Glassmorphism preview card */}
+        {/* Two-column layout */}
+        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          {/* Is For column */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="bg-zilla-surface rounded-2xl p-8 border border-zilla-shopify/20"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-full bg-zilla-shopify/10 flex items-center justify-center">
+                <CheckIcon className="w-5 h-5 text-zilla-shopify" />
+              </div>
+              <h3 className="text-xl font-semibold text-white">Growzilla works best for</h3>
+            </div>
+
+            <ul className="space-y-4">
+              {isFor.map((item, index) => (
+                <li key={index} className="flex items-start gap-3">
+                  <CheckIcon className="w-5 h-5 text-zilla-shopify mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-300 text-sm leading-relaxed">{item}</span>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* Not For column */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="relative max-w-2xl mx-auto mb-8"
+            className="bg-zilla-surface rounded-2xl p-8 border border-zilla-muted/30"
           >
-            {/* Glass card */}
-            <div
-              className="relative rounded-2xl p-8 border border-zilla-shopify/20 overflow-hidden"
-              style={{
-                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
-                backdropFilter: 'blur(12px)',
-                boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
-              }}
-            >
-              {/* Blurred dashboard preview */}
-              <div className="aspect-video bg-zilla-charcoal rounded-lg relative overflow-hidden">
-                <div className="absolute inset-0 blur-sm opacity-60">
-                  {/* Fake dashboard elements */}
-                  <div className="p-6 space-y-4">
-                    <div className="h-3 bg-zilla-shopify/40 rounded w-1/3" />
-                    <div className="h-2 bg-gray-600/40 rounded w-2/3" />
-                    <div className="grid grid-cols-3 gap-4 mt-6">
-                      <div className="h-20 bg-zilla-surface/60 rounded-lg" />
-                      <div className="h-20 bg-zilla-surface/60 rounded-lg" />
-                      <div className="h-20 bg-zilla-surface/60 rounded-lg" />
-                    </div>
-                    <div className="h-32 bg-zilla-surface/60 rounded-lg mt-4" />
-                  </div>
-                </div>
-
-                {/* Lock overlay */}
-                <div className="absolute inset-0 flex items-center justify-center bg-zilla-black/40">
-                  <div className="text-center">
-                    <LockClosedIcon className="w-16 h-16 text-zilla-shopify/80 mx-auto mb-3" />
-                    <p className="text-sm text-gray-400 font-medium">Premium Dashboard Access</p>
-                  </div>
-                </div>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center">
+                <XMarkIcon className="w-5 h-5 text-gray-400" />
               </div>
-
-              {/* Stats overlay */}
-              <div className="mt-6 flex items-center justify-center gap-8">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-zilla-shopify">60,000</div>
-                  <div className="text-sm text-gray-400">Joined Waitlist</div>
-                </div>
-                <div className="w-px h-12 bg-zilla-shopify/20" />
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-zilla-electric">15,000</div>
-                  <div className="text-sm text-gray-400">Onboarded</div>
-                </div>
-              </div>
+              <h3 className="text-xl font-semibold text-white">Growzilla is not for</h3>
             </div>
 
-            {/* Glow effect behind card */}
-            <div className="absolute inset-0 bg-zilla-shopify/10 blur-3xl -z-10 scale-95" />
+            <ul className="space-y-4">
+              {notFor.map((item, index) => (
+                <li key={index} className="flex items-start gap-3">
+                  <XMarkIcon className="w-5 h-5 text-gray-500 mt-0.5 flex-shrink-0" />
+                  <span className="text-gray-400 text-sm leading-relaxed">{item}</span>
+                </li>
+              ))}
+            </ul>
           </motion.div>
+        </div>
 
-          {/* CTA */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            <a
-              href="#waitlist"
-              className="inline-flex items-center gap-3 px-8 py-4 bg-zilla-shopify text-zilla-black font-bold text-lg rounded-xl hover:bg-zilla-acid hover:shadow-zilla-glow-lg transition-all duration-300 transform hover:scale-105"
-            >
-              <SparklesIcon className="w-5 h-5" />
-              Join the Waitlist — Limited Access
-            </a>
-
-            <p className="mt-4 text-sm text-gray-500">
-              <span className="inline-block w-2 h-2 rounded-full bg-zilla-shopify animate-pulse mr-2" />
-              Next cohort opens Jan 15 • Only 8 spots remaining
-            </p>
-          </motion.div>
-        </motion.div>
+        {/* Bottom note */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="text-center mt-10 text-sm text-gray-500 max-w-xl mx-auto"
+        >
+          If you're not sure, start a trial. We'll tell you during onboarding if we don't think it's a fit.
+        </motion.p>
       </div>
     </section>
   );

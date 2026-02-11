@@ -13,10 +13,10 @@ const GrowzillaPage: React.FC = () => {
   return (
     <>
       <Head>
-        <title>Growzilla | Unleash Monster Growth - Elite Shopify Analytics</title>
+        <title>Growzilla | Connect Your Data. Get Specific Recommendations.</title>
         <meta
           name="description"
-          content="Join 180+ elite 7-8 figure Shopify merchants. Growzilla's AI detects revenue leaks, optimizes ad spend, unlocks explosive growth. 90-second install. $47M+ recovered."
+          content="Growzilla connects your Shopify store, ad platforms, and email tools into a single analytical layer. Identifies where you're losing revenue and tells you specifically what to fix—ranked by expected impact."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="robots" content="index, follow" />
@@ -24,19 +24,19 @@ const GrowzillaPage: React.FC = () => {
         {/* Open Graph */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://growzilla.xyz" />
-        <meta property="og:title" content="Growzilla | Unleash Monster Growth on Your Shopify Store" />
+        <meta property="og:title" content="Growzilla | Your Data Isn't the Problem. Your Tools Don't Talk to Each Other." />
         <meta
           property="og:description"
-          content="Stop guessing why customers leave. Our AI artifact stomps out conversion leaks and unleashes explosive growth. Join 2,400+ brands in the herd."
+          content="Diagnostic analytics for ecommerce operators. Connect your tools, get weekly recommendations ranked by expected revenue impact. 30-day trial, no credit card."
         />
         <meta property="og:image" content="/og-image.png" />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Growzilla | Unleash Monster Growth" />
+        <meta name="twitter:title" content="Growzilla | Connect Your Data. Get Specific Recommendations." />
         <meta
           name="twitter:description"
-          content="AI-powered conversion optimization for Shopify. Join 2,400+ brands crushing it."
+          content="Diagnostic analytics for ecommerce. Connect your tools, get ranked recommendations. 23% median CVR improvement."
         />
         <meta name="twitter:image" content="/twitter-image.png" />
 
@@ -54,68 +54,56 @@ const GrowzillaPage: React.FC = () => {
 
       <GrowzillaLayout>
         {/*
-          SECTION 1: CINEMATIC HERO
-          - Godzilla silhouette with atomic breath glow (Shopify green)
-          - Dual CTA: Install vs Waitlist
-          - Target: 15-25% conversion
+          SECTION 1: HERO
+          Headline: "Your Data Isn't the Problem. Your Tools Don't Talk to Each Other."
+          Clear value prop, risk reducers, direct CTA
         */}
         <GrowzillaHero />
 
         {/*
-          SECTION 2: EXCLUSIVITY TEASER
-          - "Members Only" club vibe
-          - Glassmorphism dashboard preview
-          - Superhuman-inspired waitlist psychology
-          - Social proof: 60K joined, 15K onboarded
+          SECTION 2: ICP QUALIFICATION
+          "Is Growzilla Right For You?"
+          Two-column layout: who it's for / who it's not for
+          Helps visitors self-qualify, reduces bad-fit signups
         */}
         <ExclusivityTeaser />
 
         {/*
-          SECTION 3: PROBLEM AGITATION
-          - 3-card leak showcase with dripping animations
-          - Research-backed pain points:
-            * $237K/year wasted ad spend (murky GA4)
-            * 1.8% mobile CVR vs 3.9% desktop
-            * Blind optimization on guesswork
+          SECTION 3: PROBLEM FRAMING
+          "The Real Problem Isn't Your Data. It's Your Data Architecture."
+          3 cards: Fragmented Attribution, Dashboards Without Direction, Time Cost
+          Calm, operational tone - no fear-mongering
         */}
         <ProblemAgitation />
 
         {/*
-          SECTION 4: FEATURE SHOWCASE
-          - 4 modular cards with hover animations
-          - Unique differentiators:
-            * ICP Archetype AI (Growzilla exclusive)
-            * Pareto 80/20 Optimization
-            * Ad Targeting Prescriptions
-            * Store Redesign AI
+          SECTION 4: HOW IT WORKS
+          4-step process: Connect → Analyze → Recommend → Learn
+          Timeline to value: Day 1 → Week 1 → Month 1
+          Clear mechanism explanation
         */}
         <FeatureShowcase />
 
         {/*
-          SECTION 5: SOCIAL PROOF CAROUSEL
-          - Auto-rotating elite merchant testimonials
-          - Quantifiable results ($340K recovered, +79% mobile CVR)
-          - "Powered by Growzilla" badge teaser
-          - Conversion lift: 84-270% near CTAs
+          SECTION 5: SOCIAL PROOF
+          Customer testimonials with specific results
+          TODO: Update copy to match new tone
         */}
         <TestimonialCarousel />
 
         {/*
-          SECTION 6: COMPETITIVE COMPARISON
-          - Feature matrix: Growzilla vs Triple Whale, Peel, Northbeam
-          - Highlights unique capabilities (ICP AI, real-time alerts)
-          - Pricing positioned at $499 (premium but below Northbeam)
+          SECTION 6: COMPARISON
+          Growzilla vs alternatives (Triple Whale, Peel, etc.)
+          TODO: Update to focus on "shows data vs tells you what to do"
         */}
         <CompetitiveComparison />
 
         {/*
-          SECTION 7: ENHANCED CTA
-          - Massive "CLAIM YOUR GROWZILLA ACCESS" headline
-          - Dual conversion paths:
-            * Primary: Install Now (immediate action)
-            * Secondary: Join Waitlist (exclusivity play)
-          - Trust signals: 30-day trial, no card, 90s install
-          - Social proof stats: 180+ brands, $47M recovered, 35% CVR lift
+          SECTION 7: FINAL CTA
+          "See If Growzilla Is Right For Your Business"
+          Primary: Start 30-Day Trial
+          Secondary: Schedule a 15-Minute Walkthrough
+          Trust signals, realistic stats, contact info
         */}
         <EnhancedCTA />
       </GrowzillaLayout>

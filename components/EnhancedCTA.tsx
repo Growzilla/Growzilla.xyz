@@ -1,12 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { RocketLaunchIcon, SparklesIcon, BoltIcon } from '@heroicons/react/24/solid';
+import { ArrowRightIcon, CalendarIcon } from '@heroicons/react/24/outline';
+import { CheckCircleIcon } from '@heroicons/react/24/solid';
 
 /**
- * EnhancedCTA - Dual conversion path section (Install vs Waitlist)
- * Research: A/B testing variants - direct install vs waitlist exclusivity
- * Target: 15-25% hero CTA conversion (vs industry median 6.6%)
- * Removes friction: 30-day free trial, no credit card (Peel's strategy)
+ * EnhancedCTA - Clear, calm conversion section
+ * Revised: Removed aggressive language, fake scarcity
+ * Focus: Value clarity, risk reduction, simple next steps
  */
 export const EnhancedCTA: React.FC = () => {
   return (
@@ -29,46 +29,45 @@ export const EnhancedCTA: React.FC = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6">
-            <span className="text-white block mb-2">CLAIM YOUR</span>
-            <span className="text-transparent bg-clip-text bg-zilla-gradient text-shimmer">
-              GROWZILLA ACCESS
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+            <span className="text-white">See If Growzilla Is Right</span>
+            <br />
+            <span className="text-transparent bg-clip-text bg-zilla-gradient">
+              For Your Business
             </span>
           </h2>
 
-          <p className="text-2xl md:text-3xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Join the elite or watch your competitors <span className="text-zilla-danger font-bold">crush you</span>
+          <p className="text-lg md:text-xl text-gray-400 mb-12 max-w-2xl mx-auto leading-relaxed">
+            Start with a 30-day trial. See your first analysis within 24 hours.
+            <br className="hidden md:block" />
+            No credit card required. Cancel anytime.
           </p>
         </motion.div>
 
-        {/* Dual CTA buttons */}
+        {/* CTA buttons */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-col md:flex-row gap-6 justify-center mb-12"
+          className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
         >
-          {/* Primary CTA - Install Now */}
+          {/* Primary CTA */}
           <a
-            href="#install"
-            className="group relative inline-flex items-center justify-center gap-3 px-10 py-6 bg-zilla-shopify text-zilla-black font-black text-xl rounded-2xl hover:bg-zilla-acid hover:shadow-zilla-glow-xl transition-all duration-300 transform hover:scale-105 overflow-hidden"
+            href="#trial"
+            className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-zilla-shopify text-zilla-black font-bold text-lg rounded-xl hover:bg-zilla-acid hover:shadow-zilla-glow-lg transition-all duration-300"
           >
-            {/* Animated shimmer effect */}
-            <div className="absolute inset-0 bg-shimmer bg-[length:200%_100%] animate-text-shimmer opacity-30" />
-
-            <RocketLaunchIcon className="w-6 h-6 relative z-10 group-hover:rotate-12 transition-transform" />
-            <span className="relative z-10">Install Growzilla — Crush Leaks</span>
-            <BoltIcon className="w-6 h-6 relative z-10 group-hover:scale-110 transition-transform" />
+            <span>Start 30-Day Trial</span>
+            <ArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </a>
 
-          {/* Secondary CTA - Waitlist */}
+          {/* Secondary CTA */}
           <a
-            href="#waitlist"
-            className="group inline-flex items-center justify-center gap-3 px-10 py-6 bg-transparent border-2 border-zilla-shopify text-zilla-shopify font-bold text-xl rounded-2xl hover:bg-zilla-shopify/10 hover:shadow-zilla-glow-lg transition-all duration-300 transform hover:scale-105"
+            href="#schedule"
+            className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-transparent border border-zilla-muted text-gray-300 font-medium text-lg rounded-xl hover:border-zilla-shopify/50 hover:text-white transition-all duration-300"
           >
-            <SparklesIcon className="w-6 h-6 group-hover:rotate-12 transition-transform" />
-            <span>Join Waitlist — Private Beta</span>
+            <CalendarIcon className="w-5 h-5" />
+            <span>Schedule a 15-Minute Walkthrough</span>
           </a>
         </motion.div>
 
@@ -78,74 +77,81 @@ export const EnhancedCTA: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mb-8"
+          className="flex flex-wrap items-center justify-center gap-4 md:gap-8 mb-10"
         >
-          <div className="flex items-center gap-3 text-gray-300">
-            <div className="w-2 h-2 rounded-full bg-zilla-shopify animate-pulse" />
-            <span className="text-lg">30-day free trial</span>
-          </div>
-
-          <div className="hidden md:block w-px h-6 bg-zilla-muted" />
-
-          <div className="flex items-center gap-3 text-gray-300">
-            <div className="w-2 h-2 rounded-full bg-zilla-electric animate-pulse" />
-            <span className="text-lg">No credit card required</span>
-          </div>
-
-          <div className="hidden md:block w-px h-6 bg-zilla-muted" />
-
-          <div className="flex items-center gap-3 text-gray-300">
-            <div className="w-2 h-2 rounded-full bg-zilla-gold animate-pulse" />
-            <span className="text-lg">90-second installation</span>
-          </div>
+          {[
+            '30-day trial',
+            'No credit card',
+            'Month-to-month',
+            'Cancel anytime',
+            'GDPR compliant',
+          ].map((item, index) => (
+            <div key={item} className="flex items-center gap-2 text-gray-400">
+              <CheckCircleIcon className="w-4 h-4 text-zilla-shopify" />
+              <span className="text-sm">{item}</span>
+            </div>
+          ))}
         </motion.div>
 
-        {/* Social proof stats */}
+        {/* Results stats */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="inline-flex flex-wrap items-center justify-center gap-8 px-8 py-6 rounded-2xl bg-zilla-surface/50 border border-zilla-shopify/20 backdrop-blur-sm"
         >
-          <div className="text-center">
-            <div className="text-4xl font-bold text-zilla-shopify mb-1">180+</div>
-            <div className="text-sm text-gray-400">Elite Brands</div>
+          <p className="text-sm text-gray-500 mb-6">Results from operators using Growzilla:</p>
+          <div className="inline-flex flex-wrap items-center justify-center gap-8 md:gap-12 px-8 py-6 rounded-2xl bg-zilla-surface/50 border border-zilla-muted/30">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-zilla-shopify mb-1">23%</div>
+              <div className="text-xs text-gray-500">Median CVR<br />improvement</div>
+            </div>
+
+            <div className="w-px h-12 bg-zilla-muted/30" />
+
+            <div className="text-center">
+              <div className="text-3xl font-bold text-zilla-electric mb-1">3 weeks</div>
+              <div className="text-xs text-gray-500">Median payback<br />period</div>
+            </div>
+
+            <div className="w-px h-12 bg-zilla-muted/30" />
+
+            <div className="text-center">
+              <div className="text-3xl font-bold text-zilla-gold mb-1">200+</div>
+              <div className="text-xs text-gray-500">Active<br />operators</div>
+            </div>
           </div>
-
-          <div className="w-px h-12 bg-zilla-muted/50" />
-
-          <div className="text-center">
-            <div className="text-4xl font-bold text-zilla-electric mb-1">$47M+</div>
-            <div className="text-sm text-gray-400">Revenue Recovered</div>
-          </div>
-
-          <div className="w-px h-12 bg-zilla-muted/50" />
-
-          <div className="text-center">
-            <div className="text-4xl font-bold text-zilla-gold mb-1">35%</div>
-            <div className="text-sm text-gray-400">Avg CVR Lift</div>
-          </div>
-
-          <div className="w-px h-12 bg-zilla-muted/50" />
-
-          <div className="text-center">
-            <div className="text-4xl font-bold text-zilla-warning mb-1">4.9★</div>
-            <div className="text-sm text-gray-400">Average Rating</div>
-          </div>
+          <p className="text-xs text-gray-600 mt-4 max-w-lg mx-auto">
+            Results vary based on traffic volume and current baseline. We'll give you a realistic estimate during onboarding.
+          </p>
         </motion.div>
 
-        {/* Urgency note */}
-        <motion.p
+        {/* Integrations */}
+        <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.8 }}
-          className="mt-8 text-gray-500 text-sm"
+          className="mt-10 text-gray-500 text-sm"
         >
-          <span className="inline-block w-2 h-2 rounded-full bg-zilla-warning animate-pulse mr-2" />
-          Next cohort opens January 15, 2026 • Only 8 spots remaining
-        </motion.p>
+          <p>Works with: Shopify · Klaviyo · Meta · Google · TikTok</p>
+        </motion.div>
+
+        {/* Contact */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 1.0 }}
+          className="mt-8 pt-8 border-t border-zilla-muted/20 max-w-md mx-auto"
+        >
+          <p className="text-sm text-gray-500 mb-2">Questions before you start?</p>
+          <p className="text-sm text-gray-400">
+            Email us at <a href="mailto:hello@growzilla.xyz" className="text-zilla-shopify hover:underline">hello@growzilla.xyz</a>
+            <br />
+            <span className="text-gray-600">We typically respond within 4 hours (CET)</span>
+          </p>
+        </motion.div>
       </div>
 
       {/* Bottom gradient fade */}

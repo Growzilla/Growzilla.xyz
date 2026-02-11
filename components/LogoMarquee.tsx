@@ -1,54 +1,73 @@
 import React from 'react';
 
-const logos = [
-  { src: '/images/posthog_logo.png', alt: 'PostHog' },
-  { src: '/images/stripe_logo.png', alt: 'Stripe' },
-  { src: '/images/supabase_logo_try.png', alt: 'Supabase' },
-  { src: '/images/vercel_logo.png', alt: 'Vercel' },
+interface Logo {
+  src: string;
+  alt: string;
+  /** Dark-content logo on transparent bg — invert to white for dark theme */
+  invertForDark?: boolean;
+  /** Override default height for logos with unusual aspect ratios */
+  heightClass?: string;
+}
+
+const logos: Logo[] = [
   { src: '/images/shopify_logo.png', alt: 'Shopify' },
-  { src: '/images/openai_logo.png', alt: 'OpenAI' },
-  { src: '/images/microsoft_logo.png', alt: 'Microsoft' },
-  { src: '/images/Amazon_Web_Services_Logo.png', alt: 'AWS' },
-  { src: '/images/clerky_logo.png', alt: 'Clerky' },
-  { src: '/images/woo_logo.webp', alt: 'WooCommerce' },
-  { src: '/images/amazon_logo.png', alt: 'Amazon' },
-  { src: '/images/deepseek_logo.png', alt: 'DeepSeek' },
+  { src: '/images/meta-logo.png', alt: 'Meta', invertForDark: true },
+  { src: '/images/google_ads-logo.jpeg', alt: 'Google Ads', invertForDark: true },
+  { src: '/images/stripe_logo.png', alt: 'Stripe' },
+  { src: '/images/Klaviyo-logo.svg', alt: 'Klaviyo', invertForDark: true },
+  { src: '/images/posthog_clean.png', alt: 'PostHog', invertForDark: true, heightClass: 'h-12 sm:h-14' },
+  { src: '/images/TikTok_logo.svg', alt: 'TikTok', invertForDark: true },
+  { src: '/images/google_analytics-logo.png', alt: 'Google Analytics', invertForDark: true },
 ];
 
 export const LogoMarquee: React.FC = () => {
+  const doubled = logos.concat(logos);
+
   return (
-    <div className="w-full py-6 sm:py-8 bg-white">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="text-center text-xs uppercase tracking-wide text-gray-500 mb-3 sm:mb-4">Trusted by innovative teams</div>
-        <div className="relative overflow-hidden">
-          <div className="flex items-center gap-8 sm:gap-12 animate-[scroll_25.5s_linear_infinite] will-change-transform">
-            {logos.concat(logos).map((logo, idx) => (
-              <div 
-                key={idx} 
-                className="flex items-center justify-center h-12 sm:h-14 px-3 sm:px-4 bg-white rounded-lg flex-shrink-0 shadow-sm relative overflow-hidden"
-              >
-                {/* White background layer to cover transparent areas */}
-                <div className="absolute inset-0 bg-white rounded-lg"></div>
-                <img
-                  src={logo.src}
-                  alt={logo.alt}
-                  className="h-10 sm:h-12 w-auto object-contain opacity-70 hover:opacity-100 transition relative z-10"
-                />
-              </div>
-            ))}
-          </div>
+    <section className="w-full py-10 sm:py-14">
+      <p className="text-center text-[11px] sm:text-xs uppercase tracking-[0.25em] text-gray-500 mb-6 sm:mb-8 font-medium">
+        Integrates With Your Stack
+      </p>
+
+      {/* Track with soft left/right edge fade */}
+      <div
+        className="relative overflow-hidden"
+        style={{
+          WebkitMaskImage:
+            'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
+          maskImage:
+            'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
+        }}
+      >
+        <div className="flex items-center gap-12 sm:gap-16 animate-[marquee-scroll_35s_linear_infinite] will-change-transform">
+          {doubled.map((logo, idx) => (
+            <div
+              key={idx}
+              className="flex-shrink-0 flex items-center justify-center"
+            >
+              <img
+                src={logo.src}
+                alt={logo.alt}
+                className={`${logo.heightClass || 'h-8 sm:h-10'} max-w-[140px] sm:max-w-[180px] w-auto object-contain transition-opacity duration-300 opacity-70 hover:opacity-100`}
+                style={
+                  logo.invertForDark
+                    ? { filter: 'invert(1) hue-rotate(180deg)' }
+                    : undefined
+                }
+              />
+            </div>
+          ))}
         </div>
       </div>
+
       <style>{`
-        @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        @keyframes marquee-scroll {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
       `}</style>
-    </div>
+    </section>
   );
 };
 
 export default LogoMarquee;
-
-
-
-
-

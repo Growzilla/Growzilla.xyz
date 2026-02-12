@@ -116,6 +116,21 @@ export interface AuthState {
   loading: boolean;
 }
 
+export interface UserAuthState extends AuthState {
+  email: string | null;
+}
+
+// === User Records ===
+
+export interface UserRecord {
+  email: string;
+  passwordHash: string;
+  storeDomain: string;
+  name: string;
+  createdAt: string;
+  lastLoginAt?: string;
+}
+
 export interface LoginResponse {
   success: boolean;
   error?: string;

@@ -1,15 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import UserLayout from '@/components/user/UserLayout';
+import UserLoginGate from '@/components/user/UserLoginGate';
 import UserLoadingSkeleton from '@/components/user/UserLoadingSkeleton';
-import {
-  MOCK_STATS,
-  MOCK_REVENUE_CHART,
-  MOCK_TOP_PRODUCTS,
-  MOCK_INSIGHTS,
-} from '@/data/mockUserData';
+import { useUserDashboard } from '@/hooks/useUserDashboard';
+import { ExclamationTriangleIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 
 function formatCurrency(n: number) {
   return n >= 1000 ? `$${(n / 1000).toFixed(1)}K` : `$${n.toFixed(0)}`;
@@ -34,68 +30,84 @@ const SEVERITY_DOT: Record<string, string> = {
   low: 'bg-gray-500',
 };
 
-export default function UserDashboard() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
+function DashboardContent({ email, logout }: { email: string; logout: () => void }) {
+  const { data, loading, error, refetch } = useUserDashboard('30d');
 
-  useEffect(() => {
-    // Simulate loading delay for skeleton demo
-    const t = setTimeout(() => setLoading(false), 800);
-    return () => clearTimeout(t);
-  }, []);
-
-  const stats = MOCK_STATS;
-  const chart = MOCK_REVENUE_CHART;
-  const products = MOCK_TOP_PRODUCTS;
-  const insights = MOCK_INSIGHTS;
+  const storeName = data?.shop?.name || data?.shop?.domain || email;
+  const lastSynced = data?.shop?.last_synced
+    ? new Date(data.shop.last_synced).toLocaleString()
+    : null;
 
   // SVG chart dimensions
   const W = 700;
   const H = 250;
   const PAD = 40;
-  const maxRev = Math.max(...chart.data.map((d) => d.revenue));
-  const points = chart.data.map((d, i) => {
-    const x = PAD + (i / (chart.data.length - 1)) * (W - PAD * 2);
+
+  const chartData = data?.chart?.data || [];
+  const maxRev = chartData.length > 0 ? Math.max(...chartData.map((d) => d.revenue)) : 1;
+  const points = chartData.map((d, i) => {
+    const x = PAD + (i / Math.max(chartData.length - 1, 1)) * (W - PAD * 2);
     const y = H - PAD - (d.revenue / maxRev) * (H - PAD * 2);
     return { x, y, ...d };
   });
   const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
-  const areaPath = `${linePath} L${points[points.length - 1].x},${H - PAD} L${points[0].x},${H - PAD} Z`;
+  const areaPath = points.length > 0
+    ? `${linePath} L${points[points.length - 1].x},${H - PAD} L${points[0].x},${H - PAD} Z`
+    : '';
 
-  const kpis = [
-    { label: 'Revenue', value: formatCurrency(stats.total_revenue), delta: formatDelta(stats.revenue_change), up: stats.revenue_change >= 0 },
-    { label: 'Orders', value: stats.total_orders.toLocaleString(), delta: formatDelta(stats.orders_change), up: stats.orders_change >= 0 },
-    { label: 'AOV', value: `$${stats.average_order_value.toFixed(2)}`, delta: formatDelta(stats.aov_change), up: stats.aov_change >= 0 },
-    { label: 'Customers', value: stats.total_customers.toLocaleString(), delta: formatDelta(stats.customers_change), up: stats.customers_change >= 0 },
-  ];
+  const stats = data?.stats;
+  const products = data?.products || [];
+  const insights = data?.insights || [];
+
+  const kpis = stats
+    ? [
+        { label: 'Revenue', value: formatCurrency(stats.total_revenue), delta: formatDelta(stats.revenue_change), up: stats.revenue_change >= 0 },
+        { label: 'Orders', value: stats.total_orders.toLocaleString(), delta: formatDelta(stats.orders_change), up: stats.orders_change >= 0 },
+        { label: 'AOV', value: `$${stats.average_order_value.toFixed(2)}`, delta: formatDelta(stats.aov_change), up: stats.aov_change >= 0 },
+        { label: 'Customers', value: stats.total_customers.toLocaleString(), delta: formatDelta(stats.customers_change), up: stats.customers_change >= 0 },
+      ]
+    : [];
 
   return (
-    <>
-      <Head>
-        <title>Dashboard | Growzilla</title>
-        <meta name="robots" content="noindex, nofollow" />
-      </Head>
-
-      <UserLayout>
-        {loading ? (
-          <UserLoadingSkeleton />
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="space-y-6"
-          >
-            {/* Demo banner */}
-            <div className="rounded-lg border border-zilla-neon/20 bg-zilla-neon/5 px-4 py-3 flex items-center gap-3">
-              <span className="w-2 h-2 rounded-full bg-zilla-neon animate-pulse flex-shrink-0" />
+    <UserLayout storeName={storeName} onLogout={logout}>
+      {loading ? (
+        <UserLoadingSkeleton />
+      ) : error ? (
+        <div className="flex flex-col items-center justify-center py-20 space-y-4">
+          <ExclamationTriangleIcon className="w-12 h-12 text-red-400" />
+          <p className="text-gray-400 text-center max-w-md">{error}</p>
+          <button onClick={refetch} className="btn-zilla text-sm flex items-center gap-2">
+            <ArrowPathIcon className="w-4 h-4" />
+            Retry
+          </button>
+        </div>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="space-y-6"
+        >
+          {/* Store info banner */}
+          <div className="rounded-lg border border-zilla-neon/20 bg-zilla-neon/5 px-4 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="w-2 h-2 rounded-full bg-zilla-neon flex-shrink-0" />
               <p className="text-sm text-gray-300">
-                <span className="text-zilla-neon font-medium">Demo Mode</span> — Viewing sample data.
-                Connect your Shopify store to see real metrics.
+                <span className="text-zilla-neon font-medium">{storeName}</span>
+                {lastSynced && <span className="text-gray-500 ml-2">Last synced: {lastSynced}</span>}
               </p>
             </div>
+            <button
+              onClick={refetch}
+              className="text-gray-500 hover:text-white transition-colors p-1"
+              title="Refresh data"
+            >
+              <ArrowPathIcon className="w-4 h-4" />
+            </button>
+          </div>
 
-            {/* KPI Cards */}
+          {/* KPI Cards */}
+          {kpis.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {kpis.map((kpi, i) => (
                 <motion.div
@@ -113,15 +125,20 @@ export default function UserDashboard() {
                 </motion.div>
               ))}
             </div>
+          ) : (
+            <div className="card-zilla p-8 text-center">
+              <p className="text-gray-500">No stats available yet. Data will appear after your store syncs.</p>
+            </div>
+          )}
 
-            {/* Revenue Chart */}
+          {/* Revenue Chart */}
+          {chartData.length > 0 && (
             <div className="card-zilla p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-medium text-white">Revenue Trend</h3>
                 <span className="text-xs text-gray-500 font-mono">Last 30 days</span>
               </div>
               <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto">
-                {/* Grid lines */}
                 {[0, 0.25, 0.5, 0.75, 1].map((pct) => {
                   const y = H - PAD - pct * (H - PAD * 2);
                   return (
@@ -133,9 +150,7 @@ export default function UserDashboard() {
                     </g>
                   );
                 })}
-                {/* Area */}
                 <path d={areaPath} fill="url(#chartGrad)" opacity={0.3} />
-                {/* Line */}
                 <path d={linePath} fill="none" stroke="#00FF94" strokeWidth={2} />
                 <defs>
                   <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
@@ -145,14 +160,16 @@ export default function UserDashboard() {
                 </defs>
               </svg>
             </div>
+          )}
 
-            {/* Bottom grid: Products + Insights */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Top Products */}
-              <div className="card-zilla p-6">
-                <h3 className="text-sm font-medium text-white mb-4">Top Products</h3>
+          {/* Bottom grid: Products + Insights */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Top Products */}
+            <div className="card-zilla p-6">
+              <h3 className="text-sm font-medium text-white mb-4">Top Products</h3>
+              {products.length > 0 ? (
                 <div className="space-y-2">
-                  {products.map((p) => (
+                  {products.map((p: { product_id: string; rank: number; title: string; revenue: number; orders: number }) => (
                     <div
                       key={p.product_id}
                       className="flex items-center justify-between py-2.5 px-3 rounded-lg hover:bg-white/5 transition-colors"
@@ -168,19 +185,23 @@ export default function UserDashboard() {
                     </div>
                   ))}
                 </div>
-              </div>
+              ) : (
+                <p className="text-gray-500 text-sm">No product data available yet.</p>
+              )}
+            </div>
 
-              {/* Insights */}
-              <div className="card-zilla p-6">
-                <h3 className="text-sm font-medium text-white mb-4">AI Insights</h3>
+            {/* Insights */}
+            <div className="card-zilla p-6">
+              <h3 className="text-sm font-medium text-white mb-4">AI Insights</h3>
+              {insights.length > 0 ? (
                 <div className="space-y-3">
-                  {insights.map((ins) => (
+                  {insights.map((ins: { id: string; severity: string; title: string; description: string; expected_uplift?: string }) => (
                     <div
                       key={ins.id}
-                      className={`rounded-lg border p-4 ${SEVERITY_COLORS[ins.severity]}`}
+                      className={`rounded-lg border p-4 ${SEVERITY_COLORS[ins.severity] || SEVERITY_COLORS.low}`}
                     >
                       <div className="flex items-center gap-2 mb-1">
-                        <span className={`w-2 h-2 rounded-full ${SEVERITY_DOT[ins.severity]}`} />
+                        <span className={`w-2 h-2 rounded-full ${SEVERITY_DOT[ins.severity] || SEVERITY_DOT.low}`} />
                         <span className="text-sm font-medium text-white">{ins.title}</span>
                       </div>
                       <p className="text-xs text-gray-400 leading-relaxed">{ins.description}</p>
@@ -190,11 +211,28 @@ export default function UserDashboard() {
                     </div>
                   ))}
                 </div>
-              </div>
+              ) : (
+                <p className="text-gray-500 text-sm">No insights generated yet.</p>
+              )}
             </div>
-          </motion.div>
-        )}
-      </UserLayout>
+          </div>
+        </motion.div>
+      )}
+    </UserLayout>
+  );
+}
+
+export default function UserDashboardPage() {
+  return (
+    <>
+      <Head>
+        <title>Dashboard | Growzilla</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
+
+      <UserLoginGate>
+        {({ email, logout }) => <DashboardContent email={email} logout={logout} />}
+      </UserLoginGate>
     </>
   );
 }

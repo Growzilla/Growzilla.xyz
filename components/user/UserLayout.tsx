@@ -1,11 +1,14 @@
 import React from 'react';
 import Link from 'next/link';
+import { ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/outline';
 
 interface UserLayoutProps {
   children: React.ReactNode;
+  storeName?: string;
+  onLogout?: () => void;
 }
 
-const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
+const UserLayout: React.FC<UserLayoutProps> = ({ children, storeName, onLogout }) => {
   return (
     <div className="min-h-screen bg-zilla-black text-white">
       {/* Grid background */}
@@ -34,8 +37,18 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
                 Brand Intel
               </Link>
               <span className="text-sm text-gray-500 px-3 py-1.5 rounded-lg bg-white/5 border border-gray-800/50 font-mono">
-                demo-store
+                {storeName || 'dashboard'}
               </span>
+              {onLogout && (
+                <button
+                  onClick={onLogout}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
+                  title="Sign out"
+                >
+                  <ArrowRightStartOnRectangleIcon className="w-4 h-4" />
+                  <span className="hidden sm:inline">Sign out</span>
+                </button>
+              )}
             </div>
           </div>
         </div>

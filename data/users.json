@@ -1,0 +1,10 @@
+[
+  {
+    "email": "casedus.myshopify.com",
+    "passwordHash": "scrypt$16384$8$1$6ab1093b5d5db655b2a012144780e4a6$aff2540519a5efcec602f27aaf1fc7147de2ab0b3a9ad8b3066e7301c1b1daf6c828627a4b3f83be54cd7d3c7de658f7192f39648067709d132264a07d3c070f",
+    "storeDomain": "casedus.myshopify.com",
+    "name": "Casedus",
+    "createdAt": "2026-02-12T00:00:00Z",
+    "lastLoginAt": "2026-02-12T08:09:53.575Z"
+  }
+]

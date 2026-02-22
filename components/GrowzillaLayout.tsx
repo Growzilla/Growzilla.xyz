@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import GrowzillaLogo from './GrowzillaLogo';
+import Image from 'next/image';
+import Link from 'next/link';
 
 interface GrowzillaLayoutProps {
   children: React.ReactNode;
@@ -32,20 +33,28 @@ export const GrowzillaLayout: React.FC<GrowzillaLayoutProps> = ({ children }) =>
       {/* Scan line effect overlay */}
       <div className="fixed inset-0 pointer-events-none z-50 crt-lines opacity-30" />
 
-      {/* Header */}
+      {/* Header - solid black banner */}
       <header
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
-          scrolled
-            ? 'bg-zilla-black/90 backdrop-blur-xl border-b border-zilla-neon/10 shadow-zilla-glow'
-            : 'bg-transparent'
+        className={`fixed top-0 left-0 right-0 z-40 bg-black border-b transition-all duration-500 ${
+          scrolled ? 'border-zilla-neon/10 shadow-zilla-glow' : 'border-gray-900'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
+          <div className="flex items-center justify-between h-24">
             {/* Logo */}
-            <a href="/" className="flex items-center group">
-              <GrowzillaLogo variant="full" size="md" animated />
-            </a>
+            <Link href="/" className="flex items-center gap-3 group">
+              <Image
+                src="/images/growzilla-kaiju.png"
+                alt="Growzilla"
+                width={72}
+                height={72}
+                className="h-16 w-16 object-contain"
+                priority
+              />
+              <span className="font-display text-2xl font-bold tracking-tight text-zilla-neon">
+                GROWZILLA
+              </span>
+            </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-1">
@@ -150,7 +159,18 @@ export const GrowzillaLayout: React.FC<GrowzillaLayoutProps> = ({ children }) =>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             {/* Logo and Description */}
             <div className="md:col-span-2">
-              <GrowzillaLogo variant="full" size="lg" animated />
+              <div className="flex items-center gap-3">
+                <Image
+                  src="/images/growzilla-kaiju.png"
+                  alt="Growzilla"
+                  width={56}
+                  height={56}
+                  className="h-14 w-14 object-contain"
+                />
+                <span className="font-display text-2xl font-bold tracking-tight text-zilla-neon">
+                  GROWZILLA
+                </span>
+              </div>
               <p className="mt-4 text-gray-400 max-w-md leading-relaxed">
                 The most powerful growth system for Shopify brands. Stop guessing. Start scaling.
                 Join the herd of brands crushing it with data-driven decisions.

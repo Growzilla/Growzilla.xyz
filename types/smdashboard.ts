@@ -129,3 +129,68 @@ export interface SMDashboardData {
   revenueChart: RevenueDataPoint[];
   insights: SMInsight[];
 }
+
+// === UTM Link Types (connected to real backend) ===
+
+export interface UTMLink {
+  id: string;
+  platform: Platform;
+  content_type: PostType;
+  product_url: string | null;
+  full_url: string;
+  content_post_url: string | null;
+  status: 'pending' | 'active';
+  created_at: string;
+  creator_name: string;
+  creator_username: string;
+  total_revenue: number;
+  total_orders: number;
+}
+
+export interface UTMConversion {
+  order_id: string;
+  order_name: string;
+  revenue: number;
+  currency: string;
+  matched_at: string;
+}
+
+export interface LinkStats {
+  link: UTMLink;
+  conversions: UTMConversion[];
+}
+
+export type LoginRole = 'org_owner' | 'creator';
+
+export interface PlatformOption {
+  id: Platform;
+  label: string;
+  icon: string; // emoji
+}
+
+export interface ContentTypeOption {
+  id: PostType;
+  label: string;
+}
+
+export const PLATFORM_OPTIONS: PlatformOption[] = [
+  { id: 'instagram', label: 'Instagram', icon: '\u{1F4F7}' },
+  { id: 'tiktok', label: 'TikTok', icon: '\u{1F3AC}' },
+  { id: 'youtube', label: 'YouTube', icon: '\u25B6\uFE0F' },
+];
+
+export const CONTENT_TYPES: Record<Platform, ContentTypeOption[]> = {
+  instagram: [
+    { id: 'post', label: 'Post' },
+    { id: 'reel', label: 'Reel' },
+    { id: 'story', label: 'Story' },
+  ],
+  tiktok: [
+    { id: 'video', label: 'Video' },
+    { id: 'short', label: 'Short' },
+  ],
+  youtube: [
+    { id: 'video', label: 'Video' },
+    { id: 'short', label: 'Short' },
+  ],
+};

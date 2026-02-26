@@ -6,6 +6,7 @@ import type {
   SMInsight,
   OrgKPIs,
   SMDashboardData,
+  UTMLink,
 } from '@/types/smdashboard';
 
 // ─── Creators ────────────────────────────────────────────────────────────────
@@ -612,6 +613,81 @@ export const MOCK_SM_DATA: SMDashboardData = {
   revenueChart: REVENUE_CHART,
   insights: INSIGHTS,
 };
+
+// ─── Mock UTM Links ─────────────────────────────────────────────────────────
+
+export const MOCK_UTM_LINKS: UTMLink[] = [
+  {
+    id: 'mock-link-01',
+    platform: 'tiktok',
+    content_type: 'reel',
+    product_url: 'https://glowserum.com/products/glow-serum-pro',
+    full_url: 'https://glowserum.com/products/glow-serum-pro?utm_source=tiktok&utm_medium=social&utm_campaign=glowserum_sarahglow&utm_content=reel_20260214_a1b2c3',
+    content_post_url: 'https://tiktok.com/@sarahglow/video/7341234567890',
+    status: 'active',
+    created_at: '2026-02-14T19:00:00Z',
+    creator_name: 'Sarah Chen',
+    creator_username: 'sarahglow',
+    total_revenue: 4230,
+    total_orders: 47,
+  },
+  {
+    id: 'mock-link-02',
+    platform: 'instagram',
+    content_type: 'reel',
+    product_url: 'https://glowserum.com/products/hydraveil-moisturizer',
+    full_url: 'https://glowserum.com/products/hydraveil-moisturizer?utm_source=instagram&utm_medium=social&utm_campaign=glowserum_sarahglow&utm_content=reel_20260212_d4e5f6',
+    content_post_url: 'https://instagram.com/p/C4xyz123abc',
+    status: 'active',
+    created_at: '2026-02-12T17:00:00Z',
+    creator_name: 'Sarah Chen',
+    creator_username: 'sarahglow',
+    total_revenue: 2156,
+    total_orders: 31,
+  },
+  {
+    id: 'mock-link-03',
+    platform: 'tiktok',
+    content_type: 'reel',
+    product_url: null,
+    full_url: 'https://glowserum.com?utm_source=tiktok&utm_medium=social&utm_campaign=glowserum_jakethompson&utm_content=reel_20260215_g7h8i9',
+    content_post_url: 'https://tiktok.com/@jakethompson/video/7342345678901',
+    status: 'active',
+    created_at: '2026-02-15T19:00:00Z',
+    creator_name: 'Jake Thompson',
+    creator_username: 'jakethompson',
+    total_revenue: 7230,
+    total_orders: 84,
+  },
+  {
+    id: 'mock-link-04',
+    platform: 'youtube',
+    content_type: 'video',
+    product_url: 'https://glowserum.com/products/nightrepair-complex',
+    full_url: 'https://glowserum.com/products/nightrepair-complex?utm_source=youtube&utm_medium=social&utm_campaign=glowserum_marcusreviews&utm_content=video_20260211_j0k1l2',
+    content_post_url: 'https://youtube.com/watch?v=abc123xyz',
+    status: 'active',
+    created_at: '2026-02-11T14:00:00Z',
+    creator_name: 'Marcus Rivera',
+    creator_username: 'marcusreviews',
+    total_revenue: 6340,
+    total_orders: 67,
+  },
+  {
+    id: 'mock-link-05',
+    platform: 'instagram',
+    content_type: 'post',
+    product_url: 'https://glowserum.com/products/cleartone-cleanser',
+    full_url: 'https://glowserum.com/products/cleartone-cleanser?utm_source=instagram&utm_medium=social&utm_campaign=glowserum_aishaskin&utm_content=post_20260213_m3n4o5',
+    content_post_url: null,
+    status: 'pending',
+    created_at: '2026-02-13T20:00:00Z',
+    creator_name: 'Aisha Williams',
+    creator_username: 'aishaskin',
+    total_revenue: 0,
+    total_orders: 0,
+  },
+];
 
 // Helper: get posts for a specific creator
 export function getCreatorPosts(creatorId: string): Post[] {

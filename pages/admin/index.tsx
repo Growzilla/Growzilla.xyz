@@ -5,7 +5,9 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 import type { ShopDetails } from '@/types/admin';
 import LoginGate from '@/components/admin/LoginGate';
 import AdminLayout from '@/components/admin/AdminLayout';
-import ShopCard from '@/components/admin/ShopCard';
+import MerchantCard from '@/components/admin/MerchantCard';
+import MerchantLauncher from '@/components/admin/MerchantLauncher';
+import MerchantPreview from '@/components/admin/MerchantPreview';
 import AddShopModal from '@/components/admin/AddShopModal';
 import AdminEmptyState from '@/components/admin/AdminEmptyState';
 import AdminLoadingSkeleton from '@/components/admin/AdminLoadingSkeleton';
@@ -24,10 +26,17 @@ export default function AdminPage() {
   );
 }
 
+// Track which shops have Meta connected
+interface MetaStatus {
+  [shopId: string]: { adAccountId: string; adAccountName: string };
+}
+
 function AdminDashboard({ onLogout }: { onLogout: () => void }) {
   const [shops, setShops] = useState<ShopDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const [metaStatus, setMetaStatus] = useState<MetaStatus>({});
+  const [previewShop, setPreviewShop] = useState<ShopDetails | null>(null);
 
   const fetchShops = useCallback(async () => {
     try {
@@ -61,6 +70,23 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
     await fetchShops();
   };
 
+  const handleMetaConnected = (shopId: string, adAccountId: string, adAccountName: string) => {
+    setMetaStatus((prev) => ({
+      ...prev,
+      [shopId]: { adAccountId, adAccountName },
+    }));
+  };
+
+  const handleSync = async (shopId: string) => {
+    try {
+      await fetch(`/api/admin/shops/${shopId}/sync`, { method: 'POST' });
+      // Refresh shop list after sync
+      setTimeout(fetchShops, 2000);
+    } catch {
+      // Silently handle
+    }
+  };
+
   return (
     <AdminLayout onLogout={onLogout}>
       {/* Page header */}
@@ -74,15 +100,24 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
           </p>
         </div>
 
-        {shops.length > 0 && (
-          <button
-            onClick={() => setModalOpen(true)}
-            className="btn-zilla text-sm py-2 px-4 flex items-center gap-2"
-          >
-            <PlusIcon className="w-4 h-4" />
-            <span className="hidden sm:inline">Add Store</span>
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          {shops.length > 0 && (
+            <MerchantLauncher
+              shops={shops.map((s) => ({ domain: s.domain, shop_id: s.shop_id, label: s.label }))}
+              onSuccess={fetchShops}
+            />
+          )}
+
+          {shops.length > 0 && (
+            <button
+              onClick={() => setModalOpen(true)}
+              className="btn-zilla-outline text-sm py-2.5 px-4 flex items-center gap-2"
+            >
+              <PlusIcon className="w-4 h-4" />
+              <span className="hidden sm:inline">Add Store</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Content */}
@@ -104,7 +139,14 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: i * 0.05 }}
             >
-              <ShopCard shop={shop} />
+              <MerchantCard
+                shop={shop}
+                metaConnected={!!shop.shop_id && !!metaStatus[shop.shop_id]}
+                metaAdAccount={shop.shop_id ? metaStatus[shop.shop_id]?.adAccountName : undefined}
+                onMetaConnected={handleMetaConnected}
+                onPreview={setPreviewShop}
+                onSync={handleSync}
+              />
             </motion.div>
           ))}
         </motion.div>
@@ -115,6 +157,14 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
         onClose={() => setModalOpen(false)}
         onAdd={handleAddShop}
       />
+
+      {previewShop && (
+        <MerchantPreview
+          shop={previewShop}
+          open={!!previewShop}
+          onClose={() => setPreviewShop(null)}
+        />
+      )}
     </AdminLayout>
   );
 }

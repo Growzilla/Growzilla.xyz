@@ -41,12 +41,37 @@ interface LayoutLink {
   path: string;
 }
 
+function getConnectedPaths(nodeId: string, allLinks: { source: string; target: string }[]): Set<string> {
+  const visited = new Set<string>([nodeId]);
+  const queue = [nodeId];
+  while (queue.length > 0) {
+    const current = queue.shift()!;
+    for (const link of allLinks) {
+      if (link.source === current && !visited.has(link.target)) {
+        visited.add(link.target); queue.push(link.target);
+      }
+      if (link.target === current && !visited.has(link.source)) {
+        visited.add(link.source); queue.push(link.source);
+      }
+    }
+  }
+  return visited;
+}
+
+function getConnectedLinkIndices(connectedNodes: Set<string>, allLinks: { source: string; target: string }[]): Set<number> {
+  const indices = new Set<number>();
+  allLinks.forEach((link, i) => {
+    if (connectedNodes.has(link.source) && connectedNodes.has(link.target)) indices.add(i);
+  });
+  return indices;
+}
+
 const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, whaleOnly }) => {
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const [hoveredLink, setHoveredLink] = useState<number | null>(null);
 
   const W = 680;
-  const H = 420;
+  const H = 480;
   const PAD_T = 30;
   const PAD_B = 20;
   const PAD_L = 10;
@@ -63,25 +88,32 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, whaleOnly }
       columns.get(col)!.push(node);
     }
 
-    // Compute max value per column for scaling
-    const colMaxes: Map<number, number> = new Map();
-    Array.from(columns.entries()).forEach(([col, colNodes]) => {
-      colMaxes.set(col, colNodes.reduce((s: number, n: FemFitSankeyNode) => s + n.value, 0));
-    });
-    const globalMax = Math.max(...Array.from(colMaxes.values()), 1);
-
-    // Layout each node
+    // Global proportional scaling — column 0 defines reference height,
+    // other columns scale proportionally with pow() compression
     const layoutNodes: Map<string, LayoutNode> = new Map();
+
+    const trafficValue = columns.get(0)?.[0]?.value || 1;
+    const maxColumnH = innerH;
+
+    const columnHeights: Map<number, number> = new Map();
+    Array.from(columns.entries()).forEach(([col, colNodes]) => {
+      const totalValue = colNodes.reduce((s: number, n: FemFitSankeyNode) => s + n.value, 0);
+      const ratio = totalValue / trafficValue;
+      const compressed = Math.pow(Math.max(ratio, 0.001), 0.4);
+      const h = Math.max(maxColumnH * compressed, maxColumnH * 0.15);
+      columnHeights.set(col, Math.min(h, maxColumnH));
+    });
 
     Array.from(columns.entries()).forEach(([col, colNodes]) => {
       const x = PAD_L + COL_POSITIONS[col] * (innerW - NODE_W);
+      const colH = columnHeights.get(col) || maxColumnH;
       const totalValue = colNodes.reduce((s: number, n: FemFitSankeyNode) => s + n.value, 0);
-      const scale = (innerH - NODE_PAD * (colNodes.length - 1)) / Math.max(globalMax, 1);
+      const usableH = colH - NODE_PAD * Math.max(colNodes.length - 1, 0);
+      const scale = usableH / Math.max(totalValue, 1);
 
-      let currentY = PAD_T;
-      // Center the column vertically
-      const totalHeight = totalValue * scale + NODE_PAD * (colNodes.length - 1);
-      currentY = PAD_T + (innerH - totalHeight) / 2;
+      const totalNodesH = colNodes.reduce((s: number, n: FemFitSankeyNode) => s + Math.max(n.value * scale, 8), 0)
+        + NODE_PAD * Math.max(colNodes.length - 1, 0);
+      let currentY = PAD_T + (innerH - totalNodesH) / 2;
 
       for (const node of colNodes) {
         const h = Math.max(node.value * scale, 8);
@@ -112,16 +144,17 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, whaleOnly }
       const sTotal = nodes.find((n) => n.id === link.source)?.value || 1;
       const tTotal = nodes.find((n) => n.id === link.target)?.value || 1;
 
-      const thickness = Math.max((link.value / sTotal) * sNode.h, 2);
+      const thickness = Math.max((link.value / sTotal) * sNode.h, 1.5);
+      const tThickness = Math.max((link.value / tTotal) * tNode.h, 1.5);
 
       const sOff = sourceOffsets.get(link.source) || 0;
       const tOff = targetOffsets.get(link.target) || 0;
 
       const sy = sNode.y + sOff + thickness / 2;
-      const ty = tNode.y + tOff + thickness / 2;
+      const ty = tNode.y + tOff + tThickness / 2;
 
       sourceOffsets.set(link.source, sOff + thickness);
-      targetOffsets.set(link.target, tOff + (link.value / tTotal) * tNode.h);
+      targetOffsets.set(link.target, tOff + tThickness);
 
       const sx = sNode.x + NODE_W;
       const tx = tNode.x;
@@ -136,13 +169,20 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, whaleOnly }
     return { nodes: layoutNodes, links: layoutLinks };
   }, [nodes, links]);
 
-  const isLinkHighlighted = (link: LayoutLink) => {
-    if (hoveredNode) return link.source === hoveredNode || link.target === hoveredNode;
+  const { highlightedNodes, highlightedLinks } = useMemo(() => {
+    if (!hoveredNode) return { highlightedNodes: new Set<string>(), highlightedLinks: new Set<number>() };
+    const connectedNodes = getConnectedPaths(hoveredNode, links);
+    const connectedLinks = getConnectedLinkIndices(connectedNodes, links);
+    return { highlightedNodes: connectedNodes, highlightedLinks: connectedLinks };
+  }, [hoveredNode, links]);
+
+  const isLinkHighlighted = (link: LayoutLink, index: number) => {
+    if (hoveredNode) return highlightedLinks.has(index);
     return false;
   };
 
   const isNodeHighlighted = (nodeId: string) => {
-    if (hoveredNode === nodeId) return true;
+    if (hoveredNode) return highlightedNodes.has(nodeId);
     if (hoveredLink !== null) {
       const link = layout.links[hoveredLink];
       return link && (link.source === nodeId || link.target === nodeId);
@@ -180,7 +220,7 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, whaleOnly }
         {/* Links */}
         {layout.links.map((link, i) => {
           if (!link.path) return null;
-          const highlighted = isLinkHighlighted(link) || hoveredLink === i;
+          const highlighted = isLinkHighlighted(link, i) || hoveredLink === i;
           const dimmed = (hoveredNode || hoveredLink !== null) && !highlighted;
 
           return (
@@ -190,7 +230,7 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ nodes, links, whaleOnly }
               fill="none"
               stroke={link.color}
               strokeWidth={link.thickness}
-              strokeOpacity={dimmed ? 0.08 : highlighted ? 0.55 : 0.25}
+              strokeOpacity={dimmed ? 0.04 : highlighted ? 0.6 : 0.25}
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: 1, opacity: 1 }}
               transition={{ duration: 0.8, delay: i * 0.05, ease: 'easeOut' }}

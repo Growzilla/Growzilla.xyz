@@ -179,6 +179,54 @@ export const PLATFORM_OPTIONS: PlatformOption[] = [
   { id: 'youtube', label: 'YouTube', icon: '\u25B6\uFE0F' },
 ];
 
+// Demo dashboard view types
+export type DemoView = 'overview' | 'creators' | 'content' | 'attribution' | 'links';
+
+// Funnel stage data for attribution view
+export interface FunnelStageData {
+  label: string;
+  value: number;
+  dropOffRate: number;
+  conversionRate: number;
+}
+
+// Product data for attribution
+export interface ProductData {
+  id: string;
+  name: string;
+  revenue: number;
+  orders: number;
+  addToCart: number;
+}
+
+// Aggregated funnel data
+export interface AttributionFunnelData {
+  totalViews: number;
+  totalClicks: number;
+  pageVisits: number;
+  addToCart: number;
+  purchased: number;
+  stages: FunnelStageData[];
+  products: ProductData[];
+  // Per-platform breakdowns
+  platformViews: Record<Platform, number>;
+  platformClicks: Record<Platform, number>;
+  // Per-creator breakdowns
+  creatorClicks: Record<string, number>;
+  // Per-content-type breakdowns
+  contentTypePageVisits: Record<string, number>;
+}
+
+export interface ScaledDashboardData {
+  org: OrgKPIs;
+  creators: Creator[];
+  posts: Post[];
+  platformMetrics: PlatformMetrics[];
+  revenueChart: RevenueDataPoint[];
+  insights: SMInsight[];
+  utmLinks: UTMLink[];
+}
+
 export const CONTENT_TYPES: Record<Platform, ContentTypeOption[]> = {
   instagram: [
     { id: 'post', label: 'Post' },

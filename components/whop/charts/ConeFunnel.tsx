@@ -45,7 +45,6 @@ const ConeFunnel: React.FC<ConeFunnelProps> = ({ steps, whaleOnly }) => {
   const availableH = H - 40;
   const layerH = (availableH - layerGap * (layerCount - 1)) / layerCount;
   const centerX = W / 2;
-  const minWidth = 60;
   const maxWidth = W - PAD_X * 2;
 
   return (
@@ -78,43 +77,35 @@ const ConeFunnel: React.FC<ConeFunnelProps> = ({ steps, whaleOnly }) => {
           </filter>
         </defs>
 
-        {steps.map((step, i) => {
+        {/* Precompute boundary widths for connected trapezoid cone */}
+        {(() => {
+          const minWidth = maxWidth * 0.18;
+          const N = steps.length;
+          const boundaries: number[] = [maxWidth]; // top = full width
+          for (let i = 1; i < N; i++) {
+            boundaries.push(Math.max(minWidth, maxWidth * Math.pow(Math.max(steps[i].count / maxCount, 0.0001), 0.22)));
+          }
+          // Last stage bottom — stays meaningful, not a point
+          boundaries.push(Math.max(maxWidth * 0.15, boundaries[N - 1] * 0.75));
+          return steps.map((step, i) => ({ step, i, topWidth: boundaries[i], bottomWidth: boundaries[i + 1] }));
+        })().map(({ step, i, topWidth, bottomWidth }) => {
           const y = 20 + i * (layerH + layerGap);
-          const widthPct = Math.max(step.count / maxCount, 0.15);
-          const topWidth = i === 0
-            ? maxWidth
-            : Math.max(minWidth, maxWidth * Math.max(steps[i - 1].count / maxCount, 0.15));
-          const bottomWidth = Math.max(minWidth, maxWidth * widthPct);
-
-          // Next layer width (for bottom of this trapezoid)
-          const nextWidthPct = i < steps.length - 1
-            ? Math.max(steps[i + 1].count / maxCount, 0.15)
-            : widthPct * 0.7;
-          const thisBottomWidth = i < steps.length - 1
-            ? Math.max(minWidth, maxWidth * Math.max(steps[i].count / maxCount, 0.15))
-            : bottomWidth;
 
           const topLeft = centerX - topWidth / 2;
           const topRight = centerX + topWidth / 2;
-          const botLeft = centerX - thisBottomWidth / 2;
-          const botRight = centerX + thisBottomWidth / 2;
+          const botLeft = centerX - bottomWidth / 2;
+          const botRight = centerX + bottomWidth / 2;
 
           const colors = STAGE_COLORS[step.stage] || STAGE_COLORS.traffic;
           const isHovered = hoveredIndex === i;
           const isLast = i === steps.length - 1;
 
-          // Trapezoid path with slight curve
-          const path = `
-            M ${topLeft + 4} ${y}
-            Q ${topLeft} ${y}, ${topLeft} ${y + 4}
-            L ${botLeft} ${y + layerH - 4}
-            Q ${botLeft} ${y + layerH}, ${botLeft + 4} ${y + layerH}
-            L ${botRight - 4} ${y + layerH}
-            Q ${botRight} ${y + layerH}, ${botRight} ${y + layerH - 4}
-            L ${topRight} ${y + 4}
-            Q ${topRight} ${y}, ${topRight - 4} ${y}
-            Z
-          `;
+          // Straight trapezoid path (connected trapezoids, no curves)
+          const tl = topLeft;
+          const tr = topRight;
+          const bl = botLeft;
+          const br = botRight;
+          const path = `M ${tl} ${y} L ${tr} ${y} L ${br} ${y + layerH} L ${bl} ${y + layerH} Z`;
 
           return (
             <g key={step.stage}>

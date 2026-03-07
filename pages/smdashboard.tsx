@@ -75,11 +75,12 @@ export default function SMDashboard() {
             className="space-y-6"
           >
             {/* Demo banner */}
-            <div className="rounded-lg border border-zilla-neon/20 bg-zilla-neon/5 px-4 py-3 flex items-center gap-3">
+            <div className="rounded-xl border border-zilla-neon/20 bg-gradient-to-r from-zilla-neon/[0.06] to-transparent px-5 py-3.5 flex items-center gap-3">
               <span className="w-2 h-2 rounded-full bg-zilla-neon animate-pulse flex-shrink-0" />
               <p className="text-sm text-gray-300">
-                <span className="text-zilla-neon font-medium">Demo Mode</span>{' '}
-                — This is a live preview with sample data. Real dashboards use your Shopify data.
+                <span className="text-zilla-neon font-semibold">Live Demo</span>{' '}
+                — Explore how Growzilla tracks creator-driven revenue across platforms.
+                This dashboard uses sample data from a skincare brand with 5 creators.
               </p>
             </div>
 

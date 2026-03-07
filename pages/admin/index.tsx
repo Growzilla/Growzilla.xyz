@@ -11,6 +11,7 @@ import MerchantPreview from '@/components/admin/MerchantPreview';
 import AddShopModal from '@/components/admin/AddShopModal';
 import AdminEmptyState from '@/components/admin/AdminEmptyState';
 import AdminLoadingSkeleton from '@/components/admin/AdminLoadingSkeleton';
+import DeckViews from '@/components/admin/DeckViews';
 
 export default function AdminPage() {
   return (
@@ -151,6 +152,11 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
           ))}
         </motion.div>
       )}
+
+      {/* Deck Views Section */}
+      <div className="mt-12 pt-8 border-t border-gray-800/50">
+        <DeckViews />
+      </div>
 
       <AddShopModal
         open={modalOpen}

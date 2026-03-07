@@ -7,6 +7,12 @@ import type {
   OrgKPIs,
   SMDashboardData,
   UTMLink,
+  DateRange,
+  ScaledDashboardData,
+  AttributionFunnelData,
+  FunnelStageData,
+  ProductData,
+  Platform,
 } from '@/types/smdashboard';
 
 // ─── Creators ────────────────────────────────────────────────────────────────
@@ -95,7 +101,7 @@ const POSTS: Post[] = [
     postType: 'reel',
     thumbnail: '/sm-thumbnails/post-sarah-tt-01.jpg',
     caption: 'POV: Your skin after just 7 days of Glow Serum Pro \u2728\ud83e\uddf4 The before/after is INSANE. Link in bio for 20% off #skincareroutine #glowup',
-    postedAt: '2026-02-14T19:00:00Z',
+    postedAt: '2026-03-02T19:00:00Z',
     engagement: { likes: 24300, comments: 847, shares: 2100, saves: 1800, views: 312000 },
     revenue: 4230,
     orders: 47,
@@ -113,7 +119,7 @@ const POSTS: Post[] = [
     postType: 'reel',
     thumbnail: '/sm-thumbnails/post-sarah-tt-02.jpg',
     caption: 'Replying to @beautylover92 yes this is the EXACT routine I use every single morning \ud83d\ude2d\u2764\ufe0f Full breakdown here #morningroutine #skincare2026',
-    postedAt: '2026-02-10T18:30:00Z',
+    postedAt: '2026-02-26T18:30:00Z',
     engagement: { likes: 18700, comments: 623, shares: 1400, saves: 1200, views: 245000 },
     revenue: 3847,
     orders: 42,
@@ -131,7 +137,7 @@ const POSTS: Post[] = [
     postType: 'reel',
     thumbnail: '/sm-thumbnails/post-sarah-ig-01.jpg',
     caption: 'Get ready with me using only @GlowSerum products \u2728 I literally cannot go a day without the HydraVeil Moisturizer. Swipe for the routine \u2192',
-    postedAt: '2026-02-12T17:00:00Z',
+    postedAt: '2026-02-28T17:00:00Z',
     engagement: { likes: 8200, comments: 342, shares: 890, saves: 1450, views: 67000 },
     revenue: 2156,
     orders: 31,
@@ -149,7 +155,7 @@ const POSTS: Post[] = [
     postType: 'post',
     thumbnail: '/sm-thumbnails/post-sarah-ig-02.jpg',
     caption: 'The one product I\u2019d save in a fire \ud83d\udd25 NightRepair Complex changed my skin texture completely. 4 weeks in and my pores are literally invisible',
-    postedAt: '2026-02-08T16:00:00Z',
+    postedAt: '2026-02-24T16:00:00Z',
     engagement: { likes: 5400, comments: 218, shares: 340, saves: 980, views: 42000 },
     revenue: 1943,
     orders: 22,
@@ -167,7 +173,7 @@ const POSTS: Post[] = [
     postType: 'reel',
     thumbnail: '/sm-thumbnails/post-sarah-tt-03.jpg',
     caption: 'Honest review: I tried every serum on TikTok so you don\u2019t have to. Here\u2019s the winner \ud83c\udfc6 #serumreview #skincaretok #honest',
-    postedAt: '2026-02-05T20:00:00Z',
+    postedAt: '2026-02-21T20:00:00Z',
     engagement: { likes: 31200, comments: 1120, shares: 3400, saves: 2800, views: 487000 },
     revenue: 5280,
     orders: 58,
@@ -187,7 +193,7 @@ const POSTS: Post[] = [
     postType: 'video',
     thumbnail: '/sm-thumbnails/post-marcus-yt-01.jpg',
     caption: 'I Tested the #1 Skincare Brand on TikTok for 30 Days. Here\u2019s What Actually Happened.',
-    postedAt: '2026-02-11T14:00:00Z',
+    postedAt: '2026-02-27T14:00:00Z',
     engagement: { likes: 4200, comments: 387, shares: 890, saves: 620, views: 89000 },
     revenue: 6340,
     orders: 67,
@@ -205,7 +211,7 @@ const POSTS: Post[] = [
     postType: 'video',
     thumbnail: '/sm-thumbnails/post-marcus-yt-02.jpg',
     caption: 'Dermatologist Reacts to My Skincare Routine ft. Glow Serum Pro | Honest Review 2026',
-    postedAt: '2026-02-04T15:00:00Z',
+    postedAt: '2026-02-20T15:00:00Z',
     engagement: { likes: 3800, comments: 294, shares: 720, saves: 510, views: 72000 },
     revenue: 5120,
     orders: 54,
@@ -223,7 +229,7 @@ const POSTS: Post[] = [
     postType: 'reel',
     thumbnail: '/sm-thumbnails/post-marcus-ig-01.jpg',
     caption: 'Quick version of my full review \u2014 if you only buy ONE product from this brand, make it this one \ud83d\udc47 Full video on YouTube (link in bio)',
-    postedAt: '2026-02-12T18:00:00Z',
+    postedAt: '2026-02-28T18:00:00Z',
     engagement: { likes: 6100, comments: 198, shares: 540, saves: 890, views: 51000 },
     revenue: 2340,
     orders: 28,
@@ -243,7 +249,7 @@ const POSTS: Post[] = [
     postType: 'reel',
     thumbnail: '/sm-thumbnails/post-aisha-ig-01.jpg',
     caption: 'My nighttime skincare routine for textured skin \ud83c\udf19 This ClearTone Cleanser is actually magic. Before/after in stories \u2192',
-    postedAt: '2026-02-13T20:00:00Z',
+    postedAt: '2026-03-01T20:00:00Z',
     engagement: { likes: 7300, comments: 289, shares: 680, saves: 1100, views: 58000 },
     revenue: 2890,
     orders: 38,
@@ -261,7 +267,7 @@ const POSTS: Post[] = [
     postType: 'reel',
     thumbnail: '/sm-thumbnails/post-aisha-tt-01.jpg',
     caption: 'Things TikTok made me buy that ACTUALLY work: Glow Serum edition \ud83d\ude0d Full honest review #tiktokmademebuyit #skincare',
-    postedAt: '2026-02-09T19:30:00Z',
+    postedAt: '2026-02-25T19:30:00Z',
     engagement: { likes: 14800, comments: 520, shares: 1200, saves: 980, views: 198000 },
     revenue: 3420,
     orders: 41,
@@ -279,7 +285,7 @@ const POSTS: Post[] = [
     postType: 'post',
     thumbnail: '/sm-thumbnails/post-aisha-ig-02.jpg',
     caption: 'Flat lay of my entire routine \u2728 Every product is linked. DM me "ROUTINE" for my exact order of application',
-    postedAt: '2026-02-06T16:00:00Z',
+    postedAt: '2026-02-22T16:00:00Z',
     engagement: { likes: 4100, comments: 342, shares: 280, saves: 1420, views: 34000 },
     revenue: 1680,
     orders: 24,
@@ -299,7 +305,7 @@ const POSTS: Post[] = [
     postType: 'reel',
     thumbnail: '/sm-thumbnails/post-jake-tt-01.jpg',
     caption: 'My girlfriend made me try her skincare routine for a week and now I\u2019m obsessed \ud83d\ude33 Guys, the Glow Serum is NOT just for girls #skincare #men',
-    postedAt: '2026-02-15T19:00:00Z',
+    postedAt: '2026-03-03T19:00:00Z',
     engagement: { likes: 42000, comments: 1840, shares: 5200, saves: 3100, views: 624000 },
     revenue: 7230,
     orders: 84,
@@ -317,7 +323,7 @@ const POSTS: Post[] = [
     postType: 'reel',
     thumbnail: '/sm-thumbnails/post-jake-tt-02.jpg',
     caption: 'POV: You finally found a skincare brand that actually works and isn\u2019t $200 per bottle \ud83d\ude4f #affordable #skincare #clearskin',
-    postedAt: '2026-02-08T20:00:00Z',
+    postedAt: '2026-02-24T20:00:00Z',
     engagement: { likes: 28400, comments: 1230, shares: 3800, saves: 2400, views: 412000 },
     revenue: 5640,
     orders: 68,
@@ -329,6 +335,46 @@ const POSTS: Post[] = [
     commission: 846.00,
   },
 
+  // Aisha Williams — Instagram Stories
+  {
+    id: 'p-aisha-04',
+    creatorId: 'cr-aisha',
+    platform: 'instagram',
+    postType: 'story',
+    thumbnail: '/sm-thumbnails/post-aisha-ig-03.jpg',
+    caption: 'Swipe up for my morning routine — ClearTone Cleanser is a MUST 🧴',
+    postedAt: '2026-03-04T08:00:00Z',
+    engagement: { likes: 2100, comments: 84, shares: 120, saves: 340, views: 31000 },
+    revenue: 1120,
+    orders: 16,
+    clicks: 420,
+    conversionRate: 3.81,
+    aov: 70.00,
+    ltv: 96.50,
+    funnel: { views: 31000, clicks: 420, addToCart: 98, checkout: 28, purchases: 16 },
+    commission: 168.00,
+  },
+
+  // Sarah Chen — Instagram Stories
+  {
+    id: 'p-sarah-06',
+    creatorId: 'cr-sarah',
+    platform: 'instagram',
+    postType: 'story',
+    thumbnail: '/sm-thumbnails/post-sarah-ig-03.jpg',
+    caption: 'Quick swipe-up! NightRepair Complex 40% off today only ⏰',
+    postedAt: '2026-03-03T10:00:00Z',
+    engagement: { likes: 1800, comments: 62, shares: 90, saves: 280, views: 26000 },
+    revenue: 980,
+    orders: 14,
+    clicks: 360,
+    conversionRate: 3.89,
+    aov: 70.00,
+    ltv: 104.20,
+    funnel: { views: 26000, clicks: 360, addToCart: 84, checkout: 24, purchases: 14 },
+    commission: 147.00,
+  },
+
   // Priya Sharma — Instagram + YouTube
   {
     id: 'p-priya-01',
@@ -337,7 +383,7 @@ const POSTS: Post[] = [
     postType: 'reel',
     thumbnail: '/sm-thumbnails/post-priya-ig-01.jpg',
     caption: 'Gentle skincare for sensitive Indian skin \ud83c\uddf2\ud83c\udde6 I\u2019ve been using the HydraVeil Moisturizer for 3 months and here\u2019s my honest take #indianskincare',
-    postedAt: '2026-02-14T17:00:00Z',
+    postedAt: '2026-03-02T17:00:00Z',
     engagement: { likes: 5600, comments: 234, shares: 420, saves: 890, views: 45000 },
     revenue: 1890,
     orders: 26,
@@ -355,7 +401,7 @@ const POSTS: Post[] = [
     postType: 'video',
     thumbnail: '/sm-thumbnails/post-priya-yt-01.jpg',
     caption: 'FULL Skincare Routine for Brown Skin | Products That Actually Show Results | Glow Serum Review',
-    postedAt: '2026-02-07T14:00:00Z',
+    postedAt: '2026-02-23T14:00:00Z',
     engagement: { likes: 2800, comments: 178, shares: 340, saves: 420, views: 38000 },
     revenue: 2640,
     orders: 32,
@@ -373,7 +419,7 @@ const POSTS: Post[] = [
     postType: 'post',
     thumbnail: '/sm-thumbnails/post-priya-ig-02.jpg',
     caption: 'My top 3 products from @GlowSerum ranked \ud83c\udfc6 The Radiance Eye Cream at #1 is non-negotiable. Trust me on this one.',
-    postedAt: '2026-02-02T15:00:00Z',
+    postedAt: '2026-02-18T15:00:00Z',
     engagement: { likes: 3200, comments: 156, shares: 190, saves: 720, views: 28000 },
     revenue: 1340,
     orders: 18,
@@ -429,9 +475,21 @@ const PLATFORM_METRICS: PlatformMetrics[] = [
 
 // ─── Revenue Chart (30 days) ─────────────────────────────────────────────────
 
+// Seeded PRNG (mulberry32) — deterministic output for consistent screenshots
+function seededRandom(seed: number): () => number {
+  let s = seed | 0;
+  return () => {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
 function generateRevenueChart(): RevenueDataPoint[] {
+  const rng = seededRandom(42);
   const points: RevenueDataPoint[] = [];
-  const base = new Date('2026-01-21');
+  const base = new Date('2026-02-04');
 
   for (let i = 0; i < 30; i++) {
     const d = new Date(base);
@@ -442,11 +500,11 @@ function generateRevenueChart(): RevenueDataPoint[] {
     const dayOfWeek = d.getDay();
     const weekendMultiplier = dayOfWeek === 0 || dayOfWeek === 6 ? 1.15 : 1.0;
     const trendMultiplier = 1 + (i / 30) * 0.18; // 18% uptrend over period
-    const noise = 0.8 + Math.random() * 0.4; // +/- 20% daily variance
+    const noise = 0.8 + rng() * 0.4; // +/- 20% daily variance
 
     const baseTT = 3200 * trendMultiplier * weekendMultiplier * noise;
-    const baseIG = 2100 * trendMultiplier * weekendMultiplier * (0.85 + Math.random() * 0.3);
-    const baseYT = 680 * trendMultiplier * (0.7 + Math.random() * 0.6);
+    const baseIG = 2100 * trendMultiplier * weekendMultiplier * (0.85 + rng() * 0.3);
+    const baseYT = 680 * trendMultiplier * (0.7 + rng() * 0.6);
 
     points.push({
       date: dateStr,
@@ -603,6 +661,96 @@ const ORG_KPIS: OrgKPIs = {
   postsThisWeek: 23,
 };
 
+// ─── Attribution Funnel Data ─────────────────────────────────────────────────
+
+function computeAttributionFunnel(): AttributionFunnelData {
+  // Aggregate from posts
+  const totalViews = POSTS.reduce((s, p) => s + p.engagement.views, 0);
+  const totalClicks = POSTS.reduce((s, p) => s + p.clicks, 0);
+  const pageVisits = Math.round(totalClicks * 0.65); // 35% bounce rate
+  const addToCart = POSTS.reduce((s, p) => s + p.funnel.addToCart, 0);
+  const purchased = POSTS.reduce((s, p) => s + p.funnel.purchases, 0);
+
+  const stages: FunnelStageData[] = [
+    {
+      label: 'Views',
+      value: totalViews,
+      dropOffRate: 0,
+      conversionRate: 100,
+    },
+    {
+      label: 'Clicks',
+      value: totalClicks,
+      dropOffRate: Math.round((1 - totalClicks / totalViews) * 100),
+      conversionRate: Number(((totalClicks / totalViews) * 100).toFixed(2)),
+    },
+    {
+      label: 'Page Visits',
+      value: pageVisits,
+      dropOffRate: Math.round((1 - pageVisits / totalClicks) * 100),
+      conversionRate: Number(((pageVisits / totalViews) * 100).toFixed(2)),
+    },
+    {
+      label: 'Add to Cart',
+      value: addToCart,
+      dropOffRate: Math.round((1 - addToCart / pageVisits) * 100),
+      conversionRate: Number(((addToCart / totalViews) * 100).toFixed(2)),
+    },
+    {
+      label: 'Purchased',
+      value: purchased,
+      dropOffRate: Math.round((1 - purchased / addToCart) * 100),
+      conversionRate: Number(((purchased / totalViews) * 100).toFixed(2)),
+    },
+  ];
+
+  // Products with revenue derived from posts
+  const products: ProductData[] = [
+    { id: 'prod-serum', name: 'Glow Serum Pro', revenue: 142000, orders: 1580, addToCart: 2180 },
+    { id: 'prod-night', name: 'NightRepair Complex', revenue: 62000, orders: 652, addToCart: 920 },
+    { id: 'prod-hydra', name: 'HydraVeil Moisturizer', revenue: 44700, orders: 586, addToCart: 810 },
+    { id: 'prod-clear', name: 'ClearTone Cleanser', revenue: 22800, orders: 600, addToCart: 480 },
+    { id: 'prod-eye', name: 'Radiance Eye Cream', revenue: 13200, orders: 155, addToCart: 230 },
+  ];
+
+  // Platform view/click breakdowns
+  const platformViews: Record<Platform, number> = { tiktok: 0, instagram: 0, youtube: 0 };
+  const platformClicks: Record<Platform, number> = { tiktok: 0, instagram: 0, youtube: 0 };
+  POSTS.forEach((p) => {
+    platformViews[p.platform] += p.engagement.views;
+    platformClicks[p.platform] += p.clicks;
+  });
+
+  // Creator click breakdowns
+  const creatorClicks: Record<string, number> = {};
+  POSTS.forEach((p) => {
+    creatorClicks[p.creatorId] = (creatorClicks[p.creatorId] || 0) + p.clicks;
+  });
+
+  // Content type page visit breakdowns
+  const contentTypePageVisits: Record<string, number> = {};
+  POSTS.forEach((p) => {
+    const visits = Math.round(p.clicks * 0.65);
+    contentTypePageVisits[p.postType] = (contentTypePageVisits[p.postType] || 0) + visits;
+  });
+
+  return {
+    totalViews,
+    totalClicks,
+    pageVisits,
+    addToCart,
+    purchased,
+    stages,
+    products,
+    platformViews,
+    platformClicks,
+    creatorClicks,
+    contentTypePageVisits,
+  };
+}
+
+export const ATTRIBUTION_FUNNEL = computeAttributionFunnel();
+
 // ─── Export ──────────────────────────────────────────────────────────────────
 
 export const MOCK_SM_DATA: SMDashboardData = {
@@ -625,7 +773,7 @@ export const MOCK_UTM_LINKS: UTMLink[] = [
     full_url: 'https://glowserum.com/products/glow-serum-pro?utm_source=tiktok&utm_medium=social&utm_campaign=glowserum_sarahglow&utm_content=reel_20260214_a1b2c3',
     content_post_url: 'https://tiktok.com/@sarahglow/video/7341234567890',
     status: 'active',
-    created_at: '2026-02-14T19:00:00Z',
+    created_at: '2026-03-02T19:00:00Z',
     creator_name: 'Sarah Chen',
     creator_username: 'sarahglow',
     total_revenue: 4230,
@@ -639,7 +787,7 @@ export const MOCK_UTM_LINKS: UTMLink[] = [
     full_url: 'https://glowserum.com/products/hydraveil-moisturizer?utm_source=instagram&utm_medium=social&utm_campaign=glowserum_sarahglow&utm_content=reel_20260212_d4e5f6',
     content_post_url: 'https://instagram.com/p/C4xyz123abc',
     status: 'active',
-    created_at: '2026-02-12T17:00:00Z',
+    created_at: '2026-02-28T17:00:00Z',
     creator_name: 'Sarah Chen',
     creator_username: 'sarahglow',
     total_revenue: 2156,
@@ -653,7 +801,7 @@ export const MOCK_UTM_LINKS: UTMLink[] = [
     full_url: 'https://glowserum.com?utm_source=tiktok&utm_medium=social&utm_campaign=glowserum_jakethompson&utm_content=reel_20260215_g7h8i9',
     content_post_url: 'https://tiktok.com/@jakethompson/video/7342345678901',
     status: 'active',
-    created_at: '2026-02-15T19:00:00Z',
+    created_at: '2026-03-03T19:00:00Z',
     creator_name: 'Jake Thompson',
     creator_username: 'jakethompson',
     total_revenue: 7230,
@@ -667,7 +815,7 @@ export const MOCK_UTM_LINKS: UTMLink[] = [
     full_url: 'https://glowserum.com/products/nightrepair-complex?utm_source=youtube&utm_medium=social&utm_campaign=glowserum_marcusreviews&utm_content=video_20260211_j0k1l2',
     content_post_url: 'https://youtube.com/watch?v=abc123xyz',
     status: 'active',
-    created_at: '2026-02-11T14:00:00Z',
+    created_at: '2026-02-27T14:00:00Z',
     creator_name: 'Marcus Rivera',
     creator_username: 'marcusreviews',
     total_revenue: 6340,
@@ -681,7 +829,7 @@ export const MOCK_UTM_LINKS: UTMLink[] = [
     full_url: 'https://glowserum.com/products/cleartone-cleanser?utm_source=instagram&utm_medium=social&utm_campaign=glowserum_aishaskin&utm_content=post_20260213_m3n4o5',
     content_post_url: null,
     status: 'pending',
-    created_at: '2026-02-13T20:00:00Z',
+    created_at: '2026-03-01T20:00:00Z',
     creator_name: 'Aisha Williams',
     creator_username: 'aishaskin',
     total_revenue: 0,
@@ -741,4 +889,89 @@ export function getPlatformColor(platform: string): string {
     all: '#00FF94',
   };
   return colors[platform] || '#00FF94';
+}
+
+// ─── Date-Range Scaling ──────────────────────────────────────────────────────
+
+function generateChartForRange(range: DateRange): RevenueDataPoint[] {
+  const rng = seededRandom(42);
+  const days = range === '7d' ? 7 : range === '90d' ? 90 : 30;
+  const base = new Date('2026-03-06');
+  base.setDate(base.getDate() - days);
+  const points: RevenueDataPoint[] = [];
+
+  for (let i = 0; i < days; i++) {
+    const d = new Date(base);
+    d.setDate(d.getDate() + i);
+    const dateStr = d.toISOString().split('T')[0];
+    const dayOfWeek = d.getDay();
+    const weekendMultiplier = dayOfWeek === 0 || dayOfWeek === 6 ? 1.15 : 1.0;
+    const trendMultiplier = 1 + (i / days) * 0.18;
+    const noise = 0.8 + rng() * 0.4;
+
+    const baseTT = 3200 * trendMultiplier * weekendMultiplier * noise;
+    const baseIG = 2100 * trendMultiplier * weekendMultiplier * (0.85 + rng() * 0.3);
+    const baseYT = 680 * trendMultiplier * (0.7 + rng() * 0.6);
+
+    points.push({
+      date: dateStr,
+      tiktok: Math.round(baseTT),
+      instagram: Math.round(baseIG),
+      youtube: Math.round(baseYT),
+      total: Math.round(baseTT + baseIG + baseYT),
+    });
+  }
+  return points;
+}
+
+export function getScaledData(range: DateRange): ScaledDashboardData {
+  const scale = range === '7d' ? 7 / 30 : range === '90d' ? 3 : 1;
+
+  const scaledCreators: Creator[] = CREATORS.map((c) => ({
+    ...c,
+    totalRevenue: Math.round(c.totalRevenue * scale),
+    totalCommission: Math.round(c.totalCommission * scale),
+    totalPosts: Math.round(c.totalPosts * scale),
+    postsThisPeriod: Math.round(c.postsThisPeriod * scale),
+  }));
+
+  const scaledPosts: Post[] = POSTS.map((p) => ({
+    ...p,
+    revenue: Math.round(p.revenue * scale),
+    orders: Math.round(p.orders * scale),
+    clicks: Math.round(p.clicks * scale),
+    commission: Math.round(p.commission * scale),
+  }));
+
+  const scaledPlatformMetrics: PlatformMetrics[] = PLATFORM_METRICS.map((pm) => ({
+    ...pm,
+    revenue: Math.round(pm.revenue * scale),
+    orders: Math.round(pm.orders * scale),
+    clicks: Math.round(pm.clicks * scale),
+    posts: Math.round(pm.posts * scale),
+  }));
+
+  const scaledOrg: OrgKPIs = {
+    ...ORG_KPIS,
+    totalRevenue: Math.round(ORG_KPIS.totalRevenue * scale),
+    totalCommissions: Math.round(ORG_KPIS.totalCommissions * scale),
+    totalPosts: Math.round(ORG_KPIS.totalPosts * scale),
+    postsThisWeek: range === '7d' ? 23 : range === '90d' ? 68 : ORG_KPIS.postsThisWeek,
+  };
+
+  const scaledLinks: UTMLink[] = MOCK_UTM_LINKS.map((l) => ({
+    ...l,
+    total_revenue: Math.round(l.total_revenue * scale),
+    total_orders: Math.round(l.total_orders * scale),
+  }));
+
+  return {
+    org: scaledOrg,
+    creators: scaledCreators,
+    posts: scaledPosts,
+    platformMetrics: scaledPlatformMetrics,
+    revenueChart: generateChartForRange(range),
+    insights: INSIGHTS,
+    utmLinks: scaledLinks,
+  };
 }

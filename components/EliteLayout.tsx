@@ -8,12 +8,9 @@ interface EliteLayoutProps {
 }
 
 const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '#about', label: 'About' },
-  { href: '#community', label: 'Community' },
-  { href: '#team', label: 'Team' },
-  { href: '/apply', label: 'Apply' },
-  { href: '#contact', label: 'Contact' },
+  { href: '#how-it-works', label: 'How It Works' },
+  { href: '/demo', label: 'Demo' },
+  { href: '#book-call', label: 'Pricing' },
 ];
 
 export const EliteLayout: React.FC<EliteLayoutProps> = ({ children }) => {
@@ -91,7 +88,7 @@ export const EliteLayout: React.FC<EliteLayoutProps> = ({ children }) => {
                 onClick={(e) => handleNavClick(e, '#book-call')}
                 className="btn-zilla text-sm"
               >
-                Book Review Call
+                Install Free
               </a>
             </nav>
 
@@ -132,7 +129,7 @@ export const EliteLayout: React.FC<EliteLayoutProps> = ({ children }) => {
                 onClick={(e) => handleNavClick(e, '#book-call')}
                 className="btn-zilla text-center mt-2"
               >
-                Book Review Call
+                Install Free
               </a>
             </div>
           </div>
@@ -161,8 +158,8 @@ export const EliteLayout: React.FC<EliteLayoutProps> = ({ children }) => {
                 </span>
               </Link>
               <p className="mt-6 text-gray-400 leading-relaxed max-w-md">
-                The exclusive community where experienced ecommerce builders plug into AI systems
-                to achieve exponential scaling. Your transformer moment awaits.
+                Content attribution for Shopify brands. See which creator content, UGC, and ads
+                actually drive sales. Cut losers. Scale winners.
               </p>
               <div className="mt-8">
                 <p className="text-sm text-gray-500 mb-2">General Inquiries</p>
@@ -264,9 +261,8 @@ export const EliteLayout: React.FC<EliteLayoutProps> = ({ children }) => {
               &copy; 2026 Growzilla. All rights reserved.
             </p>
             <div className="flex items-center gap-6">
-              <span className="text-sm text-gray-600 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-zilla-neon animate-pulse" />
-                Limited spots for visionary builders
+              <span className="text-sm text-gray-600">
+                RolloutFactory Inc.
               </span>
             </div>
           </div>

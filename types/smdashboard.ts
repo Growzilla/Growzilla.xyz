@@ -227,6 +227,40 @@ export interface ScaledDashboardData {
   utmLinks: UTMLink[];
 }
 
+// === Saved Content Script Types (Hook / Meat / CTA) ===
+
+export interface SavedHook {
+  id: string;
+  number: number; // e.g. 1, 2, 3 — used in UTM as utm_hook=1
+  scriptStart: string; // First ~40 chars of the hook script
+  fullScript: string;
+  createdAt: string;
+}
+
+export interface SavedMeat {
+  id: string;
+  number: number;
+  scriptStart: string;
+  fullScript: string;
+  createdAt: string;
+}
+
+export interface SavedCTA {
+  id: string;
+  number: number;
+  scriptStart: string;
+  fullScript: string;
+  createdAt: string;
+}
+
+export interface SavedCreator {
+  id: string;
+  name: string;
+  handle: string;
+  avatar: string;
+  platforms: Platform[];
+}
+
 export const CONTENT_TYPES: Record<Platform, ContentTypeOption[]> = {
   instagram: [
     { id: 'post', label: 'Post' },

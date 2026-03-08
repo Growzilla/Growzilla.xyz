@@ -145,3 +145,42 @@ export interface SyncResponse {
 }
 
 export type SyncStatus = 'idle' | 'syncing' | 'success' | 'error';
+
+// === Custom App Launcher ===
+
+export type MerchantStatus = 'lead' | 'qualified' | 'credentials' | 'deploying' | 'live' | 'failed';
+
+export interface MerchantDeploy {
+  id: string;
+  merchant: string;
+  storeUrl: string;
+  status: MerchantStatus;
+  clientId?: string;
+  clientSecret?: string;
+  renderServiceId?: string;
+  renderServiceUrl?: string;
+  githubRepo?: string;
+  installLink?: string;
+  email?: string;
+  quizScore?: number;
+  revenueRange?: string;
+  error?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DeployMerchantRequest {
+  merchant: string;
+  storeUrl: string;
+  clientId: string;
+  clientSecret: string;
+  email?: string;
+  scopes?: string;
+}
+
+export interface DeployMerchantResponse {
+  success: boolean;
+  merchant?: MerchantDeploy;
+  installLink?: string;
+  error?: string;
+}

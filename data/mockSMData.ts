@@ -837,6 +837,37 @@ export const MOCK_UTM_LINKS: UTMLink[] = [
   },
 ];
 
+// ─── Saved Content Scripts (Hook / Meat / CTA) ─────────────────────────────
+
+import type { SavedHook, SavedMeat, SavedCTA, SavedCreator } from '@/types/smdashboard';
+
+export const MOCK_SAVED_HOOKS: SavedHook[] = [
+  { id: 'hook-1', number: 1, scriptStart: 'Did you know that 90% of skincare...', fullScript: 'Did you know that 90% of skincare products contain fillers that do nothing for your skin? Here\'s what actually works.', createdAt: '2026-02-10T10:00:00Z' },
+  { id: 'hook-2', number: 2, scriptStart: 'I tried 47 serums so you don\'t have to...', fullScript: 'I tried 47 serums so you don\'t have to. Here\'s the one that actually changed my skin.', createdAt: '2026-02-14T10:00:00Z' },
+  { id: 'hook-3', number: 3, scriptStart: 'POV: Your dermatologist sees your routine...', fullScript: 'POV: Your dermatologist sees your routine and actually approves. This is the product that made it happen.', createdAt: '2026-02-20T10:00:00Z' },
+  { id: 'hook-4', number: 4, scriptStart: 'Stop wasting money on serums that...', fullScript: 'Stop wasting money on serums that expire before they work. This one shows results in 3 days.', createdAt: '2026-03-01T10:00:00Z' },
+];
+
+export const MOCK_SAVED_MEATS: SavedMeat[] = [
+  { id: 'meat-1', number: 1, scriptStart: 'The secret is the 3-layer absorption...', fullScript: 'The secret is the 3-layer absorption formula. Layer 1 hydrates, layer 2 repairs, layer 3 locks everything in. Most serums only do layer 1.', createdAt: '2026-02-10T10:00:00Z' },
+  { id: 'meat-2', number: 2, scriptStart: 'I\'ve been using it for 2 weeks and...', fullScript: 'I\'ve been using it for 2 weeks and my dark spots are visibly lighter. My followers keep asking what changed. Here\'s my full routine.', createdAt: '2026-02-14T10:00:00Z' },
+  { id: 'meat-3', number: 3, scriptStart: 'Clinical results: 89% saw improvement...', fullScript: 'Clinical results: 89% saw improvement in 14 days. But here\'s what the study doesn\'t tell you — the texture change happens on day 3.', createdAt: '2026-02-20T10:00:00Z' },
+];
+
+export const MOCK_SAVED_CTAS: SavedCTA[] = [
+  { id: 'cta-1', number: 1, scriptStart: 'Link in bio — use code GLOW20 for...', fullScript: 'Link in bio — use code GLOW20 for 20% off your first order.', createdAt: '2026-02-10T10:00:00Z' },
+  { id: 'cta-2', number: 2, scriptStart: 'Tap the link below before they sell out...', fullScript: 'Tap the link below before they sell out again. Last restock sold out in 4 hours.', createdAt: '2026-02-14T10:00:00Z' },
+  { id: 'cta-3', number: 3, scriptStart: 'Comment GLOW and I\'ll DM you the link...', fullScript: 'Comment GLOW and I\'ll DM you the link directly.', createdAt: '2026-02-20T10:00:00Z' },
+];
+
+export const MOCK_SAVED_CREATORS: SavedCreator[] = [
+  { id: 'cr-sarah', name: 'Sarah Chen', handle: '@sarahglow', avatar: '/sm-thumbnails/avatar-sarah.jpg', platforms: ['tiktok', 'instagram'] },
+  { id: 'cr-marcus', name: 'Marcus Rivera', handle: '@marcusreviews', avatar: '/sm-thumbnails/avatar-marcus.jpg', platforms: ['youtube', 'instagram'] },
+  { id: 'cr-aisha', name: 'Aisha Williams', handle: '@aishaskin', avatar: '/sm-thumbnails/avatar-aisha.jpg', platforms: ['instagram', 'tiktok'] },
+  { id: 'cr-jake', name: 'Jake Thompson', handle: '@jakethompson', avatar: '/sm-thumbnails/avatar-jake.jpg', platforms: ['tiktok'] },
+  { id: 'cr-priya', name: 'Priya Sharma', handle: '@priyabeauty', avatar: '/sm-thumbnails/avatar-priya.jpg', platforms: ['instagram', 'youtube'] },
+];
+
 // Helper: get posts for a specific creator
 export function getCreatorPosts(creatorId: string): Post[] {
   return POSTS.filter((p) => p.creatorId === creatorId).sort((a, b) => b.revenue - a.revenue);

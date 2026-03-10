@@ -13,6 +13,7 @@ import CreatorProfileView from './views/CreatorProfileView';
 import ContentView from './views/ContentView';
 import AttributionView from './views/AttributionView';
 import LinksView from './views/LinksView';
+import CreateLinkView from './views/CreateLinkView';
 
 import PostDetailPanel from './panels/PostDetailPanel';
 import CreatorDetailPanel from './panels/CreatorDetailPanel';
@@ -95,7 +96,7 @@ const DemoShell: React.FC = () => {
   }, []);
 
   const handleCreateLink = useCallback(() => {
-    setPanelType('utm');
+    setActiveView('createLink');
   }, []);
 
   const handleViewSavedLinks = useCallback(() => {
@@ -234,6 +235,12 @@ const DemoShell: React.FC = () => {
                 links={data.utmLinks}
                 onCreateLink={handleCreateLink}
                 onViewSavedLinks={handleViewSavedLinks}
+              />
+            )}
+            {activeView === 'createLink' && (
+              <CreateLinkView
+                key="createLink"
+                onBack={() => setActiveView('links')}
               />
             )}
           </AnimatePresence>

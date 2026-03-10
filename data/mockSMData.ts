@@ -955,6 +955,36 @@ function generateChartForRange(range: DateRange): RevenueDataPoint[] {
   return points;
 }
 
+// ─── Mock Products (Shopify catalog) ───────────────────────────────────────
+
+export interface MockProduct {
+  id: string;
+  title: string;
+  handle: string;
+  status: 'active' | 'draft' | 'archived';
+  productType: string;
+  vendor: string;
+  priceMin: number;
+  priceMax: number;
+  featuredImageUrl: string | null;
+  totalInventory: number;
+}
+
+export const MOCK_PRODUCTS: MockProduct[] = [
+  { id: 'gid://shopify/Product/1', title: 'Glow Serum Pro', handle: 'glow-serum-pro', status: 'active', productType: 'Skincare', vendor: 'GlowSerum', priceMin: 49.99, priceMax: 49.99, featuredImageUrl: null, totalInventory: 342 },
+  { id: 'gid://shopify/Product/2', title: 'Hydra Mist Toner', handle: 'hydra-mist-toner', status: 'active', productType: 'Skincare', vendor: 'GlowSerum', priceMin: 34.99, priceMax: 34.99, featuredImageUrl: null, totalInventory: 518 },
+  { id: 'gid://shopify/Product/3', title: 'Vitamin C Brightening Cream', handle: 'vitamin-c-brightening-cream', status: 'active', productType: 'Skincare', vendor: 'GlowSerum', priceMin: 42.00, priceMax: 42.00, featuredImageUrl: null, totalInventory: 203 },
+  { id: 'gid://shopify/Product/4', title: 'Retinol Night Repair', handle: 'retinol-night-repair', status: 'active', productType: 'Skincare', vendor: 'GlowSerum', priceMin: 56.00, priceMax: 56.00, featuredImageUrl: null, totalInventory: 167 },
+  { id: 'gid://shopify/Product/5', title: 'SPF 50 Daily Shield', handle: 'spf-50-daily-shield', status: 'active', productType: 'Sun Care', vendor: 'GlowSerum', priceMin: 29.99, priceMax: 29.99, featuredImageUrl: null, totalInventory: 891 },
+  { id: 'gid://shopify/Product/6', title: 'Collagen Boost Eye Cream', handle: 'collagen-boost-eye-cream', status: 'active', productType: 'Skincare', vendor: 'GlowSerum', priceMin: 38.00, priceMax: 38.00, featuredImageUrl: null, totalInventory: 124 },
+  { id: 'gid://shopify/Product/7', title: 'Hyaluronic Acid Serum', handle: 'hyaluronic-acid-serum', status: 'active', productType: 'Skincare', vendor: 'GlowSerum', priceMin: 44.99, priceMax: 44.99, featuredImageUrl: null, totalInventory: 456 },
+  { id: 'gid://shopify/Product/8', title: 'Niacinamide Pore Minimizer', handle: 'niacinamide-pore-minimizer', status: 'active', productType: 'Skincare', vendor: 'GlowSerum', priceMin: 32.00, priceMax: 32.00, featuredImageUrl: null, totalInventory: 289 },
+  { id: 'gid://shopify/Product/9', title: 'Peptide Firming Serum', handle: 'peptide-firming-serum', status: 'active', productType: 'Skincare', vendor: 'GlowSerum', priceMin: 62.00, priceMax: 62.00, featuredImageUrl: null, totalInventory: 78 },
+  { id: 'gid://shopify/Product/10', title: 'Gentle Foam Cleanser', handle: 'gentle-foam-cleanser', status: 'active', productType: 'Cleansers', vendor: 'GlowSerum', priceMin: 24.99, priceMax: 24.99, featuredImageUrl: null, totalInventory: 634 },
+  { id: 'gid://shopify/Product/11', title: 'AHA/BHA Exfoliating Toner', handle: 'aha-bha-exfoliating-toner', status: 'active', productType: 'Skincare', vendor: 'GlowSerum', priceMin: 36.00, priceMax: 36.00, featuredImageUrl: null, totalInventory: 312 },
+  { id: 'gid://shopify/Product/12', title: 'Rose Hip Recovery Oil', handle: 'rose-hip-recovery-oil', status: 'active', productType: 'Oils', vendor: 'GlowSerum', priceMin: 28.99, priceMax: 28.99, featuredImageUrl: null, totalInventory: 445 },
+];
+
 export function getScaledData(range: DateRange): ScaledDashboardData {
   const scale = range === '7d' ? 7 / 30 : range === '90d' ? 3 : 1;
 

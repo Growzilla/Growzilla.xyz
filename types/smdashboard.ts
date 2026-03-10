@@ -180,7 +180,7 @@ export const PLATFORM_OPTIONS: PlatformOption[] = [
 ];
 
 // Demo dashboard view types
-export type DemoView = 'overview' | 'creators' | 'content' | 'attribution' | 'links';
+export type DemoView = 'overview' | 'creators' | 'content' | 'attribution' | 'links' | 'createLink';
 
 // Funnel stage data for attribution view
 export interface FunnelStageData {

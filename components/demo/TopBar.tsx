@@ -14,6 +14,7 @@ const VIEW_LABELS: Record<DemoView, string> = {
   content: 'Content',
   attribution: 'Attribution',
   links: 'Links',
+  createLink: 'Create Link',
 };
 
 const RANGES: DateRange[] = ['7d', '30d', '90d'];

@@ -58,6 +58,29 @@ export default function HackathonDeck() {
     return () => window.removeEventListener('click', handler);
   }, [next]);
 
+  // Touch/swipe support for mobile
+  useEffect(() => {
+    let startX = 0;
+    let startY = 0;
+    const onStart = (e: TouchEvent) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    };
+    const onEnd = (e: TouchEvent) => {
+      const dx = e.changedTouches[0].clientX - startX;
+      const dy = e.changedTouches[0].clientY - startY;
+      if (Math.abs(dx) < 50 || Math.abs(dy) > Math.abs(dx)) return;
+      if (dx < 0) next();
+      else prev();
+    };
+    window.addEventListener('touchstart', onStart, { passive: true });
+    window.addEventListener('touchend', onEnd, { passive: true });
+    return () => {
+      window.removeEventListener('touchstart', onStart);
+      window.removeEventListener('touchend', onEnd);
+    };
+  }, [next, prev]);
+
   // Statement slides (centered) — slides 0, 1, 6
   const s = (i: number): React.CSSProperties => ({
     position: 'absolute',
@@ -115,6 +138,7 @@ export default function HackathonDeck() {
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <style>{`
           * { margin: 0; padding: 0; box-sizing: border-box; }
           html, body, #__next {
@@ -124,6 +148,34 @@ export default function HackathonDeck() {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+          }
+          @media (max-width: 768px) {
+            .deck-slide-0 { padding: 100px 28px 40px 28px !important; }
+            .deck-slide { padding: 120px 28px 40px 28px !important; }
+            .deck-dots { display: none !important; }
+            .deck-counter { right: 24px !important; bottom: 20px !important; }
+            .deck-title { font-size: clamp(36px, 10vw, 52px) !important; }
+            .deck-oneliner { font-size: clamp(22px, 6vw, 32px) !important; }
+            .deck-heading { font-size: 22px !important; margin-bottom: 28px !important; }
+            .deck-grid-3 { grid-template-columns: 1fr !important; gap: 20px !important; }
+            .deck-grid-4 { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+            .deck-grid-2 { grid-template-columns: 1fr !important; gap: 20px 0 !important; }
+            .deck-prizes { flex-direction: column !important; gap: 12px !important; }
+            .deck-prizes > div { padding: 24px 20px !important; }
+            .deck-prize-amount { font-size: 32px !important; }
+            .deck-stats { gap: 32px !important; margin-top: 32px !important; }
+            .deck-stats-val { font-size: 22px !important; }
+            .deck-logo-row { margin-bottom: 40px !important; }
+            .deck-logo-row img { height: 28px !important; width: 28px !important; }
+            .deck-date-row { margin-top: 32px !important; gap: 24px !important; }
+            .deck-400 { font-size: clamp(56px, 18vw, 100px) !important; }
+            .deck-400-sub { font-size: 15px !important; }
+            .deck-400-tag { font-size: 16px !important; margin-top: 28px !important; }
+            .deck-contact-heading { font-size: 26px !important; margin-bottom: 32px !important; }
+            .deck-contact-val { font-size: 15px !important; }
+            .deck-card { padding: 20px !important; }
+            .deck-builds-footer { margin-top: 20px !important; font-size: 12px !important; }
+            .deck-credits { font-size: 13px !important; }
           }
         `}</style>
       </Head>
@@ -140,7 +192,7 @@ export default function HackathonDeck() {
         }} />
 
         {/* Counter */}
-        <div style={{
+        <div className="deck-counter" style={{
           position: 'fixed', bottom: 36, right: 48,
           fontSize: 12, fontWeight: 500, color: 'rgba(255,255,255,0.2)',
           zIndex: 200, fontVariantNumeric: 'tabular-nums', letterSpacing: '0.05em',
@@ -149,7 +201,7 @@ export default function HackathonDeck() {
         </div>
 
         {/* Dots */}
-        <div style={{
+        <div className="deck-dots" style={{
           position: 'fixed', left: 48, top: '50%', transform: 'translateY(-50%)',
           display: 'flex', flexDirection: 'column', gap: 8, zIndex: 200,
         }}>
@@ -169,8 +221,8 @@ export default function HackathonDeck() {
         </div>
 
         {/* ===== 1: TITLE ===== */}
-        <div style={si(0)}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 72 }}>
+        <div className="deck-slide-0" style={si(0)}>
+          <div className="deck-logo-row" style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 72 }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={LOGOS.claudeIcon} alt="Claude" crossOrigin="anonymous" style={{ height: 36, width: 36, borderRadius: 8 }} />
             <span style={{ color: 'rgba(255,255,255,0.12)', fontSize: 20, fontWeight: 300 }}>×</span>
@@ -178,7 +230,7 @@ export default function HackathonDeck() {
             <img src={LOGOS.shopifySymbol} alt="Shopify" crossOrigin="anonymous" style={{ height: 36, width: 'auto' }} />
           </div>
 
-          <h1 style={{
+          <h1 className="deck-title" style={{
             fontSize: 'clamp(52px, 6.5vw, 84px)',
             fontWeight: 800, lineHeight: 0.98, letterSpacing: '-0.04em', color: '#FFFFFF',
           }}>
@@ -187,15 +239,15 @@ export default function HackathonDeck() {
             Hackathon<span style={{ color: '#00FF94' }}>.</span>
           </h1>
 
-          <div style={{ marginTop: 56, display: 'flex', gap: 40 }}>
+          <div className="deck-date-row" style={{ marginTop: 56, display: 'flex', gap: 40 }}>
             <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: 14, fontWeight: 500 }}>28 March 2026</span>
             <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: 14, fontWeight: 500 }}>Forest City, Malaysia</span>
           </div>
         </div>
 
         {/* ===== 2: ONE-LINER ===== */}
-        <div style={si(1)}>
-          <p style={{
+        <div className="deck-slide" style={si(1)}>
+          <p className="deck-oneliner" style={{
             fontSize: 'clamp(28px, 4vw, 52px)',
             fontWeight: 600, lineHeight: 1.2, letterSpacing: '-0.025em',
             color: '#FFFFFF', maxWidth: 1000,
@@ -205,10 +257,10 @@ export default function HackathonDeck() {
             Shopify app using Claude Code.
           </p>
 
-          <div style={{ marginTop: 56, display: 'flex', gap: 64 }}>
+          <div className="deck-stats" style={{ marginTop: 56, display: 'flex', gap: 64 }}>
             {[['80+', 'builders'], ['$3,000', 'in prizes'], ['4 hrs', 'to ship']].map(([val, lb]) => (
               <div key={lb}>
-                <p style={{ color: '#FFFFFF', fontSize: 28, fontWeight: 700, letterSpacing: '-0.02em' }}>{val}</p>
+                <p className="deck-stats-val" style={{ color: '#FFFFFF', fontSize: 28, fontWeight: 700, letterSpacing: '-0.02em' }}>{val}</p>
                 <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 13, fontWeight: 500, marginTop: 2 }}>{lb}</p>
               </div>
             ))}
@@ -216,11 +268,11 @@ export default function HackathonDeck() {
         </div>
 
         {/* ===== 3: WHAT YOU GET ===== */}
-        <div style={si(2)}>
+        <div className="deck-slide" style={si(2)}>
           <p style={label}>What participants get</p>
-          <p style={heading}>Everything handled. Just build.</p>
+          <p className="deck-heading" style={heading}>Everything handled. Just build.</p>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '32px 40px' }}>
+          <div className="deck-grid-3" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '32px 40px' }}>
             {[
               ['Pre-built starter repo', 'OAuth, data sync, GraphQL. Fork and build in 5 minutes.'],
               ['Full Shopify API access', 'Connected test store with real data flowing through it.'],
@@ -238,11 +290,11 @@ export default function HackathonDeck() {
         </div>
 
         {/* ===== 4: EXAMPLE BUILDS ===== */}
-        <div style={si(3)}>
+        <div className="deck-slide" style={si(3)}>
           <p style={label}>Example builds</p>
-          <p style={heading}>The right Shopify app creates millions in value.</p>
+          <p className="deck-heading" style={heading}>The right Shopify app creates millions in value.</p>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+          <div className="deck-grid-3" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
             {[
               ['AI Store Clerk', 'Branded AI assistant that converts browsers to buyers'],
               ['Smart Inventory', 'Predictive stock management that eliminates dead inventory'],
@@ -251,23 +303,23 @@ export default function HackathonDeck() {
               ['Creator Tools', 'Find and scale creator partnerships programmatically'],
               ['AI UGC Engine', 'Generate ad creative and product content at scale'],
             ].map(([t, d]) => (
-              <div key={t} style={{ padding: 28, border: '1px solid rgba(255,255,255,0.06)', borderRadius: 2 }}>
+              <div key={t} className="deck-card" style={{ padding: 28, border: '1px solid rgba(255,255,255,0.06)', borderRadius: 2 }}>
                 <p style={{ color: '#FFFFFF', fontSize: 14, fontWeight: 600, marginBottom: 6 }}>{t}</p>
                 <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 12, fontWeight: 400, lineHeight: 1.5 }}>{d}</p>
               </div>
             ))}
           </div>
 
-          <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: 13, marginTop: 32 }}>
+          <p className="deck-builds-footer" style={{ color: 'rgba(255,255,255,0.2)', fontSize: 13, marginTop: 32 }}>
             Build it here. Launch on the Shopify App Store. Start earning.
           </p>
         </div>
 
         {/* ===== 5: PRIZES ===== */}
-        <div style={si(4)}>
+        <div className="deck-slide" style={si(4)}>
           <p style={label}>Prizes</p>
 
-          <div style={{ display: 'flex', gap: 24, marginBottom: 48 }}>
+          <div className="deck-prizes" style={{ display: 'flex', gap: 24, marginBottom: 48 }}>
             {[
               { place: '1st', amount: '$2,000', hl: true },
               { place: '2nd', amount: '$750', hl: false },
@@ -280,13 +332,13 @@ export default function HackathonDeck() {
                 background: p.hl ? 'rgba(0,255,148,0.02)' : 'transparent',
               }}>
                 <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, fontWeight: 500, marginBottom: 16 }}>{p.place} Place</p>
-                <p style={{ color: p.hl ? '#00FF94' : '#FFFFFF', fontSize: 44, fontWeight: 700, letterSpacing: '-0.03em' }}>{p.amount}</p>
+                <p className="deck-prize-amount" style={{ color: p.hl ? '#00FF94' : '#FFFFFF', fontSize: 44, fontWeight: 700, letterSpacing: '-0.03em' }}>{p.amount}</p>
                 <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12, marginTop: 8 }}>BTC or USDC</p>
               </div>
             ))}
           </div>
 
-          <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 14, lineHeight: 1.7 }}>
+          <p className="deck-credits" style={{ color: 'rgba(255,255,255,0.35)', fontSize: 14, lineHeight: 1.7 }}>
             Claude Code API credits for all participants.
             <br />
             Winners pitch their app to Shopify Partner Program.
@@ -294,18 +346,18 @@ export default function HackathonDeck() {
         </div>
 
         {/* ===== 6: JUDGES ===== */}
-        <div style={si(5)}>
+        <div className="deck-slide" style={si(5)}>
           <p style={label}>Judge Panel</p>
-          <p style={heading}>Judged by people who build.</p>
+          <p className="deck-heading" style={heading}>Judged by people who build.</p>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 16 }}>
+          <div className="deck-grid-4" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 16 }}>
             {[
               ['AI Policy & Research', 'Alliance for the Future'],
               ['Developer Relations', 'Shopify'],
               ['AI Research', 'DeepMind'],
               ['Venture Partner', 'Singapore VC'],
             ].map(([role, org]) => (
-              <div key={role} style={{ padding: 28, border: '1px solid rgba(255,255,255,0.06)', borderRadius: 2 }}>
+              <div key={role} className="deck-card" style={{ padding: 28, border: '1px solid rgba(255,255,255,0.06)', borderRadius: 2 }}>
                 <p style={{ color: '#FFFFFF', fontSize: 15, fontWeight: 600, marginBottom: 4 }}>{role}</p>
                 <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 13, fontWeight: 400 }}>{org}</p>
               </div>
@@ -318,8 +370,8 @@ export default function HackathonDeck() {
         </div>
 
         {/* ===== 7: SOCIAL PROOF ===== */}
-        <div style={si(6)}>
-          <p style={{
+        <div className="deck-slide" style={si(6)}>
+          <p className="deck-400" style={{
             color: '#FFFFFF',
             fontSize: 'clamp(72px, 12vw, 140px)',
             fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 0.95,
@@ -327,27 +379,27 @@ export default function HackathonDeck() {
             400<span style={{ color: '#00FF94' }}>+</span>
           </p>
 
-          <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 18, fontWeight: 400, marginTop: 20, maxWidth: 600, lineHeight: 1.6 }}>
+          <p className="deck-400-sub" style={{ color: 'rgba(255,255,255,0.4)', fontSize: 18, fontWeight: 400, marginTop: 20, maxWidth: 600, lineHeight: 1.6 }}>
             Attended the Claude Code Community event at Forest City, Malaysia.
           </p>
 
-          <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 20, fontWeight: 600, marginTop: 48, letterSpacing: '-0.01em' }}>
+          <p className="deck-400-tag" style={{ color: 'rgba(255,255,255,0.55)', fontSize: 20, fontWeight: 600, marginTop: 48, letterSpacing: '-0.01em' }}>
             This is the next one.
           </p>
         </div>
 
         {/* ===== 8: CONTACT ===== */}
-        <div style={si(7)}>
+        <div className="deck-slide" style={si(7)}>
           <p style={label}>Interested in joining</p>
 
-          <p style={{
+          <p className="deck-contact-heading" style={{
             color: '#FFFFFF', fontSize: 40, fontWeight: 700,
             letterSpacing: '-0.03em', marginBottom: 56,
           }}>
             Let&apos;s make it happen.
           </p>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '28px 64px', marginBottom: 64 }}>
+          <div className="deck-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '28px 64px', marginBottom: 64 }}>
             {([
               ['Name', 'Albert Elmgart', ''],
               ['Email', 'albert@growzilla.xyz', 'mailto:albert@growzilla.xyz'],

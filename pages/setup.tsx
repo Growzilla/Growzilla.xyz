@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
@@ -8,11 +8,81 @@ import {
   ExclamationCircleIcon,
   CheckCircleIcon,
 } from '@heroicons/react/24/outline';
+import { SyncLoadingScreen } from '@/components/onboarding/SyncLoadingScreen';
+import { OnboardingQuestionnaire, type OnboardingAnswers } from '@/components/onboarding/OnboardingQuestionnaire';
+import { useOnboardingTracker } from '@/hooks/useEventTracker';
+
+type SetupPhase = 'form' | 'syncing' | 'onboarding' | 'redirecting';
+const STORAGE_PREFIX = 'gz_onboarding_';
 
 export default function SetupPage() {
   const router = useRouter();
   const { store, tier } = router.query as { store?: string; tier?: string };
   const isStarter = tier === 'starter';
+
+  const [phase, setPhase] = useState<SetupPhase>('form');
+  const [shopId, setShopId] = useState('');
+  const tracker = useOnboardingTracker(shopId || 'unknown');
+
+  // Resume from localStorage if user already created account
+  useEffect(() => {
+    if (!router.isReady || !store) return;
+    const key = `${STORAGE_PREFIX}${store}`;
+    const savedPhase = localStorage.getItem(`${key}_phase`) as SetupPhase | null;
+    const savedShopId = localStorage.getItem(`${key}_shopId`);
+    const savedToken = localStorage.getItem('gz_token');
+    const completed = localStorage.getItem(`${key}_completed`);
+
+    if (completed === 'true' && savedToken) {
+      // Already finished onboarding — go to dashboard
+      router.replace('/whop');
+      return;
+    }
+
+    if (savedPhase && savedPhase !== 'form' && savedToken && savedShopId) {
+      setShopId(savedShopId);
+      setPhase(savedPhase);
+    }
+  }, [router.isReady, store, router]);
+
+  // Persist phase to localStorage
+  useEffect(() => {
+    if (!store || phase === 'form') return;
+    const key = `${STORAGE_PREFIX}${store}`;
+    localStorage.setItem(`${key}_phase`, phase);
+    if (shopId) localStorage.setItem(`${key}_shopId`, shopId);
+  }, [store, phase, shopId]);
+
+  const handleSyncComplete = useCallback(() => {
+    setPhase('onboarding');
+    tracker.started();
+  }, [tracker]);
+
+  const handleOnboardingComplete = useCallback(async (answers: OnboardingAnswers) => {
+    setPhase('redirecting');
+    const key = `${STORAGE_PREFIX}${store}`;
+
+    // Save completion state
+    localStorage.setItem(`${key}_completed`, 'true');
+    localStorage.setItem(`${key}_answers`, JSON.stringify(answers));
+    localStorage.setItem(`${key}_tour`, answers.tourChoice || 'skip');
+
+    // Fire completed event
+    tracker.completed({ answers });
+
+    // POST onboarding answers to backend (fire-and-forget)
+    const token = localStorage.getItem('gz_token');
+    fetch('/api/onboarding', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ shop_id: shopId, store_domain: store, answers }),
+    }).catch(() => {});
+
+    router.push('/whop');
+  }, [store, shopId, tracker, router]);
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -78,12 +148,15 @@ export default function SetupPage() {
         return;
       }
 
-      // Store token and redirect to dashboard
+      // Store token and transition to sync phase
       if (data.token) {
         localStorage.setItem('gz_token', data.token);
       }
+      if (data.shopId) {
+        setShopId(data.shopId);
+      }
 
-      router.push(data.redirectUrl || '/signin');
+      setPhase('syncing');
     } catch {
       setError('Network error. Please check your connection and try again.');
       setSubmitting(false);
@@ -110,6 +183,67 @@ export default function SetupPage() {
     );
   }
 
+  // --- Phase: Syncing ---
+  if (phase === 'syncing') {
+    return (
+      <>
+        <Head>
+          <title>Syncing Store | Growzilla</title>
+          <meta name="robots" content="noindex, nofollow" />
+        </Head>
+        <SyncLoadingScreen shopId={shopId} onSyncComplete={handleSyncComplete} />
+      </>
+    );
+  }
+
+  // --- Phase: Onboarding questionnaire ---
+  if (phase === 'onboarding' && store) {
+    return (
+      <>
+        <Head>
+          <title>Get Started | Growzilla</title>
+          <meta name="robots" content="noindex, nofollow" />
+        </Head>
+        <OnboardingQuestionnaire
+          shopId={shopId}
+          shopDomain={store}
+          onComplete={handleOnboardingComplete}
+          onStepEvent={(event) => {
+            // Persist progress for resume
+            const key = `${STORAGE_PREFIX}${store}`;
+            localStorage.setItem(`${key}_step`, String(event.stepNumber));
+            localStorage.setItem(`${key}_answers`, JSON.stringify(event.answers));
+
+            // Fire tracking events
+            tracker.stepCompleted(event.stepNumber, event.stepName, event.answers);
+          }}
+        />
+      </>
+    );
+  }
+
+  // --- Phase: Redirecting to dashboard ---
+  if (phase === 'redirecting') {
+    return (
+      <>
+        <Head>
+          <title>Growzilla</title>
+          <meta name="robots" content="noindex, nofollow" />
+        </Head>
+        <div
+          className="min-h-screen flex items-center justify-center"
+          style={{ backgroundColor: '#0A0A0B' }}
+        >
+          <div
+            className="w-6 h-6 border-2 rounded-full animate-spin"
+            style={{ borderColor: '#00FF94', borderTopColor: 'transparent' }}
+          />
+        </div>
+      </>
+    );
+  }
+
+  // --- Phase: Account creation form ---
   return (
     <>
       <Head>
@@ -276,7 +410,7 @@ export default function SetupPage() {
                     ) : (
                       <>
                         <ExclamationCircleIcon className="w-3.5 h-3.5 text-red-400" />
-                        <span className="text-xs text-red-400">Passwords don't match</span>
+                        <span className="text-xs text-red-400">Passwords don&apos;t match</span>
                       </>
                     )}
                   </div>

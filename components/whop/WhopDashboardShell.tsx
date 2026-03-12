@@ -28,6 +28,9 @@ import FunnelView from './views/FunnelView';
 import AdsView from './views/AdsView';
 import CustomersView from './views/CustomersView';
 import ProductView from './views/ProductView';
+import { ProductTour, GROWZILLA_TOUR_STEPS } from '@/components/onboarding/ProductTour';
+import { SetupChecklist, DEFAULT_CHECKLIST_ITEMS, type ChecklistItem } from '@/components/onboarding/SetupChecklist';
+import { useOnboardingTracker } from '@/hooks/useEventTracker';
 
 // ─── Placeholder Data (until Airtable env vars are connected) ─────────────────
 
@@ -513,6 +516,93 @@ const WhopDashboardShell: React.FC = () => {
   const [data, setData] = useState<WhopDashboardData | null>(null);
   const [femfitData, setFemfitData] = useState<FemFitFunnelData | null>(null);
 
+  // --- Onboarding: tour + checklist ---
+  const [showTour, setShowTour] = useState(false);
+  const [checklistItems, setChecklistItems] = useState<ChecklistItem[]>([]);
+  const [showChecklist, setShowChecklist] = useState(false);
+  const [shopIdForTracking, setShopIdForTracking] = useState('');
+  const tracker = useOnboardingTracker(shopIdForTracking || 'dashboard');
+
+  // Detect if user just finished onboarding
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    // Find the onboarding key by scanning localStorage
+    const keys = Object.keys(localStorage);
+    const completedKey = keys.find(
+      (k) => k.startsWith('gz_onboarding_') && k.endsWith('_completed')
+    );
+    if (!completedKey) return;
+
+    const storeDomain = completedKey
+      .replace('gz_onboarding_', '')
+      .replace('_completed', '');
+    const prefix = `gz_onboarding_${storeDomain}`;
+
+    const completed = localStorage.getItem(`${prefix}_completed`);
+    if (completed !== 'true') return;
+
+    const tourChoice = localStorage.getItem(`${prefix}_tour`);
+    const tourShown = localStorage.getItem(`${prefix}_tour_shown`);
+    const shopId = localStorage.getItem(`${prefix}_shopId`) || '';
+
+    setShopIdForTracking(shopId);
+
+    // Show tour if user opted in and hasn't seen it yet
+    if (tourChoice === 'tour' && tourShown !== 'true') {
+      // Delay tour start until dashboard is loaded
+      setShowTour(true);
+      tracker.tourStarted();
+    }
+
+    // Show checklist — build items from onboarding answers
+    const answersStr = localStorage.getItem(`${prefix}_answers`);
+    const answers = answersStr ? JSON.parse(answersStr) : {};
+
+    const items: ChecklistItem[] = DEFAULT_CHECKLIST_ITEMS.map((item) => {
+      if (item.id === 'connect_store') return { ...item, completed: true };
+      if (item.id === 'add_creator' && answers.firstCreator?.handle)
+        return { ...item, completed: true };
+      if (item.id === 'create_link' && answers.trackingLink)
+        return { ...item, completed: true };
+      if (item.id === 'view_dashboard') return { ...item, completed: true };
+      return { ...item };
+    });
+
+    setChecklistItems(items);
+    setShowChecklist(true);
+  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleTourComplete = useCallback(() => {
+    setShowTour(false);
+    tracker.tourCompleted();
+    // Find the prefix to mark tour as shown
+    const keys = Object.keys(localStorage);
+    const completedKey = keys.find(
+      (k) => k.startsWith('gz_onboarding_') && k.endsWith('_completed')
+    );
+    if (completedKey) {
+      const prefix = completedKey.replace('_completed', '');
+      localStorage.setItem(`${prefix}_tour_shown`, 'true');
+    }
+  }, [tracker]);
+
+  const handleTourSkip = useCallback(
+    (skippedAt: number) => {
+      setShowTour(false);
+      tracker.tourSkipped(skippedAt);
+      const keys = Object.keys(localStorage);
+      const completedKey = keys.find(
+        (k) => k.startsWith('gz_onboarding_') && k.endsWith('_completed')
+      );
+      if (completedKey) {
+        const prefix = completedKey.replace('_completed', '');
+        localStorage.setItem(`${prefix}_tour_shown`, 'true');
+      }
+    },
+    [tracker]
+  );
+
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
@@ -598,10 +688,35 @@ const WhopDashboardShell: React.FC = () => {
       )}
 
       {/* Loading state */}
-      {loading ? (
-        <LoadingSkeleton />
-      ) : (
-        renderView()
+      <div data-tour="revenue-overview">
+        {loading ? (
+          <LoadingSkeleton />
+        ) : (
+          renderView()
+        )}
+      </div>
+
+      {/* Product tour overlay */}
+      {showTour && !loading && (
+        <ProductTour
+          steps={GROWZILLA_TOUR_STEPS}
+          onComplete={handleTourComplete}
+          onSkip={handleTourSkip}
+          onStepChange={(step, stepName, interacted) => {
+            tracker.tourStep(step, stepName, interacted);
+          }}
+        />
+      )}
+
+      {/* Setup checklist widget */}
+      {showChecklist && checklistItems.length > 0 && (
+        <SetupChecklist
+          items={checklistItems}
+          onItemClick={(itemId) => {
+            if (itemId === 'add_creator') setActiveView('overview' as WhopView);
+            if (itemId === 'create_link') setActiveView('overview' as WhopView);
+          }}
+        />
       )}
     </WhopLayout>
   );

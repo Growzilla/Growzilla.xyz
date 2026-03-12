@@ -516,11 +516,13 @@ const WhopDashboardShell: React.FC = () => {
   const [data, setData] = useState<WhopDashboardData | null>(null);
   const [femfitData, setFemfitData] = useState<FemFitFunnelData | null>(null);
 
-  // --- Onboarding: tour + checklist ---
+  // --- Onboarding: tour + checklist + personalization ---
   const [showTour, setShowTour] = useState(false);
   const [checklistItems, setChecklistItems] = useState<ChecklistItem[]>([]);
   const [showChecklist, setShowChecklist] = useState(false);
   const [shopIdForTracking, setShopIdForTracking] = useState('');
+  const [showMetaPrompt, setShowMetaPrompt] = useState(false);
+  const [showCreatorCTA, setShowCreatorCTA] = useState(false);
   const tracker = useOnboardingTracker(shopIdForTracking || 'dashboard');
 
   // Detect if user just finished onboarding
@@ -571,6 +573,30 @@ const WhopDashboardShell: React.FC = () => {
 
     setChecklistItems(items);
     setShowChecklist(true);
+
+    // --- Dashboard personalization from onboarding answers ---
+    const goal = answers.mainGoal as string | undefined;
+    const creatorCount = answers.creatorCount as string | undefined;
+    const paidAds = (answers.paidAds || []) as string[];
+
+    // Default tab based on main goal
+    if (goal === 'creator_sales') {
+      setActiveView('overview'); // Overview has creator metrics
+    } else if (goal === 'reduce_cac') {
+      setActiveView('funnel'); // Funnel = attribution view
+    } else if (goal === 'meta_data') {
+      setActiveView('ads'); // Ads view for Meta data
+    }
+
+    // Show "Add your first creator" CTA if they have 0 creators
+    if (creatorCount === '0') {
+      setShowCreatorCTA(true);
+    }
+
+    // Show Meta connection prompt if they use Meta ads or want Meta data
+    if (paidAds.includes('meta') || goal === 'meta_data') {
+      setShowMetaPrompt(true);
+    }
   }, []);  // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleTourComplete = useCallback(() => {
@@ -685,6 +711,95 @@ const WhopDashboardShell: React.FC = () => {
         <div className="mb-6">
           <ChannelTabs value={activeChannel} onChange={setActiveChannel} />
         </div>
+      )}
+
+      {/* Personalized prompts from onboarding */}
+      {showMetaPrompt && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2, ease: 'easeOut' }}
+          className="mb-6 flex items-center justify-between px-4 py-3 rounded-lg"
+          style={{
+            backgroundColor: '#111113',
+            border: '1px solid rgba(255,255,255,0.08)',
+          }}
+        >
+          <div className="flex items-center gap-3">
+            <div
+              className="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0"
+              style={{ backgroundColor: 'rgba(0,255,148,0.1)' }}
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M8 1v14M1 8h14" stroke="#00FF94" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-medium" style={{ color: '#FFFFFF' }}>
+                Connect your Meta Ads account
+              </p>
+              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                See ad spend alongside creator revenue for true blended CAC
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowMetaPrompt(false)}
+              className="text-xs px-2 py-1 rounded transition-colors duration-150"
+              style={{ color: 'rgba(255,255,255,0.3)' }}
+            >
+              Later
+            </button>
+            <button
+              onClick={() => setActiveView('ads')}
+              className="text-xs font-medium px-3 py-1.5 rounded-md transition-all duration-150"
+              style={{ backgroundColor: '#00FF94', color: '#0A0A0B' }}
+            >
+              Connect Meta
+            </button>
+          </div>
+        </motion.div>
+      )}
+
+      {showCreatorCTA && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2, delay: 0.1, ease: 'easeOut' }}
+          className="mb-6 flex items-center justify-between px-4 py-3 rounded-lg"
+          style={{
+            backgroundColor: '#111113',
+            border: '1px solid rgba(255,255,255,0.08)',
+          }}
+        >
+          <div className="flex items-center gap-3">
+            <div
+              className="w-8 h-8 rounded-md flex items-center justify-center flex-shrink-0"
+              style={{ backgroundColor: 'rgba(0,255,148,0.1)' }}
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="5" r="3" stroke="#00FF94" strokeWidth="1.5" />
+                <path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="#00FF94" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-medium" style={{ color: '#FFFFFF' }}>
+                Add your first creator
+              </p>
+              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                Start tracking which creators drive your sales
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowCreatorCTA(false)}
+            className="text-xs font-medium px-3 py-1.5 rounded-md transition-all duration-150"
+            style={{ backgroundColor: '#00FF94', color: '#0A0A0B' }}
+          >
+            Add creator
+          </button>
+        </motion.div>
       )}
 
       {/* Loading state */}

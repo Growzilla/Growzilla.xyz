@@ -111,7 +111,7 @@ export function SyncLoadingScreen({ shopId, onSyncComplete }: SyncLoadingScreenP
           </div>
           <span
             className="text-base font-semibold tracking-tight"
-            style={{ color: 'rgba(255,255,255,0.95)' }}
+            style={{ color: '#FFFFFF' }}
           >
             Growzilla
           </span>
@@ -145,13 +145,13 @@ export function SyncLoadingScreen({ shopId, onSyncComplete }: SyncLoadingScreenP
 
               <p
                 className="text-sm font-medium mb-1"
-                style={{ color: 'rgba(255,255,255,0.95)' }}
+                style={{ color: '#FFFFFF' }}
               >
                 Sync failed
               </p>
               <p
                 className="text-xs mb-6"
-                style={{ color: 'rgba(255,255,255,0.48)' }}
+                style={{ color: 'rgba(255,255,255,0.5)' }}
               >
                 {error}
               </p>
@@ -192,7 +192,7 @@ export function SyncLoadingScreen({ shopId, onSyncComplete }: SyncLoadingScreenP
                 <a
                   href="mailto:albert.elmgart@gmail.com"
                   className="underline"
-                  style={{ color: 'rgba(255,255,255,0.48)' }}
+                  style={{ color: 'rgba(255,255,255,0.5)' }}
                 >
                   Contact support
                 </a>
@@ -209,13 +209,13 @@ export function SyncLoadingScreen({ shopId, onSyncComplete }: SyncLoadingScreenP
               {/* Heading */}
               <h1
                 className="text-base font-semibold text-center mb-1"
-                style={{ color: 'rgba(255,255,255,0.95)' }}
+                style={{ color: '#FFFFFF' }}
               >
                 Syncing your store data…
               </h1>
               <p
                 className="text-xs text-center mb-8"
-                style={{ color: 'rgba(255,255,255,0.48)' }}
+                style={{ color: 'rgba(255,255,255,0.5)' }}
               >
                 This usually takes under a minute.
               </p>
@@ -231,7 +231,7 @@ export function SyncLoadingScreen({ shopId, onSyncComplete }: SyncLoadingScreenP
                   </span>
                   <span
                     className="text-xs font-mono"
-                    style={{ color: 'rgba(255,255,255,0.48)' }}
+                    style={{ color: 'rgba(255,255,255,0.5)' }}
                   >
                     {pct}%
                   </span>
@@ -297,8 +297,8 @@ export function SyncLoadingScreen({ shopId, onSyncComplete }: SyncLoadingScreenP
                           color: isComplete
                             ? 'rgba(255,255,255,0.72)'
                             : isActive
-                              ? 'rgba(255,255,255,0.95)'
-                              : 'rgba(255,255,255,0.32)',
+                              ? '#FFFFFF'
+                              : 'rgba(255,255,255,0.3)',
                           fontWeight: isActive ? 500 : 400,
                         }}
                       >

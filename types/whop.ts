@@ -2,7 +2,7 @@
 
 export type DateRange = '7d' | '30d' | '90d' | 'custom';
 
-export type WhopView = 'overview' | 'funnel' | 'ads' | 'customers' | 'products';
+export type WhopView = 'overview' | 'funnel' | 'ads' | 'customers' | 'products' | 'links' | 'createLink';
 
 export type AttributionChannel =
   | 'meta'

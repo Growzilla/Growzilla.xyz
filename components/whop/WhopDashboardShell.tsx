@@ -28,6 +28,10 @@ import FunnelView from './views/FunnelView';
 import AdsView from './views/AdsView';
 import CustomersView from './views/CustomersView';
 import ProductView from './views/ProductView';
+import LinksView from '@/components/demo/views/LinksView';
+import CreateLinkView from '@/components/demo/views/CreateLinkView';
+import type { UTMLink } from '@/types/smdashboard';
+import { getScaledData } from '@/data/mockSMData';
 import { ProductTour, GROWZILLA_TOUR_STEPS } from '@/components/onboarding/ProductTour';
 import { SetupChecklist, DEFAULT_CHECKLIST_ITEMS, type ChecklistItem } from '@/components/onboarding/SetupChecklist';
 import { useOnboardingTracker } from '@/hooks/useEventTracker';
@@ -525,6 +529,24 @@ const WhopDashboardShell: React.FC = () => {
   const [showCreatorCTA, setShowCreatorCTA] = useState(false);
   const tracker = useOnboardingTracker(shopIdForTracking || 'dashboard');
 
+  // --- Links view state ---
+  const [sessionLinks, setSessionLinks] = useState<UTMLink[]>([]);
+  const mockLinks = getScaledData('30d').utmLinks;
+  const allLinks = [...sessionLinks, ...mockLinks];
+
+  const handleLinkCreated = useCallback((link: UTMLink) => {
+    setSessionLinks((prev) => [link, ...prev]);
+    setActiveView('links');
+  }, []);
+
+  const handleCreateLink = useCallback(() => {
+    setActiveView('createLink');
+  }, []);
+
+  const handleViewSavedLinks = useCallback(() => {
+    // No-op for now — all links shown in main view
+  }, []);
+
   // Detect if user just finished onboarding
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -683,6 +705,10 @@ const WhopDashboardShell: React.FC = () => {
         return <CustomersView customers={data.customers} cohorts={data.cohorts} />;
       case 'products':
         return <ProductView products={data.products} />;
+      case 'links':
+        return <LinksView links={allLinks} onCreateLink={handleCreateLink} onViewSavedLinks={handleViewSavedLinks} />;
+      case 'createLink':
+        return <CreateLinkView onBack={() => setActiveView('links')} onLinkCreated={handleLinkCreated} />;
       default:
         return null;
     }
@@ -699,6 +725,8 @@ const WhopDashboardShell: React.FC = () => {
             {activeView === 'ads' && 'Ad Campaigns'}
             {activeView === 'customers' && 'Customer Intelligence'}
             {activeView === 'products' && 'Product Performance'}
+            {activeView === 'links' && 'Tracking Links'}
+            {activeView === 'createLink' && 'Create Tracked Link'}
           </h1>
         </div>
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
@@ -829,7 +857,7 @@ const WhopDashboardShell: React.FC = () => {
           items={checklistItems}
           onItemClick={(itemId) => {
             if (itemId === 'add_creator') setActiveView('overview' as WhopView);
-            if (itemId === 'create_link') setActiveView('overview' as WhopView);
+            if (itemId === 'create_link') setActiveView('createLink');
           }}
         />
       )}

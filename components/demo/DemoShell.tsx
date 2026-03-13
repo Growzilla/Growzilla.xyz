@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import type { DemoView, DateRange, Post, Creator } from '@/types/smdashboard';
+import type { DemoView, DateRange, Post, Creator, UTMLink } from '@/types/smdashboard';
 import { getScaledData } from '@/data/mockSMData';
 
 import Sidebar from './Sidebar';
@@ -52,7 +52,17 @@ const DemoShell: React.FC = () => {
   // Creator profile view: when a creator is "opened" from CreatorsView
   const [profileCreator, setProfileCreator] = useState<Creator | null>(null);
 
+  // Session-level links (created links persist across view switches)
+  const [sessionLinks, setSessionLinks] = useState<UTMLink[]>([]);
+
   const data = useMemo(() => getScaledData(dateRange), [dateRange]);
+
+  // Merge mock links with session-created links
+  const allLinks = useMemo(() => [...sessionLinks, ...data.utmLinks], [sessionLinks, data.utmLinks]);
+
+  const handleLinkCreated = useCallback((link: UTMLink) => {
+    setSessionLinks((prev) => [link, ...prev]);
+  }, []);
 
   // Generate deterministic sparkline data per creator
   const creatorSparkData = useMemo(() => {
@@ -154,7 +164,7 @@ const DemoShell: React.FC = () => {
       case 'utm':
         return <UTMGeneratorPanel />;
       case 'savedLinks':
-        return <SavedLinksPanel links={data.utmLinks} />;
+        return <SavedLinksPanel links={allLinks} />;
       case 'insights':
         return <InsightsPanel insights={data.insights} />;
       default:
@@ -232,7 +242,7 @@ const DemoShell: React.FC = () => {
             {activeView === 'links' && (
               <LinksView
                 key="links"
-                links={data.utmLinks}
+                links={allLinks}
                 onCreateLink={handleCreateLink}
                 onViewSavedLinks={handleViewSavedLinks}
               />
@@ -241,6 +251,7 @@ const DemoShell: React.FC = () => {
               <CreateLinkView
                 key="createLink"
                 onBack={() => setActiveView('links')}
+                onLinkCreated={handleLinkCreated}
               />
             )}
           </AnimatePresence>

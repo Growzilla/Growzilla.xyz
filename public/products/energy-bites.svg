@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect width="200" height="200" rx="16" fill="#1A1A1A"/>
+  <!-- Cluster of energy bites -->
+  <!-- Main center bite -->
+  <circle cx="100" cy="88" r="16" fill="#FF9800"/>
+  <circle cx="94" cy="82" r="5" fill="#FFD700" opacity="0.35"/>
+  <!-- Top left bite -->
+  <circle cx="76" cy="72" r="13" fill="#FFC107"/>
+  <circle cx="71" cy="67" r="4" fill="#FFD700" opacity="0.35"/>
+  <!-- Top right bite -->
+  <circle cx="122" cy="68" r="14" fill="#FFD700"/>
+  <circle cx="117" cy="63" r="4.5" fill="#FFE44D" opacity="0.35"/>
+  <!-- Bottom left bite -->
+  <circle cx="80" cy="108" r="12" fill="#FFD700"/>
+  <circle cx="76" cy="104" r="3.5" fill="#FFE44D" opacity="0.35"/>
+  <!-- Bottom right bite -->
+  <circle cx="118" cy="104" r="13.5" fill="#FF9800"/>
+  <circle cx="113" cy="99" r="4" fill="#FFC107" opacity="0.35"/>
+  <!-- Bottom center bite -->
+  <circle cx="100" cy="120" r="11" fill="#FFC107"/>
+  <circle cx="96" cy="116" r="3" fill="#FFD700" opacity="0.35"/>
+  <!-- Small texture dots on bites -->
+  <circle cx="105" cy="92" r="1.2" fill="rgba(26,26,26,0.2)"/>
+  <circle cx="96" cy="86" r="1" fill="rgba(26,26,26,0.15)"/>
+  <circle cx="78" cy="76" r="1" fill="rgba(26,26,26,0.15)"/>
+  <circle cx="126" cy="72" r="1" fill="rgba(26,26,26,0.15)"/>
+  <circle cx="115" cy="108" r="1" fill="rgba(26,26,26,0.15)"/>
+  <!-- Scattered small particles -->
+  <circle cx="60" cy="95" r="2" fill="#FFC107" opacity="0.3"/>
+  <circle cx="140" cy="88" r="2.5" fill="#FFD700" opacity="0.25"/>
+  <circle cx="66" cy="125" r="1.5" fill="#FF9800" opacity="0.2"/>
+  <circle cx="134" cy="120" r="1.8" fill="#FFC107" opacity="0.2"/>
+  <!-- Product name -->
+  <text x="100" y="170" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="500" font-size="10" fill="rgba(255,255,255,0.72)">Energy Bites</text>
+</svg>

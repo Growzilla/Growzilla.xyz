@@ -136,7 +136,7 @@ const POSTS: Post[] = [
     platform: 'instagram',
     postType: 'reel',
     thumbnail: '/sm-thumbnails/post-sarah-ig-01.jpg',
-    caption: 'Get ready with me using only @GlowSerum products \u2728 I literally cannot go a day without the HydraVeil Moisturizer. Swipe for the routine \u2192',
+    caption: 'Get ready with me using only @NanoBanana products \u2728 I literally cannot go a day without the HydraVeil Moisturizer. Swipe for the routine \u2192',
     postedAt: '2026-02-28T17:00:00Z',
     engagement: { likes: 8200, comments: 342, shares: 890, saves: 1450, views: 67000 },
     revenue: 2156,
@@ -418,7 +418,7 @@ const POSTS: Post[] = [
     platform: 'instagram',
     postType: 'post',
     thumbnail: '/sm-thumbnails/post-priya-ig-02.jpg',
-    caption: 'My top 3 products from @GlowSerum ranked \ud83c\udfc6 The Radiance Eye Cream at #1 is non-negotiable. Trust me on this one.',
+    caption: 'My top 3 products from @NanoBanana ranked \ud83c\udfc6 The Radiance Eye Cream at #1 is non-negotiable. Trust me on this one.',
     postedAt: '2026-02-18T15:00:00Z',
     engagement: { likes: 3200, comments: 156, shares: 190, saves: 720, views: 28000 },
     revenue: 1340,
@@ -769,8 +769,8 @@ export const MOCK_UTM_LINKS: UTMLink[] = [
     id: 'mock-link-01',
     platform: 'tiktok',
     content_type: 'reel',
-    product_url: 'https://glowserum.com/products/glow-serum-pro',
-    full_url: 'https://glowserum.com/products/glow-serum-pro?utm_source=tiktok&utm_medium=social&utm_campaign=glowserum_sarahglow&utm_content=reel_20260214_a1b2c3',
+    product_url: 'https://nanobanana.com/products/banana-bright-serum',
+    full_url: 'https://nanobanana.com/products/banana-bright-serum?utm_source=tiktok&utm_medium=social&utm_campaign=nanobanana_sarahglow&utm_content=reel_20260214_a1b2c3',
     content_post_url: 'https://tiktok.com/@sarahglow/video/7341234567890',
     status: 'active',
     created_at: '2026-03-02T19:00:00Z',
@@ -783,8 +783,8 @@ export const MOCK_UTM_LINKS: UTMLink[] = [
     id: 'mock-link-02',
     platform: 'instagram',
     content_type: 'reel',
-    product_url: 'https://glowserum.com/products/hydraveil-moisturizer',
-    full_url: 'https://glowserum.com/products/hydraveil-moisturizer?utm_source=instagram&utm_medium=social&utm_campaign=glowserum_sarahglow&utm_content=reel_20260212_d4e5f6',
+    product_url: 'https://nanobanana.com/products/nano-glow-drops',
+    full_url: 'https://nanobanana.com/products/nano-glow-drops?utm_source=instagram&utm_medium=social&utm_campaign=nanobanana_sarahglow&utm_content=reel_20260212_d4e5f6',
     content_post_url: 'https://instagram.com/p/C4xyz123abc',
     status: 'active',
     created_at: '2026-02-28T17:00:00Z',
@@ -798,7 +798,7 @@ export const MOCK_UTM_LINKS: UTMLink[] = [
     platform: 'tiktok',
     content_type: 'reel',
     product_url: null,
-    full_url: 'https://glowserum.com?utm_source=tiktok&utm_medium=social&utm_campaign=glowserum_jakethompson&utm_content=reel_20260215_g7h8i9',
+    full_url: 'https://nanobanana.com?utm_source=tiktok&utm_medium=social&utm_campaign=nanobanana_jakethompson&utm_content=reel_20260215_g7h8i9',
     content_post_url: 'https://tiktok.com/@jakethompson/video/7342345678901',
     status: 'active',
     created_at: '2026-03-03T19:00:00Z',
@@ -811,8 +811,8 @@ export const MOCK_UTM_LINKS: UTMLink[] = [
     id: 'mock-link-04',
     platform: 'youtube',
     content_type: 'video',
-    product_url: 'https://glowserum.com/products/nightrepair-complex',
-    full_url: 'https://glowserum.com/products/nightrepair-complex?utm_source=youtube&utm_medium=social&utm_campaign=glowserum_marcusreviews&utm_content=video_20260211_j0k1l2',
+    product_url: 'https://nanobanana.com/products/recovery-balm',
+    full_url: 'https://nanobanana.com/products/recovery-balm?utm_source=youtube&utm_medium=social&utm_campaign=nanobanana_marcusreviews&utm_content=video_20260211_j0k1l2',
     content_post_url: 'https://youtube.com/watch?v=abc123xyz',
     status: 'active',
     created_at: '2026-02-27T14:00:00Z',
@@ -825,8 +825,8 @@ export const MOCK_UTM_LINKS: UTMLink[] = [
     id: 'mock-link-05',
     platform: 'instagram',
     content_type: 'post',
-    product_url: 'https://glowserum.com/products/cleartone-cleanser',
-    full_url: 'https://glowserum.com/products/cleartone-cleanser?utm_source=instagram&utm_medium=social&utm_campaign=glowserum_aishaskin&utm_content=post_20260213_m3n4o5',
+    product_url: 'https://nanobanana.com/products/banana-peel-mask',
+    full_url: 'https://nanobanana.com/products/banana-peel-mask?utm_source=instagram&utm_medium=social&utm_campaign=nanobanana_aishaskin&utm_content=post_20260213_m3n4o5',
     content_post_url: null,
     status: 'pending',
     created_at: '2026-03-01T20:00:00Z',
@@ -842,22 +842,22 @@ export const MOCK_UTM_LINKS: UTMLink[] = [
 import type { SavedHook, SavedMeat, SavedCTA, SavedCreator } from '@/types/smdashboard';
 
 export const MOCK_SAVED_HOOKS: SavedHook[] = [
-  { id: 'hook-1', number: 1, scriptStart: 'Did you know that 90% of skincare...', fullScript: 'Did you know that 90% of skincare products contain fillers that do nothing for your skin? Here\'s what actually works.', createdAt: '2026-02-10T10:00:00Z' },
-  { id: 'hook-2', number: 2, scriptStart: 'I tried 47 serums so you don\'t have to...', fullScript: 'I tried 47 serums so you don\'t have to. Here\'s the one that actually changed my skin.', createdAt: '2026-02-14T10:00:00Z' },
-  { id: 'hook-3', number: 3, scriptStart: 'POV: Your dermatologist sees your routine...', fullScript: 'POV: Your dermatologist sees your routine and actually approves. This is the product that made it happen.', createdAt: '2026-02-20T10:00:00Z' },
-  { id: 'hook-4', number: 4, scriptStart: 'Stop wasting money on serums that...', fullScript: 'Stop wasting money on serums that expire before they work. This one shows results in 3 days.', createdAt: '2026-03-01T10:00:00Z' },
+  { id: 'hook-1', number: 1, scriptStart: 'I replaced my entire routine with one...', fullScript: 'I replaced my entire routine with one brand and my skin has never looked better. Here\'s why Nano Banana is different.', createdAt: '2026-02-10T10:00:00Z' },
+  { id: 'hook-2', number: 2, scriptStart: 'This $50 serum outsold high-end brands...', fullScript: 'This $50 serum outsold high-end brands 3x last month. I finally tried it and I get the hype.', createdAt: '2026-02-14T10:00:00Z' },
+  { id: 'hook-3', number: 3, scriptStart: 'POV: You find a wellness brand that...', fullScript: 'POV: You find a wellness brand that actually uses real ingredients. No fillers, no BS — just banana-based actives.', createdAt: '2026-02-20T10:00:00Z' },
+  { id: 'hook-4', number: 4, scriptStart: 'Stop sleeping on banana extract for...', fullScript: 'Stop sleeping on banana extract for your skin. Science finally caught up — here\'s the data.', createdAt: '2026-03-01T10:00:00Z' },
 ];
 
 export const MOCK_SAVED_MEATS: SavedMeat[] = [
-  { id: 'meat-1', number: 1, scriptStart: 'The secret is the 3-layer absorption...', fullScript: 'The secret is the 3-layer absorption formula. Layer 1 hydrates, layer 2 repairs, layer 3 locks everything in. Most serums only do layer 1.', createdAt: '2026-02-10T10:00:00Z' },
-  { id: 'meat-2', number: 2, scriptStart: 'I\'ve been using it for 2 weeks and...', fullScript: 'I\'ve been using it for 2 weeks and my dark spots are visibly lighter. My followers keep asking what changed. Here\'s my full routine.', createdAt: '2026-02-14T10:00:00Z' },
-  { id: 'meat-3', number: 3, scriptStart: 'Clinical results: 89% saw improvement...', fullScript: 'Clinical results: 89% saw improvement in 14 days. But here\'s what the study doesn\'t tell you — the texture change happens on day 3.', createdAt: '2026-02-20T10:00:00Z' },
+  { id: 'meat-1', number: 1, scriptStart: 'Banana extract has potassium + vitamin...', fullScript: 'Banana extract has potassium + vitamin B6 that your skin actually absorbs. Layer 1 hydrates, layer 2 repairs, layer 3 seals. Most brands skip layers 2 and 3.', createdAt: '2026-02-10T10:00:00Z' },
+  { id: 'meat-2', number: 2, scriptStart: 'Two weeks in and my skin texture...', fullScript: 'Two weeks in and my skin texture completely changed. The smoothie mix + bright serum combo is insane. My followers keep DM-ing me about it.', createdAt: '2026-02-14T10:00:00Z' },
+  { id: 'meat-3', number: 3, scriptStart: 'Their clinical study: 89% saw results...', fullScript: 'Their clinical study: 89% saw results in 14 days. But the real secret is the collagen powder — mix it in your morning smoothie and your skin glows from the inside out.', createdAt: '2026-02-20T10:00:00Z' },
 ];
 
 export const MOCK_SAVED_CTAS: SavedCTA[] = [
-  { id: 'cta-1', number: 1, scriptStart: 'Link in bio — use code GLOW20 for...', fullScript: 'Link in bio — use code GLOW20 for 20% off your first order.', createdAt: '2026-02-10T10:00:00Z' },
-  { id: 'cta-2', number: 2, scriptStart: 'Tap the link below before they sell out...', fullScript: 'Tap the link below before they sell out again. Last restock sold out in 4 hours.', createdAt: '2026-02-14T10:00:00Z' },
-  { id: 'cta-3', number: 3, scriptStart: 'Comment GLOW and I\'ll DM you the link...', fullScript: 'Comment GLOW and I\'ll DM you the link directly.', createdAt: '2026-02-20T10:00:00Z' },
+  { id: 'cta-1', number: 1, scriptStart: 'Link in bio — use code NANO20 for...', fullScript: 'Link in bio — use code NANO20 for 20% off your first order.', createdAt: '2026-02-10T10:00:00Z' },
+  { id: 'cta-2', number: 2, scriptStart: 'Tap the link below before they sell out...', fullScript: 'Tap the link below before they sell out again. The Bright Serum sold out 3x last month.', createdAt: '2026-02-14T10:00:00Z' },
+  { id: 'cta-3', number: 3, scriptStart: 'Comment BANANA and I\'ll DM you the...', fullScript: 'Comment BANANA and I\'ll DM you the link directly.', createdAt: '2026-02-20T10:00:00Z' },
 ];
 
 export const MOCK_SAVED_CREATORS: SavedCreator[] = [
@@ -970,19 +970,23 @@ export interface MockProduct {
   totalInventory: number;
 }
 
+export const STORE_LOGO_URL = '/products/store-logo.svg';
+export const STORE_NAME = 'Nano Banana';
+export const STORE_DOMAIN = 'nanobanana.com';
+
 export const MOCK_PRODUCTS: MockProduct[] = [
-  { id: 'gid://shopify/Product/1', title: 'Glow Serum Pro', handle: 'glow-serum-pro', status: 'active', productType: 'Skincare', vendor: 'GlowSerum', priceMin: 49.99, priceMax: 49.99, featuredImageUrl: null, totalInventory: 342 },
-  { id: 'gid://shopify/Product/2', title: 'Hydra Mist Toner', handle: 'hydra-mist-toner', status: 'active', productType: 'Skincare', vendor: 'GlowSerum', priceMin: 34.99, priceMax: 34.99, featuredImageUrl: null, totalInventory: 518 },
-  { id: 'gid://shopify/Product/3', title: 'Vitamin C Brightening Cream', handle: 'vitamin-c-brightening-cream', status: 'active', productType: 'Skincare', vendor: 'GlowSerum', priceMin: 42.00, priceMax: 42.00, featuredImageUrl: null, totalInventory: 203 },
-  { id: 'gid://shopify/Product/4', title: 'Retinol Night Repair', handle: 'retinol-night-repair', status: 'active', productType: 'Skincare', vendor: 'GlowSerum', priceMin: 56.00, priceMax: 56.00, featuredImageUrl: null, totalInventory: 167 },
-  { id: 'gid://shopify/Product/5', title: 'SPF 50 Daily Shield', handle: 'spf-50-daily-shield', status: 'active', productType: 'Sun Care', vendor: 'GlowSerum', priceMin: 29.99, priceMax: 29.99, featuredImageUrl: null, totalInventory: 891 },
-  { id: 'gid://shopify/Product/6', title: 'Collagen Boost Eye Cream', handle: 'collagen-boost-eye-cream', status: 'active', productType: 'Skincare', vendor: 'GlowSerum', priceMin: 38.00, priceMax: 38.00, featuredImageUrl: null, totalInventory: 124 },
-  { id: 'gid://shopify/Product/7', title: 'Hyaluronic Acid Serum', handle: 'hyaluronic-acid-serum', status: 'active', productType: 'Skincare', vendor: 'GlowSerum', priceMin: 44.99, priceMax: 44.99, featuredImageUrl: null, totalInventory: 456 },
-  { id: 'gid://shopify/Product/8', title: 'Niacinamide Pore Minimizer', handle: 'niacinamide-pore-minimizer', status: 'active', productType: 'Skincare', vendor: 'GlowSerum', priceMin: 32.00, priceMax: 32.00, featuredImageUrl: null, totalInventory: 289 },
-  { id: 'gid://shopify/Product/9', title: 'Peptide Firming Serum', handle: 'peptide-firming-serum', status: 'active', productType: 'Skincare', vendor: 'GlowSerum', priceMin: 62.00, priceMax: 62.00, featuredImageUrl: null, totalInventory: 78 },
-  { id: 'gid://shopify/Product/10', title: 'Gentle Foam Cleanser', handle: 'gentle-foam-cleanser', status: 'active', productType: 'Cleansers', vendor: 'GlowSerum', priceMin: 24.99, priceMax: 24.99, featuredImageUrl: null, totalInventory: 634 },
-  { id: 'gid://shopify/Product/11', title: 'AHA/BHA Exfoliating Toner', handle: 'aha-bha-exfoliating-toner', status: 'active', productType: 'Skincare', vendor: 'GlowSerum', priceMin: 36.00, priceMax: 36.00, featuredImageUrl: null, totalInventory: 312 },
-  { id: 'gid://shopify/Product/12', title: 'Rose Hip Recovery Oil', handle: 'rose-hip-recovery-oil', status: 'active', productType: 'Oils', vendor: 'GlowSerum', priceMin: 28.99, priceMax: 28.99, featuredImageUrl: null, totalInventory: 445 },
+  { id: 'gid://shopify/Product/1', title: 'Banana Bright Serum', handle: 'banana-bright-serum', status: 'active', productType: 'Skincare', vendor: 'Nano Banana', priceMin: 49.99, priceMax: 49.99, featuredImageUrl: '/products/banana-bright-serum.svg', totalInventory: 342 },
+  { id: 'gid://shopify/Product/2', title: 'Nano Glow Drops', handle: 'nano-glow-drops', status: 'active', productType: 'Skincare', vendor: 'Nano Banana', priceMin: 34.99, priceMax: 34.99, featuredImageUrl: '/products/nano-glow-drops.svg', totalInventory: 518 },
+  { id: 'gid://shopify/Product/3', title: 'Banana Peel Mask', handle: 'banana-peel-mask', status: 'active', productType: 'Skincare', vendor: 'Nano Banana', priceMin: 42.00, priceMax: 42.00, featuredImageUrl: '/products/banana-peel-mask.svg', totalInventory: 203 },
+  { id: 'gid://shopify/Product/4', title: 'Power Smoothie Mix', handle: 'power-smoothie-mix', status: 'active', productType: 'Supplements', vendor: 'Nano Banana', priceMin: 56.00, priceMax: 56.00, featuredImageUrl: '/products/power-smoothie-mix.svg', totalInventory: 167 },
+  { id: 'gid://shopify/Product/5', title: 'Recovery Balm', handle: 'recovery-balm', status: 'active', productType: 'Body Care', vendor: 'Nano Banana', priceMin: 29.99, priceMax: 29.99, featuredImageUrl: '/products/recovery-balm.svg', totalInventory: 891 },
+  { id: 'gid://shopify/Product/6', title: 'Energy Bites (12-pack)', handle: 'energy-bites', status: 'active', productType: 'Supplements', vendor: 'Nano Banana', priceMin: 38.00, priceMax: 38.00, featuredImageUrl: '/products/energy-bites.svg', totalInventory: 124 },
+  { id: 'gid://shopify/Product/7', title: 'Collagen Banana Powder', handle: 'collagen-powder', status: 'active', productType: 'Supplements', vendor: 'Nano Banana', priceMin: 44.99, priceMax: 44.99, featuredImageUrl: '/products/collagen-powder.svg', totalInventory: 456 },
+  { id: 'gid://shopify/Product/8', title: 'Banana Lip Butter', handle: 'banana-lip-butter', status: 'active', productType: 'Body Care', vendor: 'Nano Banana', priceMin: 18.00, priceMax: 18.00, featuredImageUrl: '/products/banana-lip-butter.svg', totalInventory: 289 },
+  { id: 'gid://shopify/Product/9', title: 'Extract Toner', handle: 'extract-toner', status: 'active', productType: 'Skincare', vendor: 'Nano Banana', priceMin: 32.00, priceMax: 32.00, featuredImageUrl: '/products/extract-toner.svg', totalInventory: 78 },
+  { id: 'gid://shopify/Product/10', title: 'Hair Repair Oil', handle: 'hair-repair-oil', status: 'active', productType: 'Hair Care', vendor: 'Nano Banana', priceMin: 24.99, priceMax: 24.99, featuredImageUrl: '/products/hair-repair-oil.svg', totalInventory: 634 },
+  { id: 'gid://shopify/Product/11', title: 'Tropical Body Butter', handle: 'tropical-body-butter', status: 'active', productType: 'Body Care', vendor: 'Nano Banana', priceMin: 36.00, priceMax: 36.00, featuredImageUrl: '/products/tropical-body-butter.svg', totalInventory: 312 },
+  { id: 'gid://shopify/Product/12', title: 'Nano Vitamin Gummies', handle: 'nano-vitamin-gummies', status: 'active', productType: 'Supplements', vendor: 'Nano Banana', priceMin: 28.99, priceMax: 28.99, featuredImageUrl: '/products/nano-vitamin-gummies.svg', totalInventory: 445 },
 ];
 
 export function getScaledData(range: DateRange): ScaledDashboardData {

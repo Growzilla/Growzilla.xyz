@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect width="200" height="200" rx="16" fill="#1A1A1A"/>
+  <!-- Tin base (round, viewed at slight angle) -->
+  <ellipse cx="100" cy="108" rx="44" ry="14" fill="#CC8400"/>
+  <rect x="56" y="80" width="88" height="28" fill="#FF9800"/>
+  <ellipse cx="100" cy="80" rx="44" ry="14" fill="#FFC107"/>
+  <!-- Tin lid (slightly open/offset) -->
+  <ellipse cx="104" cy="68" rx="44" ry="14" fill="#FFD700" transform="rotate(-5, 104, 68)"/>
+  <!-- Lid top detail -->
+  <ellipse cx="104" cy="66" rx="36" ry="10" fill="none" stroke="rgba(26,26,26,0.2)" stroke-width="0.8" transform="rotate(-5, 104, 66)"/>
+  <!-- Label on side -->
+  <rect x="78" y="86" width="44" height="14" rx="3" fill="rgba(26,26,26,0.35)"/>
+  <line x1="84" y1="92" x2="116" y2="92" stroke="rgba(255,255,255,0.35)" stroke-width="0.8"/>
+  <line x1="84" y1="96" x2="108" y2="96" stroke="rgba(255,255,255,0.2)" stroke-width="0.8"/>
+  <!-- Small plus/cross icon (recovery) -->
+  <line x1="100" y1="42" x2="100" y2="54" stroke="#FFD700" stroke-width="2" opacity="0.5"/>
+  <line x1="94" y1="48" x2="106" y2="48" stroke="#FFD700" stroke-width="2" opacity="0.5"/>
+  <!-- Product name -->
+  <text x="100" y="170" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="500" font-size="10" fill="rgba(255,255,255,0.72)">Recovery Balm</text>
+</svg>

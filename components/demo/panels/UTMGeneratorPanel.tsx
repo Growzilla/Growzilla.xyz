@@ -230,7 +230,7 @@ const UTMGeneratorPanel: React.FC = () => {
     ...(ctaNum && { utm_cta: String(ctaNum) }),
   });
 
-  const generatedUrl = `https://glowserum.com?${params.toString()}`;
+  const generatedUrl = `https://nanobanana.com?${params.toString()}`;
 
   function handleCopy() {
     navigator.clipboard.writeText(generatedUrl).catch(() => {});

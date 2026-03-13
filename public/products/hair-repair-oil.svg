@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect width="200" height="200" rx="16" fill="#1A1A1A"/>
+  <!-- Oil drop (large, main element) -->
+  <path d="M100 38 Q80 68 72 88 Q64 108 72 122 Q80 138 100 142 Q120 138 128 122 Q136 108 128 88 Q120 68 100 38Z" fill="#FFC107"/>
+  <!-- Drop highlight -->
+  <path d="M100 48 Q88 70 82 86 Q78 98 82 108 Q86 118 94 120 Q88 110 88 98 Q88 82 100 48Z" fill="#FFD700" opacity="0.4"/>
+  <!-- Inner shine -->
+  <ellipse cx="90" cy="94" rx="6" ry="10" fill="#FFD700" opacity="0.25" transform="rotate(-15, 90, 94)"/>
+  <!-- Hair strand lines flowing from drop -->
+  <path d="M68 118 Q58 130 52 148" fill="none" stroke="#FFD700" stroke-width="1.5" opacity="0.3" stroke-linecap="round"/>
+  <path d="M72 124 Q64 136 60 150" fill="none" stroke="#FFC107" stroke-width="1.2" opacity="0.25" stroke-linecap="round"/>
+  <path d="M128 120 Q138 132 144 148" fill="none" stroke="#FFD700" stroke-width="1.5" opacity="0.3" stroke-linecap="round"/>
+  <path d="M132 118 Q140 128 148 144" fill="none" stroke="#FFC107" stroke-width="1.2" opacity="0.25" stroke-linecap="round"/>
+  <!-- Small sparkle dots -->
+  <circle cx="82" cy="78" r="1.5" fill="white" opacity="0.4"/>
+  <circle cx="86" cy="72" r="0.8" fill="white" opacity="0.3"/>
+  <!-- Product name -->
+  <text x="100" y="170" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="500" font-size="10" fill="rgba(255,255,255,0.72)">Hair Repair Oil</text>
+</svg>

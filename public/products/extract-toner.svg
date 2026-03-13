@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect width="200" height="200" rx="16" fill="#1A1A1A"/>
+  <!-- Spray bottle body -->
+  <rect x="78" y="62" width="38" height="76" rx="6" fill="#FFC107"/>
+  <!-- Bottle highlight -->
+  <rect x="82" y="66" width="10" height="66" rx="4" fill="#FFD700" opacity="0.3"/>
+  <!-- Bottle neck -->
+  <rect x="90" y="48" width="14" height="18" rx="3" fill="#FF9800"/>
+  <!-- Spray nozzle -->
+  <rect x="86" y="38" width="22" height="14" rx="4" fill="#FFD700"/>
+  <!-- Nozzle tip -->
+  <rect x="104" y="42" width="16" height="6" rx="3" fill="#FFC107"/>
+  <circle cx="120" cy="45" r="2.5" fill="#FF9800"/>
+  <!-- Spray mist -->
+  <circle cx="132" cy="38" r="1.5" fill="#FFD700" opacity="0.4"/>
+  <circle cx="136" cy="42" r="1" fill="#FFD700" opacity="0.3"/>
+  <circle cx="128" cy="34" r="1.2" fill="#FFC107" opacity="0.35"/>
+  <circle cx="134" cy="48" r="0.8" fill="#FFD700" opacity="0.25"/>
+  <circle cx="140" cy="36" r="1" fill="#FFC107" opacity="0.2"/>
+  <circle cx="130" cy="30" r="0.8" fill="#FFD700" opacity="0.2"/>
+  <!-- Label -->
+  <rect x="84" y="82" width="26" height="22" rx="3" fill="rgba(26,26,26,0.4)"/>
+  <line x1="88" y1="90" x2="106" y2="90" stroke="rgba(255,255,255,0.35)" stroke-width="0.8"/>
+  <line x1="88" y1="95" x2="102" y2="95" stroke="rgba(255,255,255,0.2)" stroke-width="0.8"/>
+  <!-- Product name -->
+  <text x="100" y="170" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="500" font-size="10" fill="rgba(255,255,255,0.72)">Extract Toner</text>
+</svg>

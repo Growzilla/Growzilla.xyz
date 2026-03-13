@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect width="200" height="200" rx="16" fill="#1A1A1A"/>
+  <!-- Small bottle -->
+  <rect x="85" y="50" width="30" height="55" rx="5" fill="#FF9800"/>
+  <!-- Bottle neck -->
+  <rect x="93" y="40" width="14" height="14" rx="3" fill="#FFD700"/>
+  <!-- Cap -->
+  <rect x="90" y="34" width="20" height="10" rx="4" fill="#FFC107"/>
+  <!-- Bottle highlight -->
+  <rect x="89" y="54" width="8" height="46" rx="3" fill="#FFD700" opacity="0.35"/>
+  <!-- Label -->
+  <rect x="89" y="68" width="22" height="16" rx="2" fill="rgba(26,26,26,0.45)"/>
+  <line x1="92" y1="74" x2="108" y2="74" stroke="rgba(255,255,255,0.35)" stroke-width="0.8"/>
+  <line x1="92" y1="78" x2="104" y2="78" stroke="rgba(255,255,255,0.2)" stroke-width="0.8"/>
+  <!-- Floating drops -->
+  <circle cx="72" cy="120" r="5" fill="#FFD700" opacity="0.7"/>
+  <circle cx="128" cy="115" r="4" fill="#FFC107" opacity="0.6"/>
+  <circle cx="82" cy="135" r="3" fill="#FF9800" opacity="0.5"/>
+  <circle cx="118" cy="132" r="3.5" fill="#FFD700" opacity="0.5"/>
+  <circle cx="100" cy="125" r="6" fill="#FFC107" opacity="0.4"/>
+  <!-- Drop shapes (teardrop) -->
+  <path d="M66 98 Q66 92 70 88 Q74 92 74 98 Q74 102 70 104 Q66 102 66 98Z" fill="#FFD700" opacity="0.5"/>
+  <path d="M130 95 Q130 89 134 85 Q138 89 138 95 Q138 99 134 101 Q130 99 130 95Z" fill="#FFC107" opacity="0.45"/>
+  <!-- Product name -->
+  <text x="100" y="170" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="500" font-size="10" fill="rgba(255,255,255,0.72)">Nano Glow Drops</text>
+</svg>

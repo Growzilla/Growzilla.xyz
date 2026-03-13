@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect width="200" height="200" rx="16" fill="#1A1A1A"/>
+  <!-- Blender cup body (tapered) -->
+  <path d="M72 60 L68 130 Q68 140 80 140 L120 140 Q132 140 132 130 L128 60Z" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+  <!-- Smoothie liquid -->
+  <path d="M74 80 L70 130 Q70 138 80 138 L120 138 Q130 138 130 130 L126 80Z" fill="#FFC107" opacity="0.7"/>
+  <!-- Liquid highlight -->
+  <path d="M74 80 L72 120 Q72 126 78 126 L90 126 L92 80Z" fill="#FFD700" opacity="0.3"/>
+  <!-- Lid -->
+  <rect x="70" y="52" width="60" height="12" rx="5" fill="#FFD700"/>
+  <!-- Straw -->
+  <rect x="108" y="30" width="5" height="60" rx="2" fill="#FF9800" transform="rotate(8, 110, 60)"/>
+  <!-- Measurement lines -->
+  <line x1="124" y1="90" x2="130" y2="90" stroke="rgba(255,255,255,0.2)" stroke-width="0.8"/>
+  <line x1="123" y1="100" x2="130" y2="100" stroke="rgba(255,255,255,0.2)" stroke-width="0.8"/>
+  <line x1="122" y1="110" x2="129" y2="110" stroke="rgba(255,255,255,0.2)" stroke-width="0.8"/>
+  <line x1="121" y1="120" x2="128" y2="120" stroke="rgba(255,255,255,0.2)" stroke-width="0.8"/>
+  <!-- Product name -->
+  <text x="100" y="170" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="500" font-size="10" fill="rgba(255,255,255,0.72)">Power Smoothie Mix</text>
+</svg>

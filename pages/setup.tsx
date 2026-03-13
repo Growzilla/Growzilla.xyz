@@ -469,7 +469,7 @@ export default function SetupPage() {
 
             <p className="mt-6 text-center text-xs text-gray-600">
               Already have an account?{' '}
-              <a href="/signin" className="text-zilla-neon/70 hover:text-zilla-neon transition-colors">
+              <a href="/login" className="text-zilla-neon/70 hover:text-zilla-neon transition-colors">
                 Sign in
               </a>
             </p>

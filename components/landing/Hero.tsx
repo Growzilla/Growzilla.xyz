@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import LeadCaptureForm from './LeadCaptureForm';
 
 const Hero: React.FC = () => {
@@ -64,6 +65,29 @@ const Hero: React.FC = () => {
               }`}
             >
               <LeadCaptureForm variant="hero" />
+            </div>
+
+            {/* View Demo CTA */}
+            <div
+              className={`mt-6 transition-all duration-700 delay-[900ms] ${
+                mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+              }`}
+            >
+              <Link href="/demo">
+                <span className="group relative inline-flex items-center gap-3 px-8 py-4 text-lg font-semibold text-black bg-zilla-neon rounded-xl cursor-pointer transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_40px_rgba(0,255,148,0.3)]">
+                  <span>View Live Demo</span>
+                  <svg
+                    className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2.5}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </span>
+              </Link>
+              <p className="mt-2 text-sm text-gray-500">No signup required</p>
             </div>
           </div>
 

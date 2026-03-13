@@ -64,6 +64,15 @@ EliteLayout + max-w-4xl, natural scroll, numbered sections. No animations, no gl
 - Hardcode backend URLs — use env var `ECOMDASH_API_URL`
 - Add animations to document-style pages (deck, privacy)
 
+## Agent Mistakes
+<!-- Agents: append one-line lessons here when you encounter bugs or wrong assumptions. Never remove entries. -->
+- Always run `npx tsc --noEmit` before committing — catches broken imports and wrong prop types
+- Filters go OUTSIDE visualization panels, not inside them (confirmed Session 12)
+- Funnel shape: connected trapezoids (each top = prev bottom), NOT tapering to a point
+- Sankey: single "Traffic" entry bar, creators as sub-labels not separate column
+- Document pages (deck, privacy) use EliteLayout + max-w-4xl — no animations, no glow
+- Do NOT use App Router for pages that should be in Pages Router (most pages use Pages Router)
+
 ## Git
 - Identity: `AscenderGrey <albert.elmgart@gmail.com>`
 - Remote: `Growzilla/Growzilla.xyz.git`

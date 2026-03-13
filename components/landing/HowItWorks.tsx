@@ -11,7 +11,7 @@ const steps = [
       text: '"All my friends started asking about my skincare routine after I used [product]"',
     },
     screenshotLabel: 'Link creation UI',
-    screenshot: null,
+    screenshot: '/images/screenshot-create-link-config.png',
   },
   {
     number: '02',
@@ -20,7 +20,7 @@ const steps = [
       'Give the link to your creator or paste it in your content. Works with TikTok, Instagram, YouTube, Meta Ads — any platform.',
     example: null,
     screenshotLabel: 'Content with tracking link',
-    screenshot: null,
+    screenshot: '/images/screenshot-content-feed.png',
   },
   {
     number: '03',

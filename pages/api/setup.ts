@@ -13,7 +13,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 const API_BASE = process.env.ECOMDASH_API_URL || 'https://ecomdash-api.onrender.com';
-const ADMIN_KEY = process.env.RENDER_API_KEY || '';
+const ADMIN_KEY = process.env.ADMIN_API_KEY || '';
 
 interface SetupBody {
   store: string;
@@ -133,6 +133,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     success: true,
     token,
     shopId,
-    redirectUrl: token ? `/admin/store/${encodeURIComponent(store)}` : '/signin',
+    redirectUrl: token ? `/admin/store/${encodeURIComponent(store)}` : '/login',
   });
 }

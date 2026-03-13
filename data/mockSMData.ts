@@ -842,22 +842,22 @@ export const MOCK_UTM_LINKS: UTMLink[] = [
 import type { SavedHook, SavedMeat, SavedCTA, SavedCreator } from '@/types/smdashboard';
 
 export const MOCK_SAVED_HOOKS: SavedHook[] = [
-  { id: 'hook-1', number: 1, scriptStart: 'I replaced my entire routine with one...', fullScript: 'I replaced my entire routine with one brand and my skin has never looked better. Here\'s why Nano Banana is different.', createdAt: '2026-02-10T10:00:00Z' },
+  { id: 'hook-1', number: 1, scriptStart: 'I replaced my entire routine with one...', fullScript: 'I replaced my entire routine with one brand and my skin has never looked better. Here\'s why Glow Theory is different.', createdAt: '2026-02-10T10:00:00Z' },
   { id: 'hook-2', number: 2, scriptStart: 'This $50 serum outsold high-end brands...', fullScript: 'This $50 serum outsold high-end brands 3x last month. I finally tried it and I get the hype.', createdAt: '2026-02-14T10:00:00Z' },
-  { id: 'hook-3', number: 3, scriptStart: 'POV: You find a wellness brand that...', fullScript: 'POV: You find a wellness brand that actually uses real ingredients. No fillers, no BS — just banana-based actives.', createdAt: '2026-02-20T10:00:00Z' },
-  { id: 'hook-4', number: 4, scriptStart: 'Stop sleeping on banana extract for...', fullScript: 'Stop sleeping on banana extract for your skin. Science finally caught up — here\'s the data.', createdAt: '2026-03-01T10:00:00Z' },
+  { id: 'hook-3', number: 3, scriptStart: 'POV: You find a skincare brand that...', fullScript: 'POV: You find a skincare brand that actually uses clinical-grade ingredients. No fillers, no fragrance — just actives that work.', createdAt: '2026-02-20T10:00:00Z' },
+  { id: 'hook-4', number: 4, scriptStart: 'Your dermatologist won\'t tell you this...', fullScript: 'Your dermatologist won\'t tell you this but retinol layered with vitamin C at the right pH changes everything. Here\'s the data.', createdAt: '2026-03-01T10:00:00Z' },
 ];
 
 export const MOCK_SAVED_MEATS: SavedMeat[] = [
-  { id: 'meat-1', number: 1, scriptStart: 'Banana extract has potassium + vitamin...', fullScript: 'Banana extract has potassium + vitamin B6 that your skin actually absorbs. Layer 1 hydrates, layer 2 repairs, layer 3 seals. Most brands skip layers 2 and 3.', createdAt: '2026-02-10T10:00:00Z' },
-  { id: 'meat-2', number: 2, scriptStart: 'Two weeks in and my skin texture...', fullScript: 'Two weeks in and my skin texture completely changed. The smoothie mix + bright serum combo is insane. My followers keep DM-ing me about it.', createdAt: '2026-02-14T10:00:00Z' },
-  { id: 'meat-3', number: 3, scriptStart: 'Their clinical study: 89% saw results...', fullScript: 'Their clinical study: 89% saw results in 14 days. But the real secret is the collagen powder — mix it in your morning smoothie and your skin glows from the inside out.', createdAt: '2026-02-20T10:00:00Z' },
+  { id: 'meat-1', number: 1, scriptStart: 'Hyaluronic acid alone doesn\'t cut it...', fullScript: 'Hyaluronic acid alone doesn\'t cut it. You need it layered with niacinamide and peptides. Layer 1 hydrates, layer 2 repairs, layer 3 seals. Most brands skip layers 2 and 3.', createdAt: '2026-02-10T10:00:00Z' },
+  { id: 'meat-2', number: 2, scriptStart: 'Two weeks in and my skin texture...', fullScript: 'Two weeks in and my skin texture completely changed. The retinol night repair + vitamin C serum combo is insane. My followers keep DM-ing me about it.', createdAt: '2026-02-14T10:00:00Z' },
+  { id: 'meat-3', number: 3, scriptStart: 'Their clinical study: 89% saw results...', fullScript: 'Their clinical study: 89% saw results in 14 days. The SPF is lightweight, no white cast, and it layers perfectly under makeup. I\'ve tried 30+ sunscreens — this one wins.', createdAt: '2026-02-20T10:00:00Z' },
 ];
 
 export const MOCK_SAVED_CTAS: SavedCTA[] = [
-  { id: 'cta-1', number: 1, scriptStart: 'Link in bio — use code NANO20 for...', fullScript: 'Link in bio — use code NANO20 for 20% off your first order.', createdAt: '2026-02-10T10:00:00Z' },
-  { id: 'cta-2', number: 2, scriptStart: 'Tap the link below before they sell out...', fullScript: 'Tap the link below before they sell out again. The Bright Serum sold out 3x last month.', createdAt: '2026-02-14T10:00:00Z' },
-  { id: 'cta-3', number: 3, scriptStart: 'Comment BANANA and I\'ll DM you the...', fullScript: 'Comment BANANA and I\'ll DM you the link directly.', createdAt: '2026-02-20T10:00:00Z' },
+  { id: 'cta-1', number: 1, scriptStart: 'Link in bio — use code GLOW20 for...', fullScript: 'Link in bio — use code GLOW20 for 20% off your first order.', createdAt: '2026-02-10T10:00:00Z' },
+  { id: 'cta-2', number: 2, scriptStart: 'Tap the link below before they sell out...', fullScript: 'Tap the link below before they sell out again. The Vitamin C Serum sold out 3x last month.', createdAt: '2026-02-14T10:00:00Z' },
+  { id: 'cta-3', number: 3, scriptStart: 'Comment GLOW and I\'ll DM you the...', fullScript: 'Comment GLOW and I\'ll DM you the link directly.', createdAt: '2026-02-20T10:00:00Z' },
 ];
 
 export const MOCK_SAVED_CREATORS: SavedCreator[] = [
@@ -971,22 +971,22 @@ export interface MockProduct {
 }
 
 export const STORE_LOGO_URL = '/products/store-logo.svg';
-export const STORE_NAME = 'Nano Banana';
-export const STORE_DOMAIN = 'nanobanana.com';
+export const STORE_NAME = 'Glow Theory';
+export const STORE_DOMAIN = 'glowtheory.com';
 
 export const MOCK_PRODUCTS: MockProduct[] = [
-  { id: 'gid://shopify/Product/1', title: 'Banana Bright Serum', handle: 'banana-bright-serum', status: 'active', productType: 'Skincare', vendor: 'Nano Banana', priceMin: 49.99, priceMax: 49.99, featuredImageUrl: '/products/banana-bright-serum.png', totalInventory: 342 },
-  { id: 'gid://shopify/Product/2', title: 'Nano Glow Drops', handle: 'nano-glow-drops', status: 'active', productType: 'Skincare', vendor: 'Nano Banana', priceMin: 34.99, priceMax: 34.99, featuredImageUrl: '/products/nano-glow-drops.png', totalInventory: 518 },
-  { id: 'gid://shopify/Product/3', title: 'Banana Peel Mask', handle: 'banana-peel-mask', status: 'active', productType: 'Skincare', vendor: 'Nano Banana', priceMin: 42.00, priceMax: 42.00, featuredImageUrl: '/products/banana-peel-mask.png', totalInventory: 203 },
-  { id: 'gid://shopify/Product/4', title: 'Power Smoothie Mix', handle: 'power-smoothie-mix', status: 'active', productType: 'Supplements', vendor: 'Nano Banana', priceMin: 56.00, priceMax: 56.00, featuredImageUrl: '/products/power-smoothie-mix.png', totalInventory: 167 },
-  { id: 'gid://shopify/Product/5', title: 'Recovery Balm', handle: 'recovery-balm', status: 'active', productType: 'Body Care', vendor: 'Nano Banana', priceMin: 29.99, priceMax: 29.99, featuredImageUrl: '/products/recovery-balm.png', totalInventory: 891 },
-  { id: 'gid://shopify/Product/6', title: 'Energy Bites (12-pack)', handle: 'energy-bites', status: 'active', productType: 'Supplements', vendor: 'Nano Banana', priceMin: 38.00, priceMax: 38.00, featuredImageUrl: '/products/energy-bites.png', totalInventory: 124 },
-  { id: 'gid://shopify/Product/7', title: 'Collagen Banana Powder', handle: 'collagen-powder', status: 'active', productType: 'Supplements', vendor: 'Nano Banana', priceMin: 44.99, priceMax: 44.99, featuredImageUrl: '/products/collagen-powder.png', totalInventory: 456 },
-  { id: 'gid://shopify/Product/8', title: 'Banana Lip Butter', handle: 'banana-lip-butter', status: 'active', productType: 'Body Care', vendor: 'Nano Banana', priceMin: 18.00, priceMax: 18.00, featuredImageUrl: '/products/banana-lip-butter.png', totalInventory: 289 },
-  { id: 'gid://shopify/Product/9', title: 'Extract Toner', handle: 'extract-toner', status: 'active', productType: 'Skincare', vendor: 'Nano Banana', priceMin: 32.00, priceMax: 32.00, featuredImageUrl: '/products/extract-toner.png', totalInventory: 78 },
-  { id: 'gid://shopify/Product/10', title: 'Hair Repair Oil', handle: 'hair-repair-oil', status: 'active', productType: 'Hair Care', vendor: 'Nano Banana', priceMin: 24.99, priceMax: 24.99, featuredImageUrl: '/products/hair-repair-oil.png', totalInventory: 634 },
-  { id: 'gid://shopify/Product/11', title: 'Tropical Body Butter', handle: 'tropical-body-butter', status: 'active', productType: 'Body Care', vendor: 'Nano Banana', priceMin: 36.00, priceMax: 36.00, featuredImageUrl: '/products/tropical-body-butter.png', totalInventory: 312 },
-  { id: 'gid://shopify/Product/12', title: 'Nano Vitamin Gummies', handle: 'nano-vitamin-gummies', status: 'active', productType: 'Supplements', vendor: 'Nano Banana', priceMin: 28.99, priceMax: 28.99, featuredImageUrl: '/products/nano-vitamin-gummies.png', totalInventory: 445 },
+  { id: 'gid://shopify/Product/1', title: 'Vitamin C Brightening Serum', handle: 'vitamin-c-brightening-serum', status: 'active', productType: 'Skincare', vendor: 'Glow Theory', priceMin: 49.99, priceMax: 49.99, featuredImageUrl: '/products/banana-bright-serum.png', totalInventory: 342 },
+  { id: 'gid://shopify/Product/2', title: 'Hydra Glow Drops', handle: 'hydra-glow-drops', status: 'active', productType: 'Skincare', vendor: 'Glow Theory', priceMin: 34.99, priceMax: 34.99, featuredImageUrl: '/products/nano-glow-drops.png', totalInventory: 518 },
+  { id: 'gid://shopify/Product/3', title: 'AHA/BHA Exfoliating Mask', handle: 'aha-bha-exfoliating-mask', status: 'active', productType: 'Skincare', vendor: 'Glow Theory', priceMin: 42.00, priceMax: 42.00, featuredImageUrl: '/products/banana-peel-mask.png', totalInventory: 203 },
+  { id: 'gid://shopify/Product/4', title: 'Collagen Peptide Powder', handle: 'collagen-peptide-powder', status: 'active', productType: 'Supplements', vendor: 'Glow Theory', priceMin: 56.00, priceMax: 56.00, featuredImageUrl: '/products/power-smoothie-mix.png', totalInventory: 167 },
+  { id: 'gid://shopify/Product/5', title: 'Recovery Balm', handle: 'recovery-balm', status: 'active', productType: 'Body Care', vendor: 'Glow Theory', priceMin: 29.99, priceMax: 29.99, featuredImageUrl: '/products/recovery-balm.png', totalInventory: 891 },
+  { id: 'gid://shopify/Product/6', title: 'SPF 50 Daily Shield', handle: 'spf-50-daily-shield', status: 'active', productType: 'Skincare', vendor: 'Glow Theory', priceMin: 38.00, priceMax: 38.00, featuredImageUrl: '/products/energy-bites.png', totalInventory: 124 },
+  { id: 'gid://shopify/Product/7', title: 'Retinol Night Repair', handle: 'retinol-night-repair', status: 'active', productType: 'Skincare', vendor: 'Glow Theory', priceMin: 44.99, priceMax: 44.99, featuredImageUrl: '/products/collagen-powder.png', totalInventory: 456 },
+  { id: 'gid://shopify/Product/8', title: 'Peptide Lip Treatment', handle: 'peptide-lip-treatment', status: 'active', productType: 'Body Care', vendor: 'Glow Theory', priceMin: 18.00, priceMax: 18.00, featuredImageUrl: '/products/banana-lip-butter.png', totalInventory: 289 },
+  { id: 'gid://shopify/Product/9', title: 'Niacinamide Toner', handle: 'niacinamide-toner', status: 'active', productType: 'Skincare', vendor: 'Glow Theory', priceMin: 32.00, priceMax: 32.00, featuredImageUrl: '/products/extract-toner.png', totalInventory: 78 },
+  { id: 'gid://shopify/Product/10', title: 'Rosehip Hair Oil', handle: 'rosehip-hair-oil', status: 'active', productType: 'Hair Care', vendor: 'Glow Theory', priceMin: 24.99, priceMax: 24.99, featuredImageUrl: '/products/hair-repair-oil.png', totalInventory: 634 },
+  { id: 'gid://shopify/Product/11', title: 'Shea Body Butter', handle: 'shea-body-butter', status: 'active', productType: 'Body Care', vendor: 'Glow Theory', priceMin: 36.00, priceMax: 36.00, featuredImageUrl: '/products/tropical-body-butter.png', totalInventory: 312 },
+  { id: 'gid://shopify/Product/12', title: 'Beauty Gummies (60ct)', handle: 'beauty-gummies', status: 'active', productType: 'Supplements', vendor: 'Glow Theory', priceMin: 28.99, priceMax: 28.99, featuredImageUrl: '/products/nano-vitamin-gummies.png', totalInventory: 445 },
 ];
 
 export function getScaledData(range: DateRange): ScaledDashboardData {

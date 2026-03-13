@@ -248,8 +248,8 @@ const StoreCard: React.FC<{ selected: boolean; onClick: () => void }> = ({ selec
         onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
     </div>
     <div className="flex-1 min-w-0">
-      <p className="text-[13px] text-white font-medium">{STORE_NAME} — Store Landing Page</p>
-      <p className="text-[11px] text-zinc-500 mt-0.5">Track visits to your store homepage (not a specific product)</p>
+      <p className="text-[13px] text-white font-medium">Link directly to your Shopify store</p>
+      <p className="text-[11px] text-zinc-500 mt-0.5">Send traffic to your store homepage instead of a specific product</p>
     </div>
     {selected && (
       <span className="text-[10px] text-[#00FF94] font-mono px-2 py-0.5 rounded border border-[#00FF94]/30 bg-[#00FF94]/10 flex-shrink-0">selected</span>
@@ -362,7 +362,7 @@ const CreateLinkView: React.FC<CreateLinkViewProps> = ({ onBack, onLinkCreated }
   const step1Complete = storeSelected || !!selectedProduct || customUrl.trim().length > 0;
 
   const step1Summary = useMemo(() => {
-    if (storeSelected) return `${STORE_NAME} — Store Landing Page`;
+    if (storeSelected) return `${STORE_NAME} — Store Homepage`;
     if (selectedProduct) return selectedProduct.title;
     if (customUrl.trim()) return customUrl.trim();
     return '';

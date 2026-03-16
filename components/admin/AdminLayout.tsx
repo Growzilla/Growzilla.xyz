@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import { ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/router';
+import { ArrowRightOnRectangleIcon, CircleStackIcon } from '@heroicons/react/24/outline';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -8,6 +9,9 @@ interface AdminLayoutProps {
 }
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children, onLogout }) => {
+  const router = useRouter();
+  const isDbPage = router.pathname === '/admin/database';
+
   return (
     <div className="min-h-screen bg-zilla-black text-white">
       {/* Grid background */}
@@ -28,13 +32,27 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, onLogout }) => {
               </span>
             </Link>
 
-            <button
-              onClick={onLogout}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
-            >
-              <ArrowRightOnRectangleIcon className="w-4 h-4" />
-              <span className="hidden sm:inline">Logout</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <Link
+                href="/admin/database"
+                className={`flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                  isDbPage
+                    ? 'text-zilla-neon bg-zilla-neon/10'
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <CircleStackIcon className="w-4 h-4" />
+                <span className="hidden sm:inline">Database</span>
+              </Link>
+
+              <button
+                onClick={onLogout}
+                className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
+              >
+                <ArrowRightOnRectangleIcon className="w-4 h-4" />
+                <span className="hidden sm:inline">Logout</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>

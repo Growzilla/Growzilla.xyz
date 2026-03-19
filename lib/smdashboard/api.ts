@@ -56,10 +56,24 @@ export function isLoggedIn(): boolean {
 }
 
 // UTM Links
-export async function generateUTMLink(platform: string, contentType: string, productUrl?: string) {
+export async function generateUTMLink(
+  platform: string,
+  contentType: string,
+  productUrl?: string,
+  hookNumber?: number,
+  meatNumber?: number,
+  ctaNumber?: number,
+) {
   return apiFetch('/api/utm/generate', {
     method: 'POST',
-    body: JSON.stringify({ platform, content_type: contentType, product_url: productUrl || null }),
+    body: JSON.stringify({
+      platform,
+      content_type: contentType,
+      product_url: productUrl || null,
+      hook_number: hookNumber || null,
+      meat_number: meatNumber || null,
+      cta_number: ctaNumber || null,
+    }),
   });
 }
 

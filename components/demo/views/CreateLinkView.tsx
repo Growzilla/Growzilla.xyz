@@ -380,19 +380,20 @@ const CreateLinkView: React.FC<CreateLinkViewProps> = ({ onBack, onLinkCreated }
   const ctaNum = ctas.find((c) => c.id === selectedCta)?.number;
   const creator = creators.find((c) => c.id === selectedCreator);
 
+  // Simulate compact ?gz= code (deterministic from selections for stable preview)
+  const demoShortCode = useMemo(() => {
+    const seed = `${channel}-${contentType}-${creator?.handle || ''}-${hookNum || 0}-${meatNum || 0}-${ctaNum || 0}`;
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+      hash = ((hash << 5) - hash + seed.charCodeAt(i)) | 0;
+    }
+    return Math.abs(hash).toString(36).slice(0, 6).padEnd(6, 'x');
+  }, [channel, contentType, creator, hookNum, meatNum, ctaNum]);
+
   const generatedUrl = useMemo(() => {
-    const params = new URLSearchParams({
-      utm_source: channel,
-      utm_medium: 'social',
-      utm_content: contentType,
-      ...(creator && { utm_creator: creator.handle.replace('@', '') }),
-      ...(hookNum && { utm_hook: String(hookNum) }),
-      ...(meatNum && { utm_meat: String(meatNum) }),
-      ...(ctaNum && { utm_cta: String(ctaNum) }),
-    });
     const separator = baseUrl.includes('?') ? '&' : '?';
-    return `${baseUrl}${separator}${params.toString()}`;
-  }, [baseUrl, channel, contentType, creator, hookNum, meatNum, ctaNum]);
+    return `${baseUrl}${separator}gz=${demoShortCode}`;
+  }, [baseUrl, demoShortCode]);
 
   const handleStoreSelect = useCallback(() => {
     setStoreSelected(true);
@@ -433,11 +434,16 @@ const CreateLinkView: React.FC<CreateLinkViewProps> = ({ onBack, onLinkCreated }
       content_type: contentType,
       product_url: storeSelected ? null : baseUrl,
       full_url: generatedUrl,
+      short_code: demoShortCode,
+      short_url: generatedUrl,
       content_post_url: contentUrl.trim() || null,
       status: 'active',
       created_at: new Date().toISOString(),
       creator_name: creator?.name || 'Unknown',
       creator_username: creator?.handle.replace('@', '') || 'unknown',
+      hook_number: hookNum ?? null,
+      meat_number: meatNum ?? null,
+      cta_number: ctaNum ?? null,
       total_revenue: 0,
       total_orders: 0,
     };

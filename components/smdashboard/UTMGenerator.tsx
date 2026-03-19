@@ -89,16 +89,15 @@ const UTMGenerator: React.FC<UTMGeneratorProps> = ({ onLinkSaved, onClose, demo 
     try {
       if (demo) {
         await new Promise((r) => setTimeout(r, 600));
-        const shortId = Math.random().toString(36).slice(2, 8);
-        const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+        const shortCode = Math.random().toString(36).slice(2, 8);
         const base = productUrl || 'https://yourstore.com';
-        const fakeUrl = `${base}?utm_source=${platform}&utm_medium=social&utm_campaign=brand_creator&utm_content=${contentType}_${dateStr}_${shortId}`;
-        setGeneratedLink({ id: `demo-${shortId}`, url: fakeUrl });
+        const fakeUrl = `${base}?gz=${shortCode}`;
+        setGeneratedLink({ id: `demo-${shortCode}`, url: fakeUrl });
         setStep('generated');
         return;
       }
       const link = await generateUTMLink(platform, contentType, productUrl || undefined);
-      setGeneratedLink(link);
+      setGeneratedLink({ id: link.id, url: link.short_url });
       setStep('generated');
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to generate link';

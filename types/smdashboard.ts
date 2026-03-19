@@ -138,11 +138,16 @@ export interface UTMLink {
   content_type: PostType;
   product_url: string | null;
   full_url: string;
+  short_code: string;
+  short_url: string;
   content_post_url: string | null;
   status: 'pending' | 'active';
   created_at: string;
   creator_name: string;
   creator_username: string;
+  hook_number: number | null;
+  meat_number: number | null;
+  cta_number: number | null;
   total_revenue: number;
   total_orders: number;
 }

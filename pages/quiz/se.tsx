@@ -484,7 +484,6 @@ export default function QuizSE() {
         if (!result) return null;
         const bucketColor = BUCKET_COLORS[result.bucket];
         const bucketLabel = BUCKET_LABELS[result.bucket];
-        const dashboardUrl = `/organicdashboard?storeUrl=${encodeURIComponent(storeUrl)}&source=quiz`;
         return (
           <div className="w-full max-w-lg mx-auto px-4">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}

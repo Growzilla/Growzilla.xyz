@@ -32,6 +32,7 @@ import { ProductTour, GROWZILLA_TOUR_STEPS } from '@/components/onboarding/Produ
 import { SetupChecklist, DEFAULT_CHECKLIST_ITEMS, type ChecklistItem } from '@/components/onboarding/SetupChecklist';
 import { useOnboardingTracker } from '@/hooks/useEventTracker';
 import DevModePanel from './DevModePanel';
+import MomentumBanner, { MOCK_MOMENTUM_WITH_DATA } from './MomentumBanner';
 import { getActiveShop, type ShopInfo } from './StoreSelector';
 
 // ─── Placeholder Data (until Airtable env vars are connected) ─────────────────
@@ -715,6 +716,11 @@ const WhopDashboardShell: React.FC = () => {
 
   return (
     <WhopLayout activeView={activeView} onViewChange={setActiveView} onShopChange={handleShopChange}>
+      {/* Momentum banner — shows on overview tab */}
+      {activeView === 'overview' && (
+        <MomentumBanner data={MOCK_MOMENTUM_WITH_DATA} />
+      )}
+
       {/* Controls bar */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div>

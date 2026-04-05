@@ -31,6 +31,8 @@ import ProductView from './views/ProductView';
 import { ProductTour, GROWZILLA_TOUR_STEPS } from '@/components/onboarding/ProductTour';
 import { SetupChecklist, DEFAULT_CHECKLIST_ITEMS, type ChecklistItem } from '@/components/onboarding/SetupChecklist';
 import { useOnboardingTracker } from '@/hooks/useEventTracker';
+import DevModePanel from './DevModePanel';
+import { getActiveShop, type ShopInfo } from './StoreSelector';
 
 // ─── Placeholder Data (until Airtable env vars are connected) ─────────────────
 
@@ -516,6 +518,29 @@ const WhopDashboardShell: React.FC = () => {
   const [data, setData] = useState<WhopDashboardData | null>(null);
   const [femfitData, setFemfitData] = useState<FemFitFunnelData | null>(null);
 
+  // --- Active shop context ---
+  const [activeShopInfo, setActiveShopInfo] = useState<ShopInfo | null>(null);
+  const [isTestStore, setIsTestStore] = useState(false);
+
+  useEffect(() => {
+    const shop = getActiveShop();
+    if (shop) setActiveShopInfo(shop);
+
+    // Check URL param for shop
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const shopParam = params.get('shop');
+      if (shopParam) {
+        setActiveShopInfo((prev) => prev ?? { domain: shopParam });
+      }
+    }
+  }, []);
+
+  const handleShopChange = useCallback((shop: ShopInfo) => {
+    setActiveShopInfo(shop);
+    // Refresh data for new shop (future: re-fetch from API)
+  }, []);
+
   // --- Onboarding: tour + checklist + personalization ---
   const [showTour, setShowTour] = useState(false);
   const [checklistItems, setChecklistItems] = useState<ChecklistItem[]>([]);
@@ -689,7 +714,7 @@ const WhopDashboardShell: React.FC = () => {
   };
 
   return (
-    <WhopLayout activeView={activeView} onViewChange={setActiveView}>
+    <WhopLayout activeView={activeView} onViewChange={setActiveView} onShopChange={handleShopChange}>
       {/* Controls bar */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <div>
@@ -831,6 +856,16 @@ const WhopDashboardShell: React.FC = () => {
             if (itemId === 'add_creator') setActiveView('overview' as WhopView);
             if (itemId === 'create_link') setActiveView('overview' as WhopView);
           }}
+        />
+      )}
+
+      {/* Dev mode panel — only visible on test stores */}
+      {activeShopInfo && (
+        <DevModePanel
+          shopDomain={activeShopInfo.domain}
+          shopId={activeShopInfo.id || ''}
+          isTestStore={isTestStore}
+          lastSyncAt={null}
         />
       )}
     </WhopLayout>

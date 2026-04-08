@@ -151,6 +151,10 @@ const SE = {
   leakBreakdown: 'Intäktsläcka per kategori',
   ctaDashboard: 'Utforska live-dashboarden',
   ctaBook: 'Boka en gratis 15-min genomgång',
+  // Install CTA (final step)
+  ctaInstall: 'Installera Growzilla på din Shopify-butik',
+  ctaInstallSub: 'Gratis att komma igång. Se vilken content som driver försäljning.',
+  ctaNotShopify: 'Inte Shopify? Boka ett samtal',
 };
 
 /* Animation variants */
@@ -480,7 +484,6 @@ export default function QuizSE() {
         if (!result) return null;
         const bucketColor = BUCKET_COLORS[result.bucket];
         const bucketLabel = BUCKET_LABELS[result.bucket];
-        const dashboardUrl = `/organicdashboard?storeUrl=${encodeURIComponent(storeUrl)}&source=quiz`;
         return (
           <div className="w-full max-w-lg mx-auto px-4">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
@@ -512,17 +515,25 @@ export default function QuizSE() {
                   </p>
                 </div>
               </div>
-              <div className="w-full space-y-3">
-                <motion.a href={dashboardUrl} target="_blank" rel="noopener noreferrer"
+              {/* Shopify Install CTA */}
+              <div className="w-full space-y-4">
+                <motion.a
+                  href="https://admin.shopify.com/?organization_id=188510280&no_redirect=true&redirect=/oauth/redirect_from_developer_dashboard?client_id%3D105493379cce87ef972e01a90be856b4"
                   whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                  className="btn-zilla w-full py-4 rounded-xl text-base text-center block">
-                  {SE.ctaDashboard} &rarr;
+                  className="btn-zilla w-full py-5 rounded-xl text-base sm:text-lg text-center block font-semibold">
+                  {SE.ctaInstall} &rarr;
                 </motion.a>
-                <motion.a href="https://calendly.com/albert-growzilla/growzilla-demo" target="_blank" rel="noopener noreferrer"
-                  whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                  className="w-full py-4 rounded-xl text-base text-center block border border-zilla-neon/30 bg-zilla-neon/5 text-zilla-neon font-medium hover:bg-zilla-neon/10 transition-colors">
-                  {SE.ctaBook} &rarr;
-                </motion.a>
+                <p className="text-sm text-gray-400 text-center">{SE.ctaInstallSub}</p>
+
+                <div className="pt-4 border-t border-white/[0.06]">
+                  <motion.a
+                    href="https://calendly.com/albert-growzilla/growzilla-demo"
+                    target="_blank" rel="noopener noreferrer"
+                    whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                    className="w-full py-3 rounded-xl text-sm text-center block text-gray-400 hover:text-white transition-colors">
+                    {SE.ctaNotShopify} &rarr;
+                  </motion.a>
+                </div>
               </div>
             </motion.div>
           </div>

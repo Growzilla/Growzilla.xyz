@@ -13,9 +13,9 @@ const API_BASE = process.env.ECOMDASH_API_URL || 'https://ecomdash-api.onrender.
 function getAdminKey(): string {
   // Admin key = first 16 chars of backend SECRET_KEY
   // We store it as BACKEND_ADMIN_KEY in Vercel env, or derive from SECRET_KEY
-  const key = process.env.BACKEND_ADMIN_KEY;
+  const key = process.env.BACKEND_ADMIN_KEY || process.env.ADMIN_API_KEY || process.env.ADMIN_PASSWORD;
   if (!key) {
-    throw new Error('BACKEND_ADMIN_KEY env var is required');
+    throw new Error('BACKEND_ADMIN_KEY or ADMIN_PASSWORD env var is required');
   }
   return key;
 }

@@ -13,7 +13,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 const API_BASE = process.env.ECOMDASH_API_URL || 'https://ecomdash-api.onrender.com';
-const ADMIN_KEY = process.env.ADMIN_API_KEY || '';
+const ADMIN_KEY = process.env.ADMIN_API_KEY || process.env.ADMIN_PASSWORD || '';
 
 interface SetupBody {
   store: string;

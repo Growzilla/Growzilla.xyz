@@ -293,3 +293,95 @@ export async function bootstrapOrg(shopId: string, data: BootstrapOrgRequest): P
 export async function syncShop(shopId: string) {
   return apiFetch<unknown>(`/api/shops/${shopId}/sync`, { method: 'POST' });
 }
+
+// ---------------------------------------------------------------------------
+// Shops
+// ---------------------------------------------------------------------------
+
+export interface ShopResponse {
+  id: string;
+  domain: string;
+  name?: string;
+  access_token?: string;
+  scopes?: string;
+  is_test_store?: boolean;
+  deep_mode_enabled?: boolean;
+  clarity_project_id?: string | null;
+  last_sync_at?: string | null;
+  created_at?: string;
+  updated_at?: string;
+  org_id?: string;
+}
+
+export async function getShop(shopDomain: string): Promise<ShopResponse> {
+  return apiFetch<ShopResponse>(`/api/shops/${encodeURIComponent(shopDomain)}`);
+}
+
+export async function toggleDevMode(shopDomain: string, enabled: boolean): Promise<ShopResponse> {
+  return apiFetch<ShopResponse>(`/api/shops/${encodeURIComponent(shopDomain)}`, {
+    method: 'PATCH',
+    body: { deepModeEnabled: enabled },
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Onboarding
+// ---------------------------------------------------------------------------
+
+export interface OnboardingProfileRequest {
+  business_name?: string;
+  industry?: string;
+  monthly_revenue?: string;
+  main_goal?: string;
+  creator_count?: number;
+  ad_platforms?: string[];
+  referral_source?: string;
+}
+
+export interface OnboardingProfileResponse {
+  id: string;
+  shop_id: string;
+  business_name?: string;
+  industry?: string;
+  monthly_revenue?: string;
+  main_goal?: string;
+  creator_count?: number;
+  ad_platforms?: string[];
+  referral_source?: string;
+  completed_at?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function postOnboardingProfile(
+  shopId: string,
+  profile: OnboardingProfileRequest
+): Promise<OnboardingProfileResponse> {
+  return apiFetch<OnboardingProfileResponse>(`/api/shops/${shopId}/onboarding`, {
+    method: 'POST',
+    body: profile,
+  });
+}
+
+export async function getOnboardingProfile(shopId: string): Promise<OnboardingProfileResponse> {
+  return apiFetch<OnboardingProfileResponse>(`/api/shops/${shopId}/onboarding`);
+}
+
+// ---------------------------------------------------------------------------
+// Events
+// ---------------------------------------------------------------------------
+
+export interface TrackEventPayload {
+  event: string;
+  shop_id?: string;
+  step_number?: number;
+  properties?: Record<string, unknown>;
+  session_id?: string;
+}
+
+export async function postEvent(payload: TrackEventPayload): Promise<void> {
+  await apiFetch<unknown>('/api/events', {
+    method: 'POST',
+    body: payload,
+  });
+}

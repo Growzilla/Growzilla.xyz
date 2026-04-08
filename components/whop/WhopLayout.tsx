@@ -3,11 +3,13 @@
 import React from 'react';
 import Link from 'next/link';
 import type { WhopView } from '@/types/whop';
+import StoreSelector, { type ShopInfo } from './StoreSelector';
 
 interface WhopLayoutProps {
   children: React.ReactNode;
   activeView: WhopView;
   onViewChange: (view: WhopView) => void;
+  onShopChange?: (shop: ShopInfo) => void;
 }
 
 const NAV_ITEMS: { id: WhopView; label: string; icon: React.ReactNode }[] = [
@@ -67,7 +69,7 @@ const NAV_ITEMS: { id: WhopView; label: string; icon: React.ReactNode }[] = [
   },
 ];
 
-const WhopLayout: React.FC<WhopLayoutProps> = ({ children, activeView, onViewChange }) => {
+const WhopLayout: React.FC<WhopLayoutProps> = ({ children, activeView, onViewChange, onShopChange }) => {
   return (
     <div className="min-h-screen bg-zilla-black text-white">
       {/* Grid background */}
@@ -89,7 +91,8 @@ const WhopLayout: React.FC<WhopLayoutProps> = ({ children, activeView, onViewCha
             </Link>
 
             <div className="flex items-center gap-3">
-              <span className="text-sm text-gray-500 px-3 py-1.5 rounded-lg bg-white/5 border border-gray-800/50 font-mono">
+              <StoreSelector onShopChange={onShopChange} />
+              <span className="hidden sm:inline-flex text-sm text-gray-500 px-3 py-1.5 rounded-lg bg-white/5 border border-gray-800/50 font-mono">
                 Attribution Hub
               </span>
             </div>

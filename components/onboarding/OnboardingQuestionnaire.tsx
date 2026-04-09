@@ -7,9 +7,14 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 export interface OnboardingAnswers {
   discovery?: string
-  mainGoal?: string
+  revenueNow?: string
+  revenueGoal?: string
+  marketingChannels?: string[]
   creatorWorkflow?: string
   creatorCount?: string
+  biggestStruggle?: string
+  // Legacy fields (kept for backward compat)
+  mainGoal?: string
   paidAds?: string[]
   firstCreator?: { handle: string; platform: string } | null
   trackingLink?: string | null
@@ -36,8 +41,11 @@ interface StepConfig {
   key: keyof OnboardingAnswers
   title: string
   subtitle?: string
-  type: 'single' | 'multi' | 'creator-form' | 'link-form' | 'completion'
+  type: 'single' | 'multi' | 'dual-select' | 'completion'
   options?: { value: string; label: string }[]
+  /** For dual-select: second set of options */
+  options2?: { value: string; label: string }[]
+  options2Label?: string
 }
 
 const STEPS: StepConfig[] = [
@@ -49,72 +57,71 @@ const STEPS: StepConfig[] = [
       { value: 'app_store', label: 'Shopify App Store' },
       { value: 'google', label: 'Google search' },
       { value: 'social', label: 'Social media' },
-      { value: 'friend', label: 'Friend or colleague' },
-      { value: 'agency', label: 'Agency recommendation' },
+      { value: 'direct_link', label: 'Someone sent me a link' },
+      { value: 'outreach', label: 'Direct outreach from Growzilla' },
+      { value: 'agency', label: 'Agency recommended' },
       { value: 'other', label: 'Other' },
     ],
   },
   {
-    key: 'mainGoal',
-    title: "What's your main goal?",
-    type: 'single',
+    key: 'revenueNow',
+    title: 'Where are you now — and where do you want to go?',
+    subtitle: 'This helps us set a goal for your dashboard',
+    type: 'dual-select',
     options: [
-      { value: 'creator_sales', label: 'See which creators drive sales' },
-      { value: 'reduce_cac', label: 'Reduce customer acquisition cost' },
-      { value: 'meta_data', label: 'Better data for Meta ad decisions' },
-      { value: 'all', label: 'All of the above' },
+      { value: '$0-5k', label: '$0 – $5k/mo' },
+      { value: '$5k-25k', label: '$5k – $25k/mo' },
+      { value: '$25k-100k', label: '$25k – $100k/mo' },
+      { value: '$100k-500k', label: '$100k – $500k/mo' },
+      { value: '$500k+', label: '$500k+/mo' },
+    ],
+    options2: [
+      { value: '$5k-25k', label: '$5k – $25k/mo' },
+      { value: '$25k-100k', label: '$25k – $100k/mo' },
+      { value: '$100k-500k', label: '$100k – $500k/mo' },
+      { value: '$500k+', label: '$500k+/mo' },
+      { value: '$1M+', label: '$1M+/mo' },
+    ],
+    options2Label: 'Revenue goal',
+  },
+  {
+    key: 'marketingChannels',
+    title: 'Where do you market today?',
+    subtitle: 'Select all that apply',
+    type: 'multi',
+    options: [
+      { value: 'instagram', label: 'Instagram' },
+      { value: 'tiktok', label: 'TikTok' },
+      { value: 'youtube', label: 'YouTube' },
+      { value: 'facebook_ads', label: 'Facebook / Meta Ads' },
+      { value: 'google_ads', label: 'Google Ads' },
+      { value: 'email', label: 'Email marketing' },
+      { value: 'none', label: 'None yet' },
     ],
   },
   {
     key: 'creatorWorkflow',
-    title: 'How do you work with creators?',
+    title: 'Do you work with content creators?',
     type: 'single',
     options: [
-      { value: 'not_yet', label: "I don't yet" },
-      { value: 'manual', label: 'DMs and manual tracking' },
-      { value: 'agency', label: 'Through an agency' },
-      { value: 'platform', label: 'Through a platform' },
+      { value: 'yes_active', label: 'Yes, actively posting content for us' },
+      { value: 'starting', label: 'Starting to — reaching out now' },
+      { value: 'no', label: 'No, we do content in-house' },
+      { value: 'interested', label: 'No, but interested in starting' },
     ],
   },
   {
-    key: 'creatorCount',
-    title: 'How many creators?',
+    key: 'biggestStruggle',
+    title: "What's your biggest struggle right now?",
+    subtitle: 'This shapes your AI insights',
     type: 'single',
     options: [
-      { value: '0', label: '0 (getting started)' },
-      { value: '1-5', label: '1–5' },
-      { value: '6-20', label: '6–20' },
-      { value: '20+', label: '20+' },
+      { value: 'dont_know_what_works', label: "Don't know which content actually drives sales" },
+      { value: 'cant_track_ads', label: "Can't track which ads lead to purchases" },
+      { value: 'spending_too_much', label: 'Spending too much on ads with unclear ROI' },
+      { value: 'need_creators', label: 'Need more content creators' },
+      { value: 'growing_blind', label: "Growing but don't know why" },
     ],
-  },
-  {
-    key: 'paidAds',
-    title: 'Do you run paid ads?',
-    subtitle: 'Select all that apply',
-    type: 'multi',
-    options: [
-      { value: 'meta', label: 'Meta / Facebook Ads' },
-      { value: 'tiktok', label: 'TikTok Ads' },
-      { value: 'google', label: 'Google Ads' },
-      { value: 'none', label: 'No paid ads yet' },
-    ],
-  },
-  {
-    key: 'firstCreator',
-    title: 'Add your first creator',
-    subtitle: 'You can always add more later',
-    type: 'creator-form',
-  },
-  {
-    key: 'trackingLink',
-    title: 'Create your first tracking link',
-    subtitle: 'Share this with your creator to start tracking',
-    type: 'link-form',
-  },
-  {
-    key: 'tourChoice',
-    title: 'Your dashboard is ready',
-    type: 'completion',
   },
 ]
 
@@ -142,10 +149,8 @@ export function OnboardingQuestionnaire({
   const [direction, setDirection] = useState<'forward' | 'back'>('forward')
   const [answers, setAnswers] = useState<OnboardingAnswers>({})
   const [multiSelect, setMultiSelect] = useState<string[]>([])
-  const [creatorHandle, setCreatorHandle] = useState('')
-  const [creatorPlatform, setCreatorPlatform] = useState('instagram')
-  const [generatedLink, setGeneratedLink] = useState('')
-  const [linkCopied, setLinkCopied] = useState(false)
+  const [dualFirst, setDualFirst] = useState('')
+  const [dualSecond, setDualSecond] = useState('')
   const stepStartTime = useRef(Date.now())
 
   const currentStep = STEPS[step]
@@ -175,15 +180,8 @@ export function OnboardingQuestionnaire({
         updated = { ...updated, [key]: value }
       } else if (currentStep.type === 'multi') {
         updated = { ...updated, [key]: multiSelect }
-      } else if (currentStep.type === 'creator-form') {
-        updated = {
-          ...updated,
-          firstCreator: creatorHandle
-            ? { handle: creatorHandle, platform: creatorPlatform }
-            : null,
-        }
-      } else if (currentStep.type === 'link-form') {
-        updated = { ...updated, trackingLink: generatedLink || null }
+      } else if (currentStep.type === 'dual-select') {
+        updated = { ...updated, revenueNow: dualFirst, revenueGoal: dualSecond }
       }
 
       setAnswers(updated)
@@ -192,9 +190,12 @@ export function OnboardingQuestionnaire({
       if (step < TOTAL_STEPS - 1) {
         setDirection('forward')
         setStep((s) => s + 1)
+      } else {
+        // Last step — complete
+        onComplete(updated)
       }
     },
-    [answers, currentStep, step, multiSelect, creatorHandle, creatorPlatform, generatedLink, emitStepEvent]
+    [answers, currentStep, step, multiSelect, dualFirst, dualSecond, emitStepEvent, onComplete]
   )
 
   const goBack = useCallback(() => {
@@ -212,15 +213,6 @@ export function OnboardingQuestionnaire({
     }
   }, [step, currentStep, answers, emitStepEvent])
 
-  const handleComplete = useCallback(
-    (tourChoice: 'tour' | 'skip') => {
-      const final = { ...answers, tourChoice }
-      emitStepEvent(TOTAL_STEPS, 'tourChoice', final)
-      onComplete(final)
-    },
-    [answers, emitStepEvent, onComplete]
-  )
-
   const toggleMulti = useCallback(
     (value: string) => {
       if (value === 'none') {
@@ -236,20 +228,6 @@ export function OnboardingQuestionnaire({
     },
     []
   )
-
-  const generateLink = useCallback(() => {
-    const creator = creatorHandle || 'creator'
-    const link = `https://${shopDomain}?utm_source=${creatorPlatform}&utm_medium=creator&utm_campaign=${encodeURIComponent(creator)}`
-    setGeneratedLink(link)
-  }, [shopDomain, creatorHandle, creatorPlatform])
-
-  const copyLink = useCallback(() => {
-    if (generatedLink) {
-      navigator.clipboard.writeText(generatedLink).catch(() => {})
-      setLinkCopied(true)
-      setTimeout(() => setLinkCopied(false), 2000)
-    }
-  }, [generatedLink])
 
   const progressPct = ((step + 1) / TOTAL_STEPS) * 100
 
@@ -390,172 +368,62 @@ export function OnboardingQuestionnaire({
                 </div>
               )}
 
-              {/* Creator form */}
-              {currentStep.type === 'creator-form' && (
-                <div className="space-y-4">
+              {/* Dual select (revenue now + goal) */}
+              {currentStep.type === 'dual-select' && currentStep.options && currentStep.options2 && (
+                <div className="space-y-5">
                   <div>
-                    <label className="block text-xs font-medium mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                      Creator handle
-                    </label>
-                    <input
-                      type="text"
-                      value={creatorHandle}
-                      onChange={(e) => setCreatorHandle(e.target.value)}
-                      placeholder="@username"
-                      className="w-full px-3 py-2.5 rounded-md text-sm outline-none transition-colors duration-150"
-                      style={{
-                        backgroundColor: 'rgba(255,255,255,0.04)',
-                        border: '1px solid rgba(255,255,255,0.12)',
-                        color: '#FFFFFF',
-                      }}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium mb-1.5" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                      Platform
-                    </label>
-                    <div className="flex gap-2">
-                      {['instagram', 'tiktok', 'youtube'].map((p) => (
+                    <p className="text-xs font-medium mb-2" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                      Current monthly revenue
+                    </p>
+                    <div className="space-y-1.5">
+                      {currentStep.options.map((opt) => (
                         <button
-                          key={p}
-                          onClick={() => setCreatorPlatform(p)}
-                          className="flex-1 py-2 rounded-md text-xs font-medium capitalize transition-all duration-150"
+                          key={opt.value}
+                          onClick={() => setDualFirst(opt.value)}
+                          className="w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-150"
                           style={{
-                            backgroundColor: creatorPlatform === p ? 'rgba(0,255,148,0.08)' : '#111113',
-                            border: `1px solid ${creatorPlatform === p ? 'rgba(0,255,148,0.4)' : 'rgba(255,255,255,0.08)'}`,
-                            color: creatorPlatform === p ? '#00FF94' : 'rgba(255,255,255,0.7)',
+                            backgroundColor: dualFirst === opt.value ? 'rgba(0,255,148,0.08)' : '#111113',
+                            border: `1px solid ${dualFirst === opt.value ? 'rgba(0,255,148,0.4)' : 'rgba(255,255,255,0.08)'}`,
+                            color: '#FFFFFF',
                           }}
                         >
-                          {p}
+                          {opt.label}
                         </button>
                       ))}
                     </div>
                   </div>
-                  <button
-                    onClick={() => advance()}
-                    className="w-full py-2.5 rounded-md text-sm font-medium transition-all duration-150"
-                    style={{
-                      backgroundColor: creatorHandle ? '#00FF94' : 'rgba(255,255,255,0.06)',
-                      color: creatorHandle ? '#0A0A0B' : 'rgba(255,255,255,0.3)',
-                    }}
-                  >
-                    {creatorHandle ? 'Add creator' : 'Continue'}
-                  </button>
-                </div>
-              )}
-
-              {/* Link form */}
-              {currentStep.type === 'link-form' && (
-                <div className="space-y-4">
-                  {!generatedLink ? (
-                    <>
-                      <div
-                        className="px-4 py-3 rounded-lg text-sm"
-                        style={{
-                          backgroundColor: '#111113',
-                          border: '1px solid rgba(255,255,255,0.08)',
-                          color: 'rgba(255,255,255,0.5)',
-                        }}
-                      >
-                        <span style={{ color: 'rgba(255,255,255,0.3)' }}>Store: </span>
-                        <span style={{ color: '#FFFFFF' }}>{shopDomain}</span>
-                        {answers.firstCreator && (
-                          <>
-                            <br />
-                            <span style={{ color: 'rgba(255,255,255,0.3)' }}>Creator: </span>
-                            <span style={{ color: '#FFFFFF' }}>@{answers.firstCreator.handle}</span>
-                          </>
-                        )}
+                  {dualFirst && (
+                    <div>
+                      <p className="text-xs font-medium mb-2" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                        {currentStep.options2Label || 'Goal'}
+                      </p>
+                      <div className="space-y-1.5">
+                        {currentStep.options2.map((opt) => (
+                          <button
+                            key={opt.value}
+                            onClick={() => setDualSecond(opt.value)}
+                            className="w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-150"
+                            style={{
+                              backgroundColor: dualSecond === opt.value ? 'rgba(0,255,148,0.08)' : '#111113',
+                              border: `1px solid ${dualSecond === opt.value ? 'rgba(0,255,148,0.4)' : 'rgba(255,255,255,0.08)'}`,
+                              color: '#FFFFFF',
+                            }}
+                          >
+                            {opt.label}
+                          </button>
+                        ))}
                       </div>
-                      <button
-                        onClick={generateLink}
-                        className="w-full py-2.5 rounded-md text-sm font-medium transition-all duration-150"
-                        style={{ backgroundColor: '#00FF94', color: '#0A0A0B' }}
-                      >
-                        Generate tracking link
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <div
-                        className="px-4 py-3 rounded-lg text-xs font-mono break-all"
-                        style={{
-                          backgroundColor: '#111113',
-                          border: '1px solid rgba(0,255,148,0.2)',
-                          color: '#00FF94',
-                        }}
-                      >
-                        {generatedLink}
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={copyLink}
-                          className="flex-1 py-2.5 rounded-md text-sm font-medium transition-all duration-150"
-                          style={{
-                            backgroundColor: linkCopied ? 'rgba(0,255,148,0.1)' : '#00FF94',
-                            color: linkCopied ? '#00FF94' : '#0A0A0B',
-                            border: linkCopied ? '1px solid rgba(0,255,148,0.3)' : 'none',
-                          }}
-                        >
-                          {linkCopied ? 'Copied' : 'Copy link'}
-                        </button>
-                        <button
-                          onClick={() => advance()}
-                          className="flex-1 py-2.5 rounded-md text-sm font-medium transition-all duration-150"
-                          style={{
-                            backgroundColor: 'rgba(255,255,255,0.06)',
-                            color: '#FFFFFF',
-                            border: '1px solid rgba(255,255,255,0.08)',
-                          }}
-                        >
-                          Continue
-                        </button>
-                      </div>
-                    </>
+                    </div>
                   )}
-                </div>
-              )}
-
-              {/* Completion */}
-              {currentStep.type === 'completion' && (
-                <div className="text-center space-y-6">
-                  {/* Checkmark */}
-                  <div
-                    className="w-16 h-16 rounded-full flex items-center justify-center mx-auto"
-                    style={{ backgroundColor: 'rgba(0,255,148,0.1)' }}
-                  >
-                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                      <path
-                        d="M7 14l5 5 9-9"
-                        stroke="#00FF94"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
-                  <p
-                    className="text-sm"
-                    style={{ color: 'rgba(255,255,255,0.5)' }}
-                  >
-                    Everything is set up. Your attribution data will build as creators share links.
-                  </p>
-                  <div className="space-y-2">
+                  {dualFirst && dualSecond && (
                     <button
-                      onClick={() => handleComplete('tour')}
+                      onClick={() => advance()}
                       className="w-full py-2.5 rounded-md text-sm font-medium transition-all duration-150"
                       style={{ backgroundColor: '#00FF94', color: '#0A0A0B' }}
                     >
-                      Take a quick tour (30 sec)
+                      Continue
                     </button>
-                    <button
-                      onClick={() => handleComplete('skip')}
-                      className="w-full py-2.5 rounded-md text-sm font-medium transition-all duration-150"
-                      style={{ color: 'rgba(255,255,255,0.5)' }}
-                    >
-                      I'll explore on my own
-                    </button>
-                  </div>
+                  )}
                 </div>
               )}
             </motion.div>
@@ -563,9 +431,9 @@ export function OnboardingQuestionnaire({
         </div>
       </div>
 
-      {/* Skip link (not on completion step) */}
-      {currentStep.type !== 'completion' && (
-        <div className="pb-8 text-center">
+      {/* Skip / Finish link */}
+      <div className="pb-8 text-center">
+        {step < TOTAL_STEPS - 1 ? (
           <button
             onClick={skip}
             className="text-xs transition-colors duration-150"
@@ -573,8 +441,16 @@ export function OnboardingQuestionnaire({
           >
             Skip
           </button>
-        </div>
-      )}
+        ) : (
+          <button
+            onClick={() => advance()}
+            className="text-xs transition-colors duration-150"
+            style={{ color: 'rgba(255,255,255,0.5)' }}
+          >
+            Go to dashboard &rarr;
+          </button>
+        )}
+      </div>
     </div>
   )
 }

@@ -165,7 +165,7 @@ export default function SetupPage() {
       const key = `${STORAGE_PREFIX}${domain}`;
       const completed = localStorage.getItem(`${key}_completed`);
       if (completed === 'true') {
-        router.replace(`/whop?shop=${encodeURIComponent(domain)}`);
+        router.replace(`/dashboard?shop=${encodeURIComponent(domain)}`);
         return;
       }
 
@@ -262,7 +262,7 @@ export default function SetupPage() {
 
     // Redirect to dashboard
     setTimeout(() => {
-      router.push(`/whop?shop=${encodeURIComponent(shopData.domain)}`);
+      router.push(`/dashboard?shop=${encodeURIComponent(shopData.domain)}`);
     }, 800);
   }, [shopData, selectedPlan, mainGoal, industry, monthlyRevenue, router]);
 
@@ -279,7 +279,7 @@ export default function SetupPage() {
     const completed = localStorage.getItem(`${key}_completed`);
 
     if (completed === 'true' && savedToken) {
-      router.replace('/whop');
+      router.replace('/dashboard');
       return;
     }
 
@@ -317,7 +317,7 @@ export default function SetupPage() {
       },
       body: JSON.stringify({ shop_id: legacyShopId, store_domain: shopDomain, answers }),
     }).catch(() => {});
-    router.push('/whop');
+    router.push('/dashboard');
   }, [shopDomain, legacyShopId, legacyTracker, router]);
 
   const isStarter = tier === 'starter';

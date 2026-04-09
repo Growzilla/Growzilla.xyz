@@ -26,7 +26,7 @@ export default function SignInPage() {
     }
     getMe()
       .then(() => {
-        router.replace('/whop');
+        router.replace('/dashboard');
       })
       .catch(() => {
         setToken(null);
@@ -43,7 +43,7 @@ export default function SignInPage() {
 
     try {
       await apiLogin(domain.trim(), password);
-      router.push('/whop');
+      router.push('/dashboard');
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Login failed';
       // Simplify API error messages for users

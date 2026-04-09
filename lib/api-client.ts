@@ -307,6 +307,7 @@ export interface ShopResponse {
   is_test_store?: boolean;
   deep_mode_enabled?: boolean;
   clarity_project_id?: string | null;
+  sync_status?: string;
   last_sync_at?: string | null;
   created_at?: string;
   updated_at?: string;

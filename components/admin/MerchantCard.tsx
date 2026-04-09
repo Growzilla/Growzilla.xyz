@@ -124,14 +124,15 @@ const MerchantCard: React.FC<MerchantCardProps> = ({
           />
         )}
 
-        {shop.status === 'active' && onPreview && (
-          <button
-            onClick={() => onPreview(shop)}
+        {shop.status === 'active' && (
+          <Link
+            href={`/dashboard?shop=${encodeURIComponent(shop.domain)}`}
+            target="_blank"
             className="btn-zilla-outline text-xs py-1.5 px-3 flex items-center gap-1.5"
           >
             <EyeIcon className="w-3.5 h-3.5" />
-            Preview
-          </button>
+            Merchant View
+          </Link>
         )}
 
         {shop.shop_id && (

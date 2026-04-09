@@ -65,7 +65,9 @@ export async function getEnrichedShops(): Promise<ShopDetails[]> {
   if (cached) return cached;
 
   const registry = readShops();
+  const registryDomains = new Set(registry.map((s) => s.domain));
 
+  // Enrich registry shops via backend
   const enriched = await Promise.all(
     registry.map(async (entry): Promise<ShopDetails> => {
       try {
@@ -92,6 +94,38 @@ export async function getEnrichedShops(): Promise<ShopDetails[]> {
       }
     })
   );
+
+  // Also pull ALL shops from the backend database (catches stores installed
+  // via the Shopify app that weren't manually added to data/shops.json).
+  // Uses the admin data endpoint which requires first 16 chars of SECRET_KEY.
+  try {
+    const API_BASE = process.env.ECOMDASH_API_URL || 'https://ecomdash-api.onrender.com';
+    const adminDataKey = process.env.ADMIN_DATA_KEY || process.env.BACKEND_ADMIN_KEY || '';
+    const res = await fetch(`${API_BASE}/api/admin/data/shops`, {
+      headers: {
+        'X-Admin-Key': adminDataKey,
+        'Content-Type': 'application/json',
+      },
+    });
+    if (res.ok) {
+      const json = await res.json();
+      const dbShops: { id: string; domain: string; sync_status: string; last_sync_at: string | null; created_at: string }[] = json.shops || json.data || json || [];
+      for (const dbShop of dbShops) {
+        if (!dbShop.domain || registryDomains.has(dbShop.domain)) continue;
+        enriched.push({
+          domain: dbShop.domain,
+          label: dbShop.domain.replace('.myshopify.com', ''),
+          addedAt: dbShop.created_at || new Date().toISOString(),
+          status: 'active',
+          shop_id: dbShop.id,
+          last_synced: dbShop.last_sync_at || undefined,
+          created_at: dbShop.created_at,
+        });
+      }
+    }
+  } catch {
+    // Backend unreachable — show only registry shops
+  }
 
   setCache('enriched_shops', enriched);
   return enriched;

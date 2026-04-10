@@ -28,6 +28,7 @@ import FunnelView from './views/FunnelView';
 import AdsView from './views/AdsView';
 import CustomersView from './views/CustomersView';
 import ProductView from './views/ProductView';
+import IntegrationsView from './views/IntegrationsView';
 import { ProductTour, GROWZILLA_TOUR_STEPS } from '@/components/onboarding/ProductTour';
 import { SetupChecklist, DEFAULT_CHECKLIST_ITEMS, type ChecklistItem } from '@/components/onboarding/SetupChecklist';
 import { useOnboardingTracker } from '@/hooks/useEventTracker';
@@ -709,6 +710,8 @@ const WhopDashboardShell: React.FC = () => {
         return <CustomersView customers={data.customers} cohorts={data.cohorts} />;
       case 'products':
         return <ProductView products={data.products} />;
+      case 'integrations':
+        return <IntegrationsView shopId={activeShopInfo?.id} />;
       default:
         return null;
     }
@@ -730,6 +733,7 @@ const WhopDashboardShell: React.FC = () => {
             {activeView === 'ads' && 'Ad Campaigns'}
             {activeView === 'customers' && 'Customer Intelligence'}
             {activeView === 'products' && 'Product Performance'}
+            {activeView === 'integrations' && 'Integrations'}
           </h1>
         </div>
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap">

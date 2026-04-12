@@ -100,7 +100,7 @@ export async function getEnrichedShops(): Promise<ShopDetails[]> {
   // Uses the admin data endpoint which requires first 16 chars of SECRET_KEY.
   try {
     const API_BASE = process.env.ECOMDASH_API_URL || 'https://ecomdash-api.onrender.com';
-    const adminDataKey = process.env.ADMIN_DATA_KEY || process.env.BACKEND_ADMIN_KEY || '';
+    const adminDataKey = process.env.BACKEND_ADMIN_KEY || process.env.ADMIN_API_KEY || '';
     const res = await fetch(`${API_BASE}/api/admin/data/shops`, {
       headers: {
         'X-Admin-Key': adminDataKey,

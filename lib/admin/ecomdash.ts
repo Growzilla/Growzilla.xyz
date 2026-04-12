@@ -49,6 +49,7 @@ export async function getShop(domain: string) {
 export async function syncShop(shopId: string) {
   return apiFetch<Record<string, unknown>>(`/api/shops/${encodeURIComponent(shopId)}/sync`, {
     method: 'POST',
+    body: { full_sync: false },
   });
 }
 

@@ -1,7 +1,17 @@
 [
   {
-    "domain": "https://casedus.myshopify.com",
+    "domain": "casedus.myshopify.com",
     "label": "Cased(Rhett)",
     "addedAt": "2026-02-10T06:41:14.171Z"
+  },
+  {
+    "domain": "glow-nordic.myshopify.com",
+    "label": "Glow Nordic",
+    "addedAt": "2026-04-12T00:00:00.000Z"
+  },
+  {
+    "domain": "nordic-laptops.myshopify.com",
+    "label": "Nordic Laptops",
+    "addedAt": "2026-04-12T00:00:00.000Z"
   }
 ]

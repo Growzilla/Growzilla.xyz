@@ -78,9 +78,12 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
     }));
   };
 
-  const handleSync = async (shopId: string) => {
+  const handleSync = async (shopDomainOrId: string) => {
     try {
-      await fetch(`/api/admin/shops/${shopId}/sync`, { method: 'POST' });
+      // The sync route expects a domain, not a UUID
+      const shop = shops.find((s) => s.shop_id === shopDomainOrId || s.domain === shopDomainOrId);
+      const domain = shop?.domain || shopDomainOrId;
+      await fetch(`/api/admin/shops/${encodeURIComponent(domain)}/sync`, { method: 'POST' });
       // Refresh shop list after sync
       setTimeout(fetchShops, 2000);
     } catch {

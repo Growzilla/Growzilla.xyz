@@ -35,6 +35,9 @@ import { useOnboardingTracker } from '@/hooks/useEventTracker';
 import DevModePanel from './DevModePanel';
 import MomentumBanner, { MOCK_MOMENTUM_WITH_DATA } from './MomentumBanner';
 import { getActiveShop, type ShopInfo } from './StoreSelector';
+import { getUTMLinks, getMetaFunnel, getUTMLinkConversions } from '@/lib/api-client';
+import type { FemFitSankeyNode, FemFitSankeyLink } from '@/types/whop';
+import FirstSaleToast from './FirstSaleToast';
 
 // ─── Placeholder Data (until Airtable env vars are connected) ─────────────────
 
@@ -510,6 +513,91 @@ function generateFemFitFunnelData(): FemFitFunnelData {
   };
 }
 
+// ─── Fetch Sankey from API (falls back to mock) ─────────────────────────────
+
+async function fetchSankeyData(shopId: string | undefined): Promise<FemFitFunnelData> {
+  if (!shopId) return generateFemFitFunnelData();
+
+  try {
+    // Try fetching UTM links + meta funnel from backend
+    const [utmLinks, metaFunnel] = await Promise.allSettled([
+      getUTMLinks(),
+      getMetaFunnel(shopId),
+    ]);
+
+    const hasUtmData = utmLinks.status === 'fulfilled' && Array.isArray(utmLinks.value) && utmLinks.value.length > 0;
+    const hasMetaData = metaFunnel.status === 'fulfilled' && metaFunnel.value?.nodes?.length > 0;
+
+    if (hasMetaData) {
+      // Transform SankeyData from API into FemFitFunnelData shape
+      const apiData = (metaFunnel as PromiseFulfilledResult<{ nodes: FemFitSankeyNode[]; links: FemFitSankeyLink[] }>).value;
+      const mockFallback = generateFemFitFunnelData();
+      return {
+        ...mockFallback,
+        sankeyNodes: apiData.nodes,
+        sankeyLinks: apiData.links,
+      };
+    }
+
+    if (hasUtmData) {
+      // Build basic Sankey from UTM link data
+      const links = (utmLinks as PromiseFulfilledResult<{ platform: string; content_type: string; total_revenue: number; total_orders: number; click_count: number }[]>).value;
+      const platformMap = new Map<string, { clicks: number; orders: number; revenue: number }>();
+      for (const link of links) {
+        const key = link.platform || 'unknown';
+        const existing = platformMap.get(key) || { clicks: 0, orders: 0, revenue: 0 };
+        existing.clicks += link.click_count || 0;
+        existing.orders += link.total_orders || 0;
+        existing.revenue += link.total_revenue || 0;
+        platformMap.set(key, existing);
+      }
+
+      const platformColors: Record<string, string> = {
+        tiktok: '#00F2EA', instagram: '#E4405F', youtube: '#FF0000',
+        facebook: '#1877F2', organic: '#22C55E', referral: '#FF3366',
+      };
+
+      const nodes: FemFitSankeyNode[] = [];
+      const sankeyLinks: FemFitSankeyLink[] = [];
+      let totalClicks = 0;
+      let totalOrders = 0;
+
+      platformMap.forEach((data, platform) => {
+        totalClicks += data.clicks;
+        totalOrders += data.orders;
+        nodes.push({
+          id: `n-${platform}`,
+          label: platform.charAt(0).toUpperCase() + platform.slice(1),
+          value: Math.max(data.clicks, 1),
+          column: 0,
+          color: platformColors[platform] || '#A1A1AA',
+        });
+      });
+
+      // Add funnel nodes
+      nodes.push({ id: 'n-clicks', label: 'Link Clicks', value: Math.max(totalClicks, 1), column: 1, color: '#FF6B3D' });
+      nodes.push({ id: 'n-orders', label: 'Orders', value: Math.max(totalOrders, 1), column: 2, color: '#FFA77B' });
+
+      // Links: platform → clicks → orders
+      platformMap.forEach((data, platform) => {
+        sankeyLinks.push({ source: `n-${platform}`, target: 'n-clicks', value: Math.max(data.clicks, 1), color: platformColors[platform] || '#A1A1AA' });
+      });
+      sankeyLinks.push({ source: 'n-clicks', target: 'n-orders', value: Math.max(totalOrders, 1), color: '#FF6B3D' });
+
+      const mockFallback = generateFemFitFunnelData();
+      return {
+        ...mockFallback,
+        sankeyNodes: nodes,
+        sankeyLinks,
+      };
+    }
+  } catch (err) {
+    console.warn('[WhopDashboardShell] Sankey API fetch failed, using mock:', err);
+  }
+
+  return generateFemFitFunnelData();
+}
+
 // ─── Main Shell Component ─────────────────────────────────────────────────────
 
 const WhopDashboardShell: React.FC = () => {
@@ -523,6 +611,53 @@ const WhopDashboardShell: React.FC = () => {
   // --- Active shop context ---
   const [activeShopInfo, setActiveShopInfo] = useState<ShopInfo | null>(null);
   const [isTestStore, setIsTestStore] = useState(false);
+
+  // --- First sale toast ---
+  const [firstSaleToast, setFirstSaleToast] = useState<{
+    platform: string;
+    contentType: string;
+    revenue: string;
+    productName: string;
+  } | null>(null);
+  const [pollingLinkId, setPollingLinkId] = useState<string | null>(null);
+  const [pollingSince, setPollingSince] = useState<string | null>(null);
+
+  // Poll for first conversion on a newly created link
+  useEffect(() => {
+    if (!pollingLinkId || !pollingSince) return;
+    let stopped = false;
+
+    const interval = setInterval(async () => {
+      if (stopped) return;
+      try {
+        const conversions = await getUTMLinkConversions(pollingLinkId, pollingSince);
+        if (conversions.length > 0) {
+          const first = conversions[0];
+          setFirstSaleToast({
+            platform: 'Creator',
+            contentType: 'link',
+            revenue: `$${first.revenue.toFixed(2)}`,
+            productName: first.product_name || 'Product',
+          });
+          setPollingLinkId(null);
+          setPollingSince(null);
+        }
+      } catch {
+        // Silently ignore polling errors
+      }
+    }, 10000);
+
+    return () => {
+      stopped = true;
+      clearInterval(interval);
+    };
+  }, [pollingLinkId, pollingSince]);
+
+  /** Call this after a UTM link is created to start polling for conversions */
+  const startConversionPolling = useCallback((linkId: string) => {
+    setPollingLinkId(linkId);
+    setPollingSince(new Date().toISOString());
+  }, []);
 
   useEffect(() => {
     const shop = getActiveShop();
@@ -682,7 +817,10 @@ const WhopDashboardShell: React.FC = () => {
 
       // Use placeholder data until env vars are configured
       setData(generatePlaceholderData());
-      setFemfitData(generateFemFitFunnelData());
+
+      // Fetch sankey data from API (with mock fallback)
+      const sankeyResult = await fetchSankeyData(activeShopInfo?.id);
+      setFemfitData(sankeyResult);
     } catch (err) {
       console.error('[WhopDashboardShell] Error fetching data:', err);
       setData(generatePlaceholderData());
@@ -690,7 +828,7 @@ const WhopDashboardShell: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [dateRange]);
+  }, [dateRange, activeShopInfo?.id]);
 
   useEffect(() => {
     fetchData();
@@ -876,6 +1014,17 @@ const WhopDashboardShell: React.FC = () => {
           shopId={activeShopInfo.id || ''}
           isTestStore={isTestStore}
           lastSyncAt={null}
+        />
+      )}
+
+      {/* First sale toast notification */}
+      {firstSaleToast && (
+        <FirstSaleToast
+          platform={firstSaleToast.platform}
+          contentType={firstSaleToast.contentType}
+          revenue={firstSaleToast.revenue}
+          productName={firstSaleToast.productName}
+          onDismiss={() => setFirstSaleToast(null)}
         />
       )}
     </WhopLayout>

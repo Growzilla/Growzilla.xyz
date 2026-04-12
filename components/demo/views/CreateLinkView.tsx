@@ -14,6 +14,8 @@ import {
   STORE_DOMAIN,
 } from '@/data/mockSMData';
 import type { MockProduct } from '@/data/mockSMData';
+import { getShopProducts, generateUTMLink, patchUTMLink, type ShopProduct } from '@/lib/api-client';
+import { getActiveShop } from '@/components/whop/StoreSelector';
 
 // ─── Inline Dropdown Component ──────────────────────────────────────────────
 
@@ -347,16 +349,75 @@ const CreateLinkView: React.FC<CreateLinkViewProps> = ({ onBack, onLinkCreated }
   const [copied, setCopied] = useState(false);
   const [saved, setSaved] = useState(false);
   const [contentUrl, setContentUrl] = useState('');
+  const [generating, setGenerating] = useState(false);
+  const [lastGeneratedLinkId, setLastGeneratedLinkId] = useState<string | null>(null);
+
+  // --- Real products from API (falls back to mock) ---
+  const [products, setProducts] = useState<MockProduct[]>(MOCK_PRODUCTS);
+  const [productsLoading, setProductsLoading] = useState(true);
+  const [shopId, setShopId] = useState<string | null>(null);
+  const [storeDomain, setStoreDomain] = useState<string>(STORE_DOMAIN);
+
+  useEffect(() => {
+    const shop = getActiveShop();
+    if (shop?.id) {
+      setShopId(shop.id);
+      if (shop.domain) setStoreDomain(shop.domain);
+    }
+    // Also check URL params
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const shopParam = params.get('shop');
+      if (shopParam && !shop?.id) {
+        setStoreDomain(shopParam);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function fetchProducts() {
+      if (!shopId) {
+        setProductsLoading(false);
+        return;
+      }
+      setProductsLoading(true);
+      try {
+        const apiProducts = await getShopProducts(shopId);
+        if (!cancelled && apiProducts.length > 0) {
+          setProducts(apiProducts.map((p) => ({
+            id: p.id,
+            title: p.title,
+            handle: p.handle,
+            status: p.status as 'active' | 'draft' | 'archived',
+            productType: p.product_type,
+            vendor: p.vendor,
+            priceMin: p.price_min,
+            priceMax: p.price_max,
+            featuredImageUrl: p.featured_image_url || '',
+            totalInventory: p.total_inventory,
+          })));
+        }
+      } catch {
+        // Keep mock fallback — products state already has MOCK_PRODUCTS
+        console.warn('[CreateLinkView] Failed to fetch products, using mock data');
+      } finally {
+        if (!cancelled) setProductsLoading(false);
+      }
+    }
+    fetchProducts();
+    return () => { cancelled = true; };
+  }, [shopId]);
 
   const filteredProducts = useMemo(() => {
-    if (!searchQuery.trim()) return MOCK_PRODUCTS;
+    if (!searchQuery.trim()) return products;
     const q = searchQuery.toLowerCase();
-    return MOCK_PRODUCTS.filter((p) => p.title.toLowerCase().includes(q));
-  }, [searchQuery]);
+    return products.filter((p) => p.title.toLowerCase().includes(q));
+  }, [searchQuery, products]);
 
   const selectedProduct = useMemo(
-    () => MOCK_PRODUCTS.find((p) => p.id === selectedProductId) ?? null,
-    [selectedProductId]
+    () => products.find((p) => p.id === selectedProductId) ?? null,
+    [selectedProductId, products]
   );
 
   const step1Complete = storeSelected || !!selectedProduct || customUrl.trim().length > 0;
@@ -369,11 +430,11 @@ const CreateLinkView: React.FC<CreateLinkViewProps> = ({ onBack, onLinkCreated }
   }, [storeSelected, selectedProduct, customUrl]);
 
   const baseUrl = useMemo(() => {
-    if (storeSelected) return `https://${STORE_DOMAIN}`;
-    if (selectedProduct) return `https://${STORE_DOMAIN}/products/${selectedProduct.handle}`;
+    if (storeSelected) return `https://${storeDomain}`;
+    if (selectedProduct) return `https://${storeDomain}/products/${selectedProduct.handle}`;
     if (customUrl.trim()) return customUrl.trim();
-    return `https://${STORE_DOMAIN}`;
-  }, [storeSelected, selectedProduct, customUrl]);
+    return `https://${storeDomain}`;
+  }, [storeSelected, selectedProduct, customUrl, storeDomain]);
 
   const hookNum = hooks.find((h) => h.id === selectedHook)?.number;
   const meatNum = meats.find((m) => m.id === selectedMeat)?.number;
@@ -427,29 +488,75 @@ const CreateLinkView: React.FC<CreateLinkViewProps> = ({ onBack, onLinkCreated }
     setTimeout(() => setCopied(false), 2000);
   }
 
-  function handleSave() {
-    const newLink: UTMLink = {
-      id: `link-${Date.now()}`,
-      platform: channel,
-      content_type: contentType,
-      product_url: storeSelected ? null : baseUrl,
-      full_url: generatedUrl,
-      short_code: demoShortCode,
-      short_url: generatedUrl,
-      content_post_url: contentUrl.trim() || null,
-      status: 'active',
-      created_at: new Date().toISOString(),
-      creator_name: creator?.name || 'Unknown',
-      creator_username: creator?.handle.replace('@', '') || 'unknown',
-      hook_number: hookNum ?? null,
-      meat_number: meatNum ?? null,
-      cta_number: ctaNum ?? null,
-      total_revenue: 0,
-      total_orders: 0,
-    };
-    onLinkCreated?.(newLink);
-    setSaved(true);
-    setTimeout(() => { setSaved(false); onBack(); }, 1200);
+  async function handleSave() {
+    setGenerating(true);
+    try {
+      // Try real API first
+      const apiResult = await generateUTMLink({
+        platform: channel,
+        content_type: contentType,
+        product_url: baseUrl,
+        hook_number: hookNum,
+        cta_number: ctaNum,
+      });
+
+      const newLink: UTMLink = {
+        id: apiResult.id,
+        platform: apiResult.platform as Platform,
+        content_type: apiResult.content_type as PostType,
+        product_url: storeSelected ? null : baseUrl,
+        full_url: apiResult.full_url,
+        short_code: apiResult.short_code,
+        short_url: apiResult.full_url,
+        content_post_url: contentUrl.trim() || null,
+        status: 'active',
+        created_at: apiResult.created_at,
+        creator_name: creator?.name || 'Unknown',
+        creator_username: creator?.handle.replace('@', '') || 'unknown',
+        hook_number: hookNum ?? null,
+        meat_number: meatNum ?? null,
+        cta_number: ctaNum ?? null,
+        total_revenue: 0,
+        total_orders: 0,
+      };
+
+      // If content URL provided, patch it onto the link
+      if (contentUrl.trim()) {
+        patchUTMLink(apiResult.id, { content_post_url: contentUrl.trim() }).catch(() => {});
+      }
+
+      setLastGeneratedLinkId(apiResult.id);
+      onLinkCreated?.(newLink);
+      setSaved(true);
+      setTimeout(() => { setSaved(false); onBack(); }, 1200);
+    } catch {
+      // Fallback: create link locally if API fails
+      console.warn('[CreateLinkView] API generate failed, saving locally');
+      const newLink: UTMLink = {
+        id: `link-${Date.now()}`,
+        platform: channel,
+        content_type: contentType,
+        product_url: storeSelected ? null : baseUrl,
+        full_url: generatedUrl,
+        short_code: demoShortCode,
+        short_url: generatedUrl,
+        content_post_url: contentUrl.trim() || null,
+        status: 'active',
+        created_at: new Date().toISOString(),
+        creator_name: creator?.name || 'Unknown',
+        creator_username: creator?.handle.replace('@', '') || 'unknown',
+        hook_number: hookNum ?? null,
+        meat_number: meatNum ?? null,
+        cta_number: ctaNum ?? null,
+        total_revenue: 0,
+        total_orders: 0,
+      };
+      onLinkCreated?.(newLink);
+      setSaved(true);
+      setTimeout(() => { setSaved(false); onBack(); }, 1200);
+    } finally {
+      setGenerating(false);
+    }
   }
 
   function handleCreateSave(data: { script: string } | { name: string; handle: string }) {
@@ -522,15 +629,22 @@ const CreateLinkView: React.FC<CreateLinkViewProps> = ({ onBack, onLinkCreated }
                 placeholder="Search products..." />
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} selected={selectedProductId === product.id}
-                  onClick={() => handleProductSelect(product.id)} />
-              ))}
-            </div>
+            {productsLoading ? (
+              <div className="flex items-center justify-center py-8 gap-2">
+                <div className="w-4 h-4 border-2 rounded-full animate-spin" style={{ borderColor: '#00FF94', borderTopColor: 'transparent' }} />
+                <span className="text-sm text-zinc-500">Loading products...</span>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5">
+                {filteredProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} selected={selectedProductId === product.id}
+                    onClick={() => handleProductSelect(product.id)} />
+                ))}
+              </div>
+            )}
 
-            {filteredProducts.length === 0 && (
-              <div className="text-center py-6"><p className="text-sm text-zinc-600">No products match your search</p></div>
+            {!productsLoading && filteredProducts.length === 0 && (
+              <div className="text-center py-6"><p className="text-sm text-zinc-600">No products found</p></div>
             )}
 
             <div className="flex items-center gap-3 my-4">
@@ -642,15 +756,17 @@ const CreateLinkView: React.FC<CreateLinkViewProps> = ({ onBack, onLinkCreated }
                       <><svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9.75a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" /></svg>Copy Link</>
                     )}
                   </button>
-                  <button onClick={handleSave}
-                    className="flex-1 py-2.5 rounded-lg text-sm font-semibold bg-[#00FF94] text-[#09090B] hover:bg-[#00E676] transition-colors flex items-center justify-center gap-2">
+                  <button onClick={handleSave} disabled={generating}
+                    className="flex-1 py-2.5 rounded-lg text-sm font-semibold bg-[#00FF94] text-[#09090B] hover:bg-[#00E676] transition-colors flex items-center justify-center gap-2 disabled:opacity-60">
                     {saved ? (
                       <><svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>Saved!</>
+                    ) : generating ? (
+                      <><div className="w-3.5 h-3.5 border-2 border-[#09090B] border-t-transparent rounded-full animate-spin" />Generating...</>
                     ) : 'Create & Save'}
                   </button>
                 </div>
 
-                <p className="text-[10px] text-zinc-600 text-center mt-3">Demo mode — link will be saved to your session</p>
+                <p className="text-[10px] text-zinc-600 text-center mt-3">Your tracking link will be generated and saved</p>
               </div>
             </motion.div>
           )}

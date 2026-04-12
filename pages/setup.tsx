@@ -602,43 +602,8 @@ export default function SetupPage() {
                 {manualMode ? (
                   <div className="rounded-xl p-8" style={{ backgroundColor: '#151518', border: '1px solid rgba(255,255,255,0.08)' }}>
                     <h2 className="text-lg font-semibold text-white mb-2">Connect your store</h2>
-                    <p className="text-sm text-gray-400 mb-6">Enter your Shopify store domain</p>
-                    <div className="flex gap-2 mb-4">
-                      <input
-                        type="text"
-                        value={manualDomain}
-                        onChange={(e) => setManualDomain(e.target.value)}
-                        placeholder="your-store.myshopify.com"
-                        autoFocus
-                        className="flex-1 px-4 py-3 rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none transition-colors"
-                        style={{
-                          backgroundColor: '#0A0A0B',
-                          border: '1px solid rgba(255,255,255,0.08)',
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' && manualDomain.trim()) {
-                            checkShop(manualDomain.trim());
-                          }
-                        }}
-                      />
-                      <button
-                        onClick={() => manualDomain.trim() && checkShop(manualDomain.trim())}
-                        disabled={!manualDomain.trim()}
-                        className="px-4 py-3 rounded-lg text-sm font-medium transition-all duration-150 disabled:opacity-40"
-                        style={{
-                          backgroundColor: '#00FF94',
-                          color: '#0A0A0B',
-                        }}
-                      >
-                        Connect
-                      </button>
-                    </div>
-                    {checkError && (
-                      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-red-400 flex items-center justify-center gap-1.5">
-                        <ExclamationCircleIcon className="w-4 h-4" />
-                        {checkError}
-                      </motion.p>
-                    )}
+                    <p className="text-sm text-gray-400 mb-6">Install Growzilla from the Shopify App Store to get started.</p>
+                    <p className="text-xs text-gray-500">You will be redirected here automatically after installation.</p>
                   </div>
                 ) : (
                   <div>

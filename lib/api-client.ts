@@ -403,6 +403,48 @@ export async function getOnboardingProfile(shopId: string): Promise<OnboardingPr
 }
 
 // ---------------------------------------------------------------------------
+// Products
+// ---------------------------------------------------------------------------
+
+export interface ShopProduct {
+  id: string;
+  title: string;
+  handle: string;
+  status: string;
+  product_type: string;
+  vendor: string;
+  price_min: number;
+  price_max: number;
+  featured_image_url: string | null;
+  total_inventory: number;
+}
+
+export async function getShopProducts(shopId: string): Promise<ShopProduct[]> {
+  return apiFetch<ShopProduct[]>(`/api/shops/${shopId}/products`);
+}
+
+// ---------------------------------------------------------------------------
+// UTM Link Updates + Conversions
+// ---------------------------------------------------------------------------
+
+export async function patchUTMLink(linkId: string, data: { content_post_url?: string }): Promise<UTMLinkGenerated> {
+  return apiFetch<UTMLinkGenerated>(`/api/api/utm/links/${linkId}`, { method: 'PATCH', body: data });
+}
+
+export interface UTMConversion {
+  id: string;
+  revenue: number;
+  product_name: string;
+  created_at: string;
+}
+
+export async function getUTMLinkConversions(linkId: string, since?: string): Promise<UTMConversion[]> {
+  const params: Record<string, string> = {};
+  if (since) params.since = since;
+  return apiFetch<UTMConversion[]>(`/api/api/utm/links/${linkId}/conversions`, { params });
+}
+
+// ---------------------------------------------------------------------------
 // Events
 // ---------------------------------------------------------------------------
 

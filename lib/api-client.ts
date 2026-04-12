@@ -280,7 +280,7 @@ export interface UTMLinkGenerated {
 }
 
 export async function getUTMLinks(): Promise<UTMLink[]> {
-  return apiFetch<UTMLink[]>('/api/api/utm/links');
+  return apiFetch<UTMLink[]>('/api/utm/links');
 }
 
 export async function syncStore(shopId: string): Promise<{ message: string }> {
@@ -294,7 +294,7 @@ export async function generateUTMLink(data: {
   hook_number?: number;
   cta_number?: number;
 }): Promise<UTMLinkGenerated> {
-  return apiFetch<UTMLinkGenerated>('/api/api/utm/generate', { method: 'POST', body: data });
+  return apiFetch<UTMLinkGenerated>('/api/utm/generate', { method: 'POST', body: data });
 }
 
 export async function getCreators() {
@@ -428,7 +428,7 @@ export async function getShopProducts(shopId: string): Promise<ShopProduct[]> {
 // ---------------------------------------------------------------------------
 
 export async function patchUTMLink(linkId: string, data: { content_post_url?: string }): Promise<UTMLinkGenerated> {
-  return apiFetch<UTMLinkGenerated>(`/api/api/utm/links/${linkId}`, { method: 'PATCH', body: data });
+  return apiFetch<UTMLinkGenerated>(`/api/utm/links/${linkId}`, { method: 'PATCH', body: data });
 }
 
 export interface UTMConversion {
@@ -441,7 +441,7 @@ export interface UTMConversion {
 export async function getUTMLinkConversions(linkId: string, since?: string): Promise<UTMConversion[]> {
   const params: Record<string, string> = {};
   if (since) params.since = since;
-  return apiFetch<UTMConversion[]>(`/api/api/utm/links/${linkId}/conversions`, { params });
+  return apiFetch<UTMConversion[]>(`/api/utm/links/${linkId}/conversions`, { params });
 }
 
 // ---------------------------------------------------------------------------

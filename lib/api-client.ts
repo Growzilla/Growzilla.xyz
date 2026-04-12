@@ -283,6 +283,10 @@ export async function getUTMLinks(): Promise<UTMLink[]> {
   return apiFetch<UTMLink[]>('/api/api/utm/links');
 }
 
+export async function syncStore(shopId: string): Promise<{ message: string }> {
+  return apiFetch<{ message: string }>(`/api/shops/${shopId}/sync`, { method: 'POST', body: { full_sync: false } });
+}
+
 export async function generateUTMLink(data: {
   platform: string;
   content_type: string;

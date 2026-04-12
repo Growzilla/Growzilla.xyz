@@ -11,6 +11,7 @@ import {
   getToken,
   getUTMLinks,
   generateUTMLink,
+  syncStore,
   type DashboardStats,
   type RevenueChartData,
   type ShopResponse,
@@ -67,8 +68,11 @@ export default function MerchantDashboard() {
   const [modalResult, setModalResult] = useState<UTMLinkGenerated | null>(null);
   const [copied, setCopied] = useState(false);
 
-  // Toast state
-  const [toast, setToast] = useState<{ message: string } | null>(null);
+  // Toast state — enhanced notification card
+  const [toast, setToast] = useState<{ amount: string; platform: string; contentType: string; product: string } | null>(null);
+
+  // Sync state
+  const [syncing, setSyncing] = useState(false);
 
   const loadGoals = useCallback((domain: string) => {
     try {
@@ -94,7 +98,8 @@ export default function MerchantDashboard() {
           if (l.total_revenue > prevRev && prevRev !== undefined) {
             const diff = l.total_revenue - prevRev;
             const platformLabel = l.platform.charAt(0).toUpperCase() + l.platform.slice(1);
-            setToast({ message: `New sale! $${diff.toFixed(2)} attributed to your ${platformLabel} ${l.content_type} link` });
+            const productPath = l.product_url ? l.product_url.split('/products/').pop()?.split('?')[0]?.replace(/-/g, ' ') || 'product' : 'product';
+            setToast({ amount: `$${diff.toFixed(2)}`, platform: platformLabel, contentType: l.content_type, product: productPath });
           }
         });
         setPrevUtmRevenue(prevMap);
@@ -225,6 +230,31 @@ export default function MerchantDashboard() {
     });
   };
 
+  // Sync handler — triggers backend sync, waits, then reloads all data
+  const handleSync = async () => {
+    if (!shop?.id || syncing) return;
+    setSyncing(true);
+    try {
+      await syncStore(shop.id);
+      // Wait for sync to process orders + match UTM conversions
+      await new Promise(r => setTimeout(r, 5000));
+      // Reload all dashboard data
+      const [statsRes, chartRes, productsRes] = await Promise.allSettled([
+        getDashboardStats(shop.id),
+        getRevenueChart(shop.id, '30d'),
+        getTopProducts(shop.id, 5),
+      ]);
+      if (statsRes.status === 'fulfilled') setStats(statsRes.value);
+      if (chartRes.status === 'fulfilled') setChart(chartRes.value);
+      if (productsRes.status === 'fulfilled') {
+        setProducts((productsRes.value as { title: string; revenue: number; orders: number; rank: number }[]) || []);
+      }
+      await loadUTMLinks();
+    } catch { /* ignore */ } finally {
+      setSyncing(false);
+    }
+  };
+
   // Platform display helpers
   const platformEmoji: Record<string, string> = {
     instagram: '📸',
@@ -270,14 +300,36 @@ export default function MerchantDashboard() {
       </Head>
 
       <div className="min-h-screen bg-zilla-black text-white">
-        {/* Toast Notification */}
+        {/* Attribution Notification Card */}
         {toast && (
           <div
-            className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-3 px-5 py-3 rounded-xl border-l-4 border-[#00FF94] bg-[#151518] shadow-2xl text-white text-sm font-medium"
-            style={{ animation: 'slideInFromTop 0.25s ease-out' }}
+            className="fixed top-6 left-1/2 -translate-x-1/2 z-[100] w-[380px] rounded-xl border border-[#00FF94]/30 bg-[#0A0A0B] shadow-2xl shadow-[#00FF94]/10 overflow-hidden"
+            style={{ animation: 'slideInFromTop 0.3s ease-out' }}
           >
-            <span>{toast.message}</span>
-            <button onClick={() => setToast(null)} className="ml-2 text-gray-500 hover:text-white transition-colors text-xs">✕</button>
+            <div className="h-1 bg-[#00FF94]" />
+            <div className="p-5">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">🎉</span>
+                  <span className="text-[13px] font-semibold text-[#00FF94] uppercase tracking-wider">New Sale Attributed</span>
+                </div>
+                <button onClick={() => setToast(null)} className="text-gray-600 hover:text-white transition-colors text-xs">✕</button>
+              </div>
+              <div className="text-3xl font-bold text-white font-mono mb-3">{toast.amount}</div>
+              <div className="space-y-1.5 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-500">Platform</span>
+                  <span className="text-white font-medium">{toast.platform} {toast.contentType}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-500">Product</span>
+                  <span className="text-white font-medium capitalize">{toast.product}</span>
+                </div>
+              </div>
+              <div className="mt-3 pt-3 border-t border-white/5 text-[11px] text-gray-600">
+                Attributed via Growzilla tracking link
+              </div>
+            </div>
           </div>
         )}
 
@@ -304,6 +356,13 @@ export default function MerchantDashboard() {
                   {storeName}
                 </span>
               )}
+              <button
+                onClick={handleSync}
+                disabled={syncing}
+                className="text-xs px-3 py-1.5 rounded-lg border border-[#00FF94]/20 bg-[#00FF94]/5 text-[#00FF94] hover:bg-[#00FF94]/10 transition-colors disabled:opacity-50 font-medium"
+              >
+                {syncing ? 'Syncing...' : 'Sync'}
+              </button>
               <button onClick={() => router.push('/signin')} className="text-xs text-gray-500 hover:text-white transition-colors">
                 Switch store
               </button>

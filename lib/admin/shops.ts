@@ -77,12 +77,12 @@ export async function getEnrichedShops(): Promise<ShopDetails[]> {
           label: entry.label,
           addedAt: entry.addedAt,
           status: 'active',
-          shop_id: shopData.shop_id as string | undefined,
+          shop_id: (shopData.id || shopData.shop_id) as string | undefined,
           name: shopData.name as string | undefined,
           currency: shopData.currency as string | undefined,
           plan: shopData.plan as string | undefined,
-          last_synced: shopData.last_synced as string | undefined,
-          created_at: shopData.created_at as string | undefined,
+          last_synced: (shopData.lastSyncAt || shopData.last_synced) as string | undefined,
+          created_at: (shopData.createdAt || shopData.created_at) as string | undefined,
         };
       } catch {
         return {

@@ -100,13 +100,15 @@ export interface AuthResponse {
 }
 
 export interface DashboardStats {
-  yesterday_revenue: number;
-  week_avg_revenue: number;
-  yesterday_orders: number;
-  week_avg_orders: number;
-  aov: number;
-  revenue_delta: number;
-  orders_delta: number;
+  yesterdayRevenue: number;
+  weekAvgRevenue: number;
+  yesterdayOrders: number;
+  weekAvgOrders: number;
+  yesterdayAov: number;
+  weekAvgAov: number;
+  revenueDelta: number;
+  ordersDelta: number;
+  aovDelta: number;
 }
 
 export interface RevenueChartData {
@@ -305,12 +307,12 @@ export interface ShopResponse {
   access_token?: string;
   scopes?: string;
   is_test_store?: boolean;
-  deep_mode_enabled?: boolean;
-  clarity_project_id?: string | null;
-  sync_status?: string;
-  last_sync_at?: string | null;
-  created_at?: string;
-  updated_at?: string;
+  deepModeEnabled?: boolean;
+  clarityProjectId?: string | null;
+  syncStatus?: string;
+  lastSyncAt?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
   org_id?: string;
 }
 

@@ -19,14 +19,16 @@ import { getActiveShop } from '@/components/whop/StoreSelector';
 // Helpers
 // ---------------------------------------------------------------------------
 
-function fmt(n: number) {
-  if (n >= 1000) return `$${(n / 1000).toFixed(1)}K`;
-  return `$${n.toFixed(0)}`;
+function fmt(n: number | null | undefined) {
+  const v = n ?? 0;
+  if (v >= 1000) return `$${(v / 1000).toFixed(1)}K`;
+  return `$${v.toFixed(0)}`;
 }
 
-function fmtDelta(d: number) {
-  const sign = d >= 0 ? '+' : '';
-  return `${sign}${d.toFixed(1)}%`;
+function fmtDelta(d: number | null | undefined) {
+  const v = d ?? 0;
+  const sign = v >= 0 ? '+' : '';
+  return `${sign}${v.toFixed(1)}%`;
 }
 
 // ---------------------------------------------------------------------------
@@ -141,14 +143,14 @@ export default function MerchantDashboard() {
     'Just starting': 1000, '$1k-$10k': 10000, '$10k-$50k': 50000, '$50k-$100k': 100000, '$100k+': 500000,
   };
   const goalNum = GOAL_MAP[goalRevenue] || 0;
-  const currentNum = stats ? stats.yesterday_revenue * 30 : (GOAL_MAP[currentRevenue] || 0);
+  const currentNum = stats ? (stats.yesterdayRevenue ?? 0) * 30 : (GOAL_MAP[currentRevenue] || 0);
   const goalPct = goalNum > 0 ? Math.min(Math.round((currentNum / goalNum) * 100), 100) : 0;
 
   const kpis = stats ? [
-    { label: 'Revenue (yesterday)', value: fmt(stats.yesterday_revenue), delta: fmtDelta(stats.revenue_delta), up: stats.revenue_delta >= 0 },
-    { label: 'Orders (yesterday)', value: String(stats.yesterday_orders), delta: fmtDelta(stats.orders_delta), up: stats.orders_delta >= 0 },
-    { label: 'AOV', value: `$${stats.aov.toFixed(2)}`, delta: '', up: true },
-    { label: '7-Day Avg Revenue', value: fmt(stats.week_avg_revenue), delta: '', up: true },
+    { label: 'Revenue (yesterday)', value: fmt(stats.yesterdayRevenue), delta: fmtDelta(stats.revenueDelta), up: (stats.revenueDelta ?? 0) >= 0 },
+    { label: 'Orders (yesterday)', value: String(stats.yesterdayOrders ?? 0), delta: fmtDelta(stats.ordersDelta), up: (stats.ordersDelta ?? 0) >= 0 },
+    { label: 'AOV', value: `$${(stats.yesterdayAov ?? 0).toFixed(2)}`, delta: '', up: true },
+    { label: '7-Day Avg Revenue', value: fmt(stats.weekAvgRevenue), delta: '', up: true },
   ] : [];
 
   return (
@@ -205,12 +207,12 @@ export default function MerchantDashboard() {
               <div className="card-zilla p-5">
                 <div className="flex items-center justify-between mb-2">
                   <h1 className="text-lg font-semibold text-white">{storeName}</h1>
-                  {shop?.sync_status && (
+                  {shop?.syncStatus && (
                     <span className={`text-xs px-2 py-0.5 rounded-full font-mono ${
-                      shop.sync_status === 'completed' ? 'bg-zilla-neon/10 text-zilla-neon' :
-                      shop.sync_status === 'syncing' ? 'bg-amber-500/10 text-amber-400' :
+                      shop.syncStatus === 'completed' ? 'bg-zilla-neon/10 text-zilla-neon' :
+                      shop.syncStatus === 'syncing' ? 'bg-amber-500/10 text-amber-400' :
                       'bg-white/5 text-gray-500'
-                    }`}>{shop.sync_status}</span>
+                    }`}>{shop.syncStatus}</span>
                   )}
                 </div>
                 {goalNum > 0 && (

@@ -34,7 +34,71 @@ import { SetupChecklist, DEFAULT_CHECKLIST_ITEMS, type ChecklistItem } from '@/c
 import { useOnboardingTracker } from '@/hooks/useEventTracker';
 import DevModePanel from './DevModePanel';
 import MomentumBanner, { MOCK_MOMENTUM_WITH_DATA } from './MomentumBanner';
+import FirstSaleToast from './FirstSaleToast';
 import { getActiveShop, type ShopInfo } from './StoreSelector';
+import { getMetaFunnel, type SankeyData } from '@/lib/api-client';
+import type { FemFitSankeyNode, FemFitSankeyLink } from '@/types/whop';
+
+// ─── Transform API Sankey data to component shape ────────────────────────────
+
+const SANKEY_COLORS: Record<string, string> = {
+  facebook: '#1877F2', instagram: '#E4405F', tiktok: '#00F2EA',
+  youtube: '#FF0000', organic: '#22C55E', referral: '#FF3366',
+  google: '#4285F4', email: '#F59E0B',
+};
+
+function transformSankeyData(apiData: SankeyData): { sankeyNodes: FemFitSankeyNode[]; sankeyLinks: FemFitSankeyLink[] } {
+  const sankeyNodes: FemFitSankeyNode[] = apiData.nodes.map((n) => ({
+    id: n.id,
+    label: n.label,
+    value: n.value,
+    column: n.column,
+    color: SANKEY_COLORS[n.id.toLowerCase()] || SANKEY_COLORS[n.label.toLowerCase()] || '#888888',
+  }));
+
+  const sankeyLinks: FemFitSankeyLink[] = apiData.links.map((l) => {
+    const sourceNode = sankeyNodes.find((n) => n.id === l.source);
+    return {
+      source: l.source,
+      target: l.target,
+      value: l.value,
+      color: sourceNode?.color || '#888888',
+    };
+  });
+
+  return { sankeyNodes, sankeyLinks };
+}
+
+async function fetchSankeyData(shopId: string): Promise<FemFitFunnelData | null> {
+  try {
+    const apiData = await getMetaFunnel(shopId);
+    if (!apiData || !apiData.nodes || apiData.nodes.length === 0) return null;
+
+    const { sankeyNodes, sankeyLinks } = transformSankeyData(apiData);
+
+    // Build minimal funnel steps from the data
+    const totalTraffic = sankeyNodes.filter((n) => n.column === 0).reduce((s, n) => s + n.value, 0);
+    const lastCol = Math.max(...sankeyNodes.map((n) => n.column));
+    const totalClosed = sankeyNodes.filter((n) => n.column === lastCol).reduce((s, n) => s + n.value, 0);
+
+    return {
+      steps: [
+        { stage: 'traffic', label: 'Traffic Sources', count: totalTraffic, revenue: 0, dropOffRate: 0, conversionRate: 100 },
+        { stage: 'closed_won', label: 'Converted', count: totalClosed, revenue: 0, dropOffRate: 0, conversionRate: totalTraffic > 0 ? Math.round((totalClosed / totalTraffic) * 1000) / 10 : 0 },
+      ],
+      sources: [],
+      sankeyNodes,
+      sankeyLinks,
+      whaleInsights: [],
+      totalRevenue: 0,
+      totalTraffic,
+      overallConversion: totalTraffic > 0 ? Math.round((totalClosed / totalTraffic) * 1000) / 10 : 0,
+      whaleRevenuePercent: 0,
+    };
+  } catch {
+    return null; // Fall back to mock
+  }
+}
 
 // ─── Placeholder Data (until Airtable env vars are connected) ─────────────────
 
@@ -550,6 +614,7 @@ const WhopDashboardShell: React.FC = () => {
   const [shopIdForTracking, setShopIdForTracking] = useState('');
   const [showMetaPrompt, setShowMetaPrompt] = useState(false);
   const [showCreatorCTA, setShowCreatorCTA] = useState(false);
+  const [lastCreatedLinkId, setLastCreatedLinkId] = useState<string | null>(null);
   const tracker = useOnboardingTracker(shopIdForTracking || 'dashboard');
 
   // Detect if user just finished onboarding
@@ -682,7 +747,19 @@ const WhopDashboardShell: React.FC = () => {
 
       // Use placeholder data until env vars are configured
       setData(generatePlaceholderData());
-      setFemfitData(generateFemFitFunnelData());
+
+      // Try real Sankey data first, fall back to mock
+      const shopId = activeShopInfo?.id;
+      if (shopId) {
+        const realSankey = await fetchSankeyData(shopId);
+        if (realSankey) {
+          setFemfitData(realSankey);
+        } else {
+          setFemfitData(generateFemFitFunnelData());
+        }
+      } else {
+        setFemfitData(generateFemFitFunnelData());
+      }
     } catch (err) {
       console.error('[WhopDashboardShell] Error fetching data:', err);
       setData(generatePlaceholderData());
@@ -690,7 +767,7 @@ const WhopDashboardShell: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [dateRange]);
+  }, [dateRange, activeShopInfo]);
 
   useEffect(() => {
     fetchData();
@@ -719,6 +796,9 @@ const WhopDashboardShell: React.FC = () => {
 
   return (
     <WhopLayout activeView={activeView} onViewChange={setActiveView} onShopChange={handleShopChange}>
+      {/* First sale toast — polls for conversions after link creation */}
+      <FirstSaleToast linkId={lastCreatedLinkId} onDismiss={() => setLastCreatedLinkId(null)} />
+
       {/* Momentum banner — shows on overview tab */}
       {activeView === 'overview' && (
         <MomentumBanner data={MOCK_MOMENTUM_WITH_DATA} />

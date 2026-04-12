@@ -104,7 +104,8 @@ export default function SetupPage() {
   const [shopData, setShopData] = useState<ShopResponse | null>(null);
   const [checkError, setCheckError] = useState('');
 
-  // Manual domain entry (when no ?shop param)
+  // Manual domain entry removed — store is always known from OAuth install (?shop= param)
+  // Kept for backward compat: if no ?shop param, show informational message
   const [manualDomain, setManualDomain] = useState('');
   const [manualMode, setManualMode] = useState(false);
 
@@ -601,40 +602,19 @@ export default function SetupPage() {
               >
                 {manualMode ? (
                   <div className="rounded-xl p-8" style={{ backgroundColor: '#151518', border: '1px solid rgba(255,255,255,0.08)' }}>
-                    <h2 className="text-lg font-semibold text-white mb-2">Connect your store</h2>
-                    <p className="text-sm text-gray-400 mb-6">Enter your Shopify store domain</p>
-                    <div className="flex gap-2 mb-4">
-                      <input
-                        type="text"
-                        value={manualDomain}
-                        onChange={(e) => setManualDomain(e.target.value)}
-                        placeholder="your-store.myshopify.com"
-                        autoFocus
-                        className="flex-1 px-4 py-3 rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none transition-colors"
-                        style={{
-                          backgroundColor: '#0A0A0B',
-                          border: '1px solid rgba(255,255,255,0.08)',
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' && manualDomain.trim()) {
-                            checkShop(manualDomain.trim());
-                          }
-                        }}
-                      />
-                      <button
-                        onClick={() => manualDomain.trim() && checkShop(manualDomain.trim())}
-                        disabled={!manualDomain.trim()}
-                        className="px-4 py-3 rounded-lg text-sm font-medium transition-all duration-150 disabled:opacity-40"
-                        style={{
-                          backgroundColor: '#00FF94',
-                          color: '#0A0A0B',
-                        }}
-                      >
-                        Connect
-                      </button>
-                    </div>
+                    <h2 className="text-lg font-semibold text-white mb-2">Install Growzilla first</h2>
+                    <p className="text-sm text-gray-400 mb-4">Your store is automatically detected when you install Growzilla from the Shopify App Store.</p>
+                    <a
+                      href="https://apps.shopify.com/growzilla"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-150"
+                      style={{ backgroundColor: '#00FF94', color: '#0A0A0B' }}
+                    >
+                      Install from Shopify App Store
+                    </a>
                     {checkError && (
-                      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-red-400 flex items-center justify-center gap-1.5">
+                      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-sm text-red-400 flex items-center justify-center gap-1.5 mt-4">
                         <ExclamationCircleIcon className="w-4 h-4" />
                         {checkError}
                       </motion.p>
@@ -652,7 +632,7 @@ export default function SetupPage() {
                           className="text-xs font-medium transition-colors"
                           style={{ color: '#00FF94' }}
                         >
-                          Enter domain manually
+                          Need help?
                         </button>
                       </motion.div>
                     )}

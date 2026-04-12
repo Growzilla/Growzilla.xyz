@@ -4,9 +4,9 @@ import type { Platform, PostType, SavedHook, SavedMeat, SavedCTA, SavedCreator, 
 import { CONTENT_TYPES } from '@/types/smdashboard';
 import { platformColor, tw } from '@/lib/design-tokens';
 import {
-  MOCK_SAVED_HOOKS,
-  MOCK_SAVED_MEATS,
-  MOCK_SAVED_CTAS,
+  MOCK_SAVED_HOOKS as DEFAULT_HOOKS,
+  MOCK_SAVED_MEATS as DEFAULT_MEATS,
+  MOCK_SAVED_CTAS as DEFAULT_CTAS,
   MOCK_SAVED_CREATORS,
   MOCK_PRODUCTS,
   STORE_LOGO_URL,
@@ -14,6 +14,57 @@ import {
   STORE_DOMAIN,
 } from '@/data/mockSMData';
 import type { MockProduct } from '@/data/mockSMData';
+
+// ─── Default Hook / CTA Examples ───────────────────────────────────────────
+
+const HOOK_EXAMPLES: SavedHook[] = [
+  { id: 'hook-ex-1', number: 1, scriptStart: 'Watch what happens when...', fullScript: 'Watch what happens when I try this for the first time — the results speak for themselves.', createdAt: '' },
+  { id: 'hook-ex-2', number: 2, scriptStart: 'POV: You just discovered...', fullScript: 'POV: You just discovered the product everyone\'s been talking about but nobody can keep in stock.', createdAt: '' },
+  { id: 'hook-ex-3', number: 3, scriptStart: 'I tried this for 30 days...', fullScript: 'I tried this for 30 days and here\'s what actually happened to my skin.', createdAt: '' },
+  { id: 'hook-ex-4', number: 4, scriptStart: 'The secret nobody talks about...', fullScript: 'The secret nobody talks about when it comes to getting real results with skincare.', createdAt: '' },
+  { id: 'hook-ex-5', number: 5, scriptStart: 'This changed everything...', fullScript: 'This changed everything about my morning routine. I\'m never going back.', createdAt: '' },
+];
+
+const CTA_EXAMPLES: SavedCTA[] = [
+  { id: 'cta-ex-1', number: 1, scriptStart: 'Link in bio', fullScript: 'Link in bio — go check it out before it sells out again.', createdAt: '' },
+  { id: 'cta-ex-2', number: 2, scriptStart: 'Shop now — link below', fullScript: 'Shop now — link below. You won\'t find this deal anywhere else.', createdAt: '' },
+  { id: 'cta-ex-3', number: 3, scriptStart: 'Use my code for 10% off', fullScript: 'Use my code for 10% off your first order. Trust me, it\'s worth it.', createdAt: '' },
+  { id: 'cta-ex-4', number: 4, scriptStart: 'Tap to shop', fullScript: 'Tap to shop — I\'ve linked everything so you can grab the exact same products.', createdAt: '' },
+  { id: 'cta-ex-5', number: 5, scriptStart: 'Comment LINK for the URL', fullScript: 'Comment LINK and I\'ll DM you the URL directly.', createdAt: '' },
+];
+
+const INITIAL_HOOKS: SavedHook[] = [...HOOK_EXAMPLES, ...DEFAULT_HOOKS];
+const INITIAL_CTAS: SavedCTA[] = [...CTA_EXAMPLES, ...DEFAULT_CTAS];
+
+// ─── Product fetching ──────────────────────────────────────────────────────
+
+interface APIProduct {
+  id: string;
+  title: string;
+  handle: string;
+  status: string;
+  product_type?: string;
+  vendor?: string;
+  price_min?: number;
+  price_max?: number;
+  featured_image_url?: string | null;
+  total_inventory?: number;
+}
+
+function apiProductToMock(p: APIProduct): MockProduct {
+  return {
+    id: p.id,
+    title: p.title,
+    handle: p.handle,
+    status: (p.status as MockProduct['status']) || 'active',
+    productType: p.product_type || '',
+    vendor: p.vendor || '',
+    priceMin: p.price_min ?? 0,
+    priceMax: p.price_max ?? 0,
+    featuredImageUrl: p.featured_image_url || null,
+    totalInventory: p.total_inventory ?? 0,
+  };
+}
 
 // ─── Inline Dropdown Component ──────────────────────────────────────────────
 
@@ -320,9 +371,11 @@ const LiveUrlPreview: React.FC<{ url: string }> = ({ url }) => {
 interface CreateLinkViewProps {
   onBack: () => void;
   onLinkCreated?: (link: UTMLink) => void;
+  /** Shop ID for real API calls. If omitted, uses mock data. */
+  shopId?: string;
 }
 
-const CreateLinkView: React.FC<CreateLinkViewProps> = ({ onBack, onLinkCreated }) => {
+const CreateLinkView: React.FC<CreateLinkViewProps> = ({ onBack, onLinkCreated, shopId }) => {
   const [step1Open, setStep1Open] = useState(true);
   const [step2Open, setStep2Open] = useState(false);
 
@@ -334,29 +387,70 @@ const CreateLinkView: React.FC<CreateLinkViewProps> = ({ onBack, onLinkCreated }
   const [channel, setChannel] = useState<Platform>('tiktok');
   const [contentType, setContentType] = useState<PostType>('video');
   const [selectedCreator, setSelectedCreator] = useState<string | null>('cr-sarah');
-  const [selectedHook, setSelectedHook] = useState<string | null>('hook-1');
+  const [selectedHook, setSelectedHook] = useState<string | null>('hook-ex-1');
   const [selectedMeat, setSelectedMeat] = useState<string | null>('meat-1');
-  const [selectedCta, setSelectedCta] = useState<string | null>('cta-1');
+  const [selectedCta, setSelectedCta] = useState<string | null>('cta-ex-1');
 
-  const [hooks, setHooks] = useState<SavedHook[]>(MOCK_SAVED_HOOKS);
-  const [meats, setMeats] = useState<SavedMeat[]>(MOCK_SAVED_MEATS);
-  const [ctas, setCtas] = useState<SavedCTA[]>(MOCK_SAVED_CTAS);
+  const [hooks, setHooks] = useState<SavedHook[]>(INITIAL_HOOKS);
+  const [meats, setMeats] = useState<SavedMeat[]>(DEFAULT_MEATS);
+  const [ctas, setCtas] = useState<SavedCTA[]>(INITIAL_CTAS);
   const [creators, setCreators] = useState<SavedCreator[]>(MOCK_SAVED_CREATORS);
 
   const [createModal, setCreateModal] = useState<'hook' | 'meat' | 'cta' | 'creator' | null>(null);
   const [copied, setCopied] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [contentUrl, setContentUrl] = useState('');
+  const [createdLinkId, setCreatedLinkId] = useState<string | null>(null);
+
+  // ─── Product fetching (real API with mock fallback) ─────────────────────
+  const [products, setProducts] = useState<MockProduct[]>(MOCK_PRODUCTS);
+  const [productsLoading, setProductsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!shopId) return; // Use mock data if no shopId
+
+    let cancelled = false;
+    setProductsLoading(true);
+
+    const fetchProducts = async () => {
+      try {
+        const token = typeof window !== 'undefined' ? localStorage.getItem('gz_token') : null;
+        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const API_BASE = process.env.NEXT_PUBLIC_ECOMDASH_API_URL || process.env.ECOMDASH_API_URL || 'https://ecomdash-api.onrender.com';
+        const res = await fetch(`${API_BASE}/api/shops/${shopId}/products`, { headers });
+
+        if (!res.ok) throw new Error(`API ${res.status}`);
+
+        const data = await res.json();
+        const apiProducts: APIProduct[] = Array.isArray(data) ? data : data.products || data.data || [];
+
+        if (!cancelled && apiProducts.length > 0) {
+          setProducts(apiProducts.map(apiProductToMock));
+        }
+        // If empty, keep mock products as fallback
+      } catch {
+        // Silently fall back to mock products
+      } finally {
+        if (!cancelled) setProductsLoading(false);
+      }
+    };
+
+    fetchProducts();
+    return () => { cancelled = true; };
+  }, [shopId]);
 
   const filteredProducts = useMemo(() => {
-    if (!searchQuery.trim()) return MOCK_PRODUCTS;
+    if (!searchQuery.trim()) return products;
     const q = searchQuery.toLowerCase();
-    return MOCK_PRODUCTS.filter((p) => p.title.toLowerCase().includes(q));
-  }, [searchQuery]);
+    return products.filter((p) => p.title.toLowerCase().includes(q));
+  }, [searchQuery, products]);
 
   const selectedProduct = useMemo(
-    () => MOCK_PRODUCTS.find((p) => p.id === selectedProductId) ?? null,
-    [selectedProductId]
+    () => products.find((p) => p.id === selectedProductId) ?? null,
+    [selectedProductId, products]
   );
 
   const step1Complete = storeSelected || !!selectedProduct || customUrl.trim().length > 0;
@@ -426,7 +520,72 @@ const CreateLinkView: React.FC<CreateLinkViewProps> = ({ onBack, onLinkCreated }
     setTimeout(() => setCopied(false), 2000);
   }
 
-  function handleSave() {
+  async function handleSave() {
+    setSaving(true);
+
+    try {
+      // Try real API first if shopId is available
+      if (shopId) {
+        const token = typeof window !== 'undefined' ? localStorage.getItem('gz_token') : null;
+        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const API_BASE = process.env.NEXT_PUBLIC_ECOMDASH_API_URL || process.env.ECOMDASH_API_URL || 'https://ecomdash-api.onrender.com';
+
+        // POST /api/utm/generate to create the link
+        const res = await fetch(`${API_BASE}/api/utm/generate`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            platform: channel,
+            content_type: contentType,
+            product_url: storeSelected ? undefined : baseUrl,
+            creator_handle: creator?.handle.replace('@', '') || undefined,
+            hook_number: hookNum || undefined,
+            cta_number: ctaNum || undefined,
+          }),
+        });
+
+        if (res.ok) {
+          const apiLink = await res.json();
+          const linkId = apiLink.id || apiLink.link_id;
+          setCreatedLinkId(linkId);
+
+          // If content URL is provided, PATCH to attach it
+          if (contentUrl.trim() && linkId) {
+            await fetch(`${API_BASE}/api/utm/links/${linkId}`, {
+              method: 'PATCH',
+              headers,
+              body: JSON.stringify({ post_url: contentUrl.trim() }),
+            }).catch(() => {}); // Non-blocking
+          }
+
+          const newLink: UTMLink = {
+            id: linkId || `link-${Date.now()}`,
+            platform: channel,
+            content_type: contentType,
+            product_url: storeSelected ? null : baseUrl,
+            full_url: apiLink.full_url || apiLink.tracking_url || generatedUrl,
+            content_post_url: contentUrl.trim() || null,
+            status: 'active',
+            created_at: new Date().toISOString(),
+            creator_name: creator?.name || 'Unknown',
+            creator_username: creator?.handle.replace('@', '') || 'unknown',
+            total_revenue: 0,
+            total_orders: 0,
+          };
+          onLinkCreated?.(newLink);
+          setSaved(true);
+          setSaving(false);
+          setTimeout(() => { setSaved(false); onBack(); }, 1200);
+          return;
+        }
+      }
+    } catch {
+      // Fall through to demo mode save
+    }
+
+    // Demo mode fallback — save to session
     const newLink: UTMLink = {
       id: `link-${Date.now()}`,
       platform: channel,
@@ -443,6 +602,7 @@ const CreateLinkView: React.FC<CreateLinkViewProps> = ({ onBack, onLinkCreated }
     };
     onLinkCreated?.(newLink);
     setSaved(true);
+    setSaving(false);
     setTimeout(() => { setSaved(false); onBack(); }, 1200);
   }
 
@@ -516,15 +676,29 @@ const CreateLinkView: React.FC<CreateLinkViewProps> = ({ onBack, onLinkCreated }
                 placeholder="Search products..." />
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5">
-              {filteredProducts.map((product) => (
-                <ProductCard key={product.id} product={product} selected={selectedProductId === product.id}
-                  onClick={() => handleProductSelect(product.id)} />
-              ))}
-            </div>
+            {productsLoading ? (
+              <div className="text-center py-8">
+                <div className="w-6 h-6 mx-auto mb-3 border-2 rounded-full animate-spin" style={{ borderColor: '#00FF94', borderTopColor: 'transparent' }} />
+                <p className="text-sm text-zinc-500">Loading products...</p>
+              </div>
+            ) : products.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-sm text-zinc-400 mb-1">No products found</p>
+                <p className="text-xs text-zinc-600">Sync your store first to load products</p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5">
+                  {filteredProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} selected={selectedProductId === product.id}
+                      onClick={() => handleProductSelect(product.id)} />
+                  ))}
+                </div>
 
-            {filteredProducts.length === 0 && (
-              <div className="text-center py-6"><p className="text-sm text-zinc-600">No products match your search</p></div>
+                {filteredProducts.length === 0 && (
+                  <div className="text-center py-6"><p className="text-sm text-zinc-600">No products match your search</p></div>
+                )}
+              </>
             )}
 
             <div className="flex items-center gap-3 my-4">
@@ -636,15 +810,19 @@ const CreateLinkView: React.FC<CreateLinkViewProps> = ({ onBack, onLinkCreated }
                       <><svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9.75a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" /></svg>Copy Link</>
                     )}
                   </button>
-                  <button onClick={handleSave}
-                    className="flex-1 py-2.5 rounded-lg text-sm font-semibold bg-[#00FF94] text-[#09090B] hover:bg-[#00E676] transition-colors flex items-center justify-center gap-2">
+                  <button onClick={handleSave} disabled={saving}
+                    className="flex-1 py-2.5 rounded-lg text-sm font-semibold bg-[#00FF94] text-[#09090B] hover:bg-[#00E676] transition-colors flex items-center justify-center gap-2 disabled:opacity-60">
                     {saved ? (
                       <><svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>Saved!</>
+                    ) : saving ? (
+                      <><div className="w-3.5 h-3.5 border-2 border-[#09090B] border-t-transparent rounded-full animate-spin" />Creating...</>
                     ) : 'Create & Save'}
                   </button>
                 </div>
 
-                <p className="text-[10px] text-zinc-600 text-center mt-3">Demo mode — link will be saved to your session</p>
+                {!shopId && (
+                  <p className="text-[10px] text-zinc-600 text-center mt-3">Demo mode — link will be saved to your session</p>
+                )}
               </div>
             </motion.div>
           )}

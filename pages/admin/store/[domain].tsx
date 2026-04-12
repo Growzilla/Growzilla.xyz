@@ -43,16 +43,18 @@ function StoreDetail({ domain, onLogout }: { domain: string | undefined; onLogou
   const { stats, revenueChart, topProducts, loading, refetch } = useDashboardData(domain, period);
   const { insights, filter, setFilter, dismiss, action, loading: insightsLoading } = useInsights(domain);
 
-  const formatNumber = (n: number) => {
-    if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-    if (n >= 1_000) return `${(n / 1_000).toFixed(1)}k`;
-    return n.toFixed(0);
+  const formatNumber = (n: number | null | undefined) => {
+    const v = n ?? 0;
+    if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`;
+    if (v >= 1_000) return `${(v / 1_000).toFixed(1)}k`;
+    return v.toFixed(0);
   };
 
-  const formatCurrency = (n: number) => {
-    if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(2)}M`;
-    if (n >= 1_000) return `$${(n / 1_000).toFixed(1)}k`;
-    return `$${n.toFixed(2)}`;
+  const formatCurrency = (n: number | null | undefined) => {
+    const v = n ?? 0;
+    if (v >= 1_000_000) return `$${(v / 1_000_000).toFixed(2)}M`;
+    if (v >= 1_000) return `$${(v / 1_000).toFixed(1)}k`;
+    return `$${v.toFixed(2)}`;
   };
 
   if (!domain) return null;

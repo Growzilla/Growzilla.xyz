@@ -257,12 +257,40 @@ export async function getMetaCampaigns(shopId: string): Promise<MetaCampaignResp
 // UTM / Creators
 // ---------------------------------------------------------------------------
 
-export async function getUTMLinks() {
-  return apiFetch<unknown[]>('/api/utm/links');
+export interface UTMLink {
+  id: string;
+  full_url: string;
+  short_code: string;
+  platform: string;
+  content_type: string;
+  product_url: string;
+  total_revenue: number;
+  total_orders: number;
+  click_count: number;
+  created_at: string;
 }
 
-export async function generateUTMLink(data: { platform: string; content_type: string; product_url?: string }) {
-  return apiFetch<unknown>('/api/utm/generate', { method: 'POST', body: data });
+export interface UTMLinkGenerated {
+  id: string;
+  full_url: string;
+  short_code: string;
+  platform: string;
+  content_type: string;
+  created_at: string;
+}
+
+export async function getUTMLinks(): Promise<UTMLink[]> {
+  return apiFetch<UTMLink[]>('/api/utm/links');
+}
+
+export async function generateUTMLink(data: {
+  platform: string;
+  content_type: string;
+  product_url: string;
+  hook_number?: number;
+  cta_number?: number;
+}): Promise<UTMLinkGenerated> {
+  return apiFetch<UTMLinkGenerated>('/api/utm/generate', { method: 'POST', body: data });
 }
 
 export async function getCreators() {

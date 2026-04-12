@@ -9,9 +9,13 @@ import {
   getTopProducts,
   getMe,
   getToken,
+  getUTMLinks,
+  generateUTMLink,
   type DashboardStats,
   type RevenueChartData,
   type ShopResponse,
+  type UTMLink,
+  type UTMLinkGenerated,
 } from '@/lib/api-client';
 import { getActiveShop } from '@/components/whop/StoreSelector';
 
@@ -48,6 +52,24 @@ export default function MerchantDashboard() {
   const [goalRevenue, setGoalRevenue] = useState('');
   const [currentRevenue, setCurrentRevenue] = useState('');
 
+  // UTM state
+  const [utmLinks, setUtmLinks] = useState<UTMLink[]>([]);
+  const [prevUtmRevenue, setPrevUtmRevenue] = useState<Record<string, number>>({});
+
+  // Modal state
+  const [showModal, setShowModal] = useState(false);
+  const [modalProductUrl, setModalProductUrl] = useState('');
+  const [modalPlatform, setModalPlatform] = useState<'instagram' | 'tiktok' | 'youtube'>('instagram');
+  const [modalHook, setModalHook] = useState('');
+  const [modalCta, setModalCta] = useState('');
+  const [modalLoading, setModalLoading] = useState(false);
+  const [modalError, setModalError] = useState('');
+  const [modalResult, setModalResult] = useState<UTMLinkGenerated | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  // Toast state
+  const [toast, setToast] = useState<{ message: string } | null>(null);
+
   const loadGoals = useCallback((domain: string) => {
     try {
       const raw = localStorage.getItem(`gz_onboarding_${domain}_answers`);
@@ -57,6 +79,28 @@ export default function MerchantDashboard() {
         setCurrentRevenue(answers.revenueNow || '');
       }
     } catch { /* ignore */ }
+  }, []);
+
+  const loadUTMLinks = useCallback(async () => {
+    try {
+      const links = await getUTMLinks();
+      setUtmLinks(prev => {
+        // Build revenue map from previous state
+        const prevMap: Record<string, number> = {};
+        prev.forEach(l => { prevMap[l.id] = l.total_revenue; });
+        // Check for new revenue
+        links.forEach(l => {
+          const prevRev = prevMap[l.id] ?? 0;
+          if (l.total_revenue > prevRev && prevRev !== undefined) {
+            const diff = l.total_revenue - prevRev;
+            const platformLabel = l.platform.charAt(0).toUpperCase() + l.platform.slice(1);
+            setToast({ message: `New sale! $${diff.toFixed(2)} attributed to your ${platformLabel} ${l.content_type} link` });
+          }
+        });
+        setPrevUtmRevenue(prevMap);
+        return links;
+      });
+    } catch { /* ignore — UTM links are non-critical */ }
   }, []);
 
   const resolveShop = useCallback(async () => {
@@ -115,13 +159,78 @@ export default function MerchantDashboard() {
             (productsRes.value as { title: string; revenue: number; orders: number; rank: number }[]) || []
           );
         }
+        await loadUTMLinks();
       } catch (err) {
         console.error('Dashboard data load error:', err);
       } finally {
         setLoading(false);
       }
     })();
-  }, [router.isReady, resolveShop]);
+  }, [router.isReady, resolveShop, loadUTMLinks]);
+
+  // Auto-dismiss toast after 8 seconds
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 8000);
+    return () => clearTimeout(t);
+  }, [toast]);
+
+  // Modal handlers
+  const openModal = () => {
+    setModalProductUrl(storeName ? `https://${storeName}/products/` : '');
+    setModalPlatform('instagram');
+    setModalHook('');
+    setModalCta('');
+    setModalError('');
+    setModalResult(null);
+    setCopied(false);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setModalResult(null);
+    setModalError('');
+  };
+
+  const handleGenerateUTM = async () => {
+    if (!modalProductUrl) {
+      setModalError('Product URL is required.');
+      return;
+    }
+    setModalLoading(true);
+    setModalError('');
+    try {
+      const result = await generateUTMLink({
+        platform: modalPlatform,
+        content_type: 'reel',
+        product_url: modalProductUrl,
+        hook_number: 1,
+        cta_number: 1,
+      });
+      setModalResult(result);
+      // Refresh UTM links list
+      await loadUTMLinks();
+    } catch (err) {
+      setModalError(err instanceof Error ? err.message : 'Failed to generate link.');
+    } finally {
+      setModalLoading(false);
+    }
+  };
+
+  const handleCopy = (url: string) => {
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  // Platform display helpers
+  const platformEmoji: Record<string, string> = {
+    instagram: '📸',
+    tiktok: '🎵',
+    youtube: '▶️',
+  };
 
   // Chart
   const W = 700, H = 250, PAD = 40;
@@ -161,6 +270,24 @@ export default function MerchantDashboard() {
       </Head>
 
       <div className="min-h-screen bg-zilla-black text-white">
+        {/* Toast Notification */}
+        {toast && (
+          <div
+            className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-3 px-5 py-3 rounded-xl border-l-4 border-[#00FF94] bg-[#151518] shadow-2xl text-white text-sm font-medium"
+            style={{ animation: 'slideInFromTop 0.25s ease-out' }}
+          >
+            <span>{toast.message}</span>
+            <button onClick={() => setToast(null)} className="ml-2 text-gray-500 hover:text-white transition-colors text-xs">✕</button>
+          </div>
+        )}
+
+        <style>{`
+          @keyframes slideInFromTop {
+            from { opacity: 0; transform: translateX(-50%) translateY(-12px); }
+            to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+          }
+        `}</style>
+
         <div className="fixed inset-0 pointer-events-none z-0 opacity-40 bg-grid-zilla" />
         <div className="fixed inset-0 pointer-events-none z-0 bg-zilla-radial" />
 
@@ -241,6 +368,44 @@ export default function MerchantDashboard() {
                 </div>
               )}
 
+              {/* Tracked Links */}
+              <div className="card-zilla p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-medium text-white">Tracked Links</h3>
+                  <button onClick={openModal} className="text-xs text-zilla-neon hover:text-zilla-neon/80 transition-colors font-mono">+ New link</button>
+                </div>
+                {utmLinks.length > 0 ? (
+                  <div className="space-y-1">
+                    <div className="grid grid-cols-12 text-[11px] text-gray-600 uppercase tracking-wider px-3 pb-2 border-b border-white/5">
+                      <span className="col-span-1">Platform</span>
+                      <span className="col-span-4">Product URL</span>
+                      <span className="col-span-2">Code</span>
+                      <span className="col-span-2 text-right">Revenue</span>
+                      <span className="col-span-2 text-right">Orders</span>
+                      <span className="col-span-1 text-right">Clicks</span>
+                    </div>
+                    {utmLinks.map(link => (
+                      <div key={link.id} className="grid grid-cols-12 items-center py-2.5 px-3 rounded-lg hover:bg-white/5 transition-colors">
+                        <span className="col-span-1 text-base">{platformEmoji[link.platform] ?? '🔗'}</span>
+                        <span className="col-span-4 text-xs text-gray-400 truncate pr-2" title={link.product_url}>
+                          {link.product_url.replace(/^https?:\/\/[^/]+/, '')}
+                        </span>
+                        <span className="col-span-2 text-xs text-gray-500 font-mono">{link.short_code}</span>
+                        <span className={`col-span-2 text-sm font-mono text-right ${link.total_revenue > 0 ? 'text-zilla-neon' : 'text-gray-600'}`}>
+                          {fmt(link.total_revenue)}
+                        </span>
+                        <span className="col-span-2 text-xs text-gray-500 font-mono text-right">{link.total_orders}</span>
+                        <span className="col-span-1 text-xs text-gray-600 font-mono text-right">{link.click_count}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500 text-center py-4">
+                    Create your first tracking link to start attributing revenue
+                  </p>
+                )}
+              </div>
+
               {/* Revenue Chart */}
               {chartData.length > 1 ? (
                 <div className="card-zilla p-6">
@@ -301,7 +466,7 @@ export default function MerchantDashboard() {
                 <div className="card-zilla p-6">
                   <h3 className="text-sm font-medium text-white mb-4">Quick Actions</h3>
                   <div className="space-y-3">
-                    <button className="w-full text-left px-4 py-3 rounded-lg border border-zilla-neon/20 bg-zilla-neon/5 hover:bg-zilla-neon/10 transition-colors group">
+                    <button onClick={openModal} className="w-full text-left px-4 py-3 rounded-lg border border-zilla-neon/20 bg-zilla-neon/5 hover:bg-zilla-neon/10 transition-colors group">
                       <p className="text-sm font-medium text-white group-hover:text-zilla-neon transition-colors">Create Tracking Link</p>
                       <p className="text-xs text-gray-500 mt-0.5">Generate a ?gz= link for any product</p>
                     </button>
@@ -325,6 +490,113 @@ export default function MerchantDashboard() {
           )}
         </main>
       </div>
+
+      {/* Create Tracking Link Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={closeModal} />
+
+          {/* Modal panel */}
+          <div className="relative w-full max-w-md bg-[#151518] border border-white/10 rounded-xl shadow-2xl p-6 space-y-5">
+            <div className="flex items-center justify-between">
+              <h2 className="text-base font-semibold text-white">Create Tracking Link</h2>
+              <button onClick={closeModal} className="text-gray-500 hover:text-white transition-colors text-lg leading-none">✕</button>
+            </div>
+
+            {/* Product URL */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] text-gray-500 uppercase tracking-wider">Product URL</label>
+              <input
+                type="url"
+                value={modalProductUrl}
+                onChange={e => setModalProductUrl(e.target.value)}
+                placeholder="https://yourstore.myshopify.com/products/..."
+                className="w-full bg-[#0A0A0B] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-zilla-neon/50 transition-colors font-mono"
+              />
+            </div>
+
+            {/* Platform */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] text-gray-500 uppercase tracking-wider">Platform</label>
+              <select
+                value={modalPlatform}
+                onChange={e => setModalPlatform(e.target.value as 'instagram' | 'tiktok' | 'youtube')}
+                className="w-full bg-[#0A0A0B] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-zilla-neon/50 transition-colors"
+              >
+                <option value="instagram">📸 Instagram</option>
+                <option value="tiktok">🎵 TikTok</option>
+                <option value="youtube">▶️ YouTube</option>
+              </select>
+            </div>
+
+            {/* Hook */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] text-gray-500 uppercase tracking-wider">Hook</label>
+              <input
+                type="text"
+                value={modalHook}
+                onChange={e => setModalHook(e.target.value)}
+                placeholder="e.g. Transform your skin in 7 days"
+                className="w-full bg-[#0A0A0B] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-zilla-neon/50 transition-colors"
+              />
+            </div>
+
+            {/* CTA */}
+            <div className="space-y-1.5">
+              <label className="text-[11px] text-gray-500 uppercase tracking-wider">CTA</label>
+              <input
+                type="text"
+                value={modalCta}
+                onChange={e => setModalCta(e.target.value)}
+                placeholder="e.g. Shop now - link in bio"
+                className="w-full bg-[#0A0A0B] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-zilla-neon/50 transition-colors"
+              />
+            </div>
+
+            {/* Error */}
+            {modalError && (
+              <p className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">{modalError}</p>
+            )}
+
+            {/* Generated link */}
+            {modalResult && (
+              <div className="bg-[#0A0A0B] border border-zilla-neon/20 rounded-lg p-3 space-y-2">
+                <p className="text-[11px] text-zilla-neon uppercase tracking-wider font-mono">Link generated</p>
+                <div className="flex items-center gap-2">
+                  <span className="flex-1 text-xs text-gray-300 font-mono truncate">{modalResult.full_url}</span>
+                  <button
+                    onClick={() => handleCopy(modalResult.full_url)}
+                    className="flex-shrink-0 text-xs px-3 py-1.5 rounded-md bg-zilla-neon/10 text-zilla-neon border border-zilla-neon/20 hover:bg-zilla-neon/20 transition-colors font-mono"
+                  >
+                    {copied ? 'Copied!' : 'Copy'}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Generate button */}
+            {!modalResult && (
+              <button
+                onClick={handleGenerateUTM}
+                disabled={modalLoading}
+                className="w-full py-2.5 rounded-lg bg-zilla-neon text-zilla-black font-semibold text-sm hover:bg-zilla-neon/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {modalLoading ? 'Generating...' : 'Generate Link'}
+              </button>
+            )}
+
+            {modalResult && (
+              <button
+                onClick={closeModal}
+                className="w-full py-2.5 rounded-lg border border-white/10 text-gray-400 text-sm hover:text-white hover:border-white/20 transition-colors"
+              >
+                Done
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 }

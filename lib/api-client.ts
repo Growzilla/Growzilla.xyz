@@ -280,7 +280,7 @@ export interface UTMLinkGenerated {
 }
 
 export async function getUTMLinks(): Promise<UTMLink[]> {
-  return apiFetch<UTMLink[]>('/api/utm/links');
+  return apiFetch<UTMLink[]>('/api/api/utm/links');
 }
 
 export async function generateUTMLink(data: {
@@ -290,7 +290,7 @@ export async function generateUTMLink(data: {
   hook_number?: number;
   cta_number?: number;
 }): Promise<UTMLinkGenerated> {
-  return apiFetch<UTMLinkGenerated>('/api/utm/generate', { method: 'POST', body: data });
+  return apiFetch<UTMLinkGenerated>('/api/api/utm/generate', { method: 'POST', body: data });
 }
 
 export async function getCreators() {

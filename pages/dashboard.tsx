@@ -11,10 +11,13 @@ import {
   getToken,
   getUTMLinks,
   generateUTMLink,
+  getShopProducts,
+  patchUTMLink,
   syncStore,
   type DashboardStats,
   type RevenueChartData,
   type ShopResponse,
+  type ShopProduct,
   type UTMLink,
   type UTMLinkGenerated,
 } from '@/lib/api-client';
@@ -57,15 +60,23 @@ export default function MerchantDashboard() {
   const [utmLinks, setUtmLinks] = useState<UTMLink[]>([]);
   const [prevUtmRevenue, setPrevUtmRevenue] = useState<Record<string, number>>({});
 
-  // Modal state
+  // Modal state — step-by-step link creation flow
   const [showModal, setShowModal] = useState(false);
-  const [modalProductUrl, setModalProductUrl] = useState('');
+  const [modalStep, setModalStep] = useState(1); // 1=Product 2=Platform 3=ContentType 4=Creator 5=Hook 6=CTA 7=Generate 8=PostUrl
+  const [modalProducts, setModalProducts] = useState<ShopProduct[]>([]);
+  const [modalProductsLoading, setModalProductsLoading] = useState(false);
+  const [modalSelectedProduct, setModalSelectedProduct] = useState<ShopProduct | null>(null);
   const [modalPlatform, setModalPlatform] = useState<'instagram' | 'tiktok' | 'youtube'>('instagram');
+  const [modalContentType, setModalContentType] = useState('');
+  const [modalCreator, setModalCreator] = useState('');
   const [modalHook, setModalHook] = useState('');
+  const [modalHookCustom, setModalHookCustom] = useState('');
   const [modalCta, setModalCta] = useState('');
+  const [modalCtaCustom, setModalCtaCustom] = useState('');
   const [modalLoading, setModalLoading] = useState(false);
   const [modalError, setModalError] = useState('');
   const [modalResult, setModalResult] = useState<UTMLinkGenerated | null>(null);
+  const [modalPostUrl, setModalPostUrl] = useState('');
   const [copied, setCopied] = useState(false);
 
   // Toast state — enhanced notification card
@@ -180,16 +191,57 @@ export default function MerchantDashboard() {
     return () => clearTimeout(t);
   }, [toast]);
 
+  // Content type options per platform
+  const PLATFORM_CONTENT_TYPES: Record<string, { id: string; label: string }[]> = {
+    youtube: [{ id: 'video', label: 'Video' }, { id: 'short', label: 'Short' }, { id: 'reel', label: 'Reel' }, { id: 'live', label: 'Live' }],
+    tiktok: [{ id: 'video', label: 'Video' }, { id: 'live', label: 'LIVE' }, { id: 'story', label: 'Story' }],
+    instagram: [{ id: 'reel', label: 'Reel' }, { id: 'story', label: 'Story' }, { id: 'post', label: 'Post' }, { id: 'live', label: 'LIVE' }],
+  };
+
+  const HOOK_PRESETS = [
+    'Watch what happens when...',
+    'POV: You just discovered...',
+    'I tried this for 30 days...',
+    'The secret nobody talks about...',
+    'This changed everything...',
+  ];
+
+  const CTA_PRESETS = [
+    'Link in bio',
+    'Shop now — link below',
+    'Use my code for 10% off',
+    'Tap to shop',
+    'Comment LINK for the URL',
+  ];
+
   // Modal handlers
-  const openModal = () => {
-    setModalProductUrl(storeName ? `https://${storeName}/products/` : '');
+  const openModal = async () => {
+    setModalStep(1);
+    setModalSelectedProduct(null);
     setModalPlatform('instagram');
+    setModalContentType('');
+    setModalCreator('');
     setModalHook('');
+    setModalHookCustom('');
     setModalCta('');
+    setModalCtaCustom('');
     setModalError('');
     setModalResult(null);
+    setModalPostUrl('');
     setCopied(false);
     setShowModal(true);
+    // Fetch products
+    if (shop?.id) {
+      setModalProductsLoading(true);
+      try {
+        const prods = await getShopProducts(shop.id);
+        setModalProducts(prods);
+      } catch {
+        setModalProducts([]);
+      } finally {
+        setModalProductsLoading(false);
+      }
+    }
   };
 
   const closeModal = () => {
@@ -199,28 +251,49 @@ export default function MerchantDashboard() {
   };
 
   const handleGenerateUTM = async () => {
-    if (!modalProductUrl) {
-      setModalError('Product URL is required.');
+    if (!modalSelectedProduct) {
+      setModalError('Please select a product.');
       return;
     }
+    const productUrl = `https://${shop?.domain || storeName}/products/${modalSelectedProduct.handle}`;
+    const resolvedHook = modalHook === '__custom__' ? modalHookCustom : modalHook;
+    const resolvedCta = modalCta === '__custom__' ? modalCtaCustom : modalCta;
+    const hookIdx = modalHook === '__custom__' ? 99 : HOOK_PRESETS.indexOf(modalHook) + 1;
+    const ctaIdx = modalCta === '__custom__' ? 99 : CTA_PRESETS.indexOf(modalCta) + 1;
+
     setModalLoading(true);
     setModalError('');
     try {
       const result = await generateUTMLink({
         platform: modalPlatform,
-        content_type: 'reel',
-        product_url: modalProductUrl,
-        hook_number: 1,
-        cta_number: 1,
+        content_type: modalContentType || 'reel',
+        product_url: productUrl,
+        hook_number: hookIdx > 0 ? hookIdx : 1,
+        cta_number: ctaIdx > 0 ? ctaIdx : 1,
       });
       setModalResult(result);
+      setModalStep(8);
       // Refresh UTM links list
       await loadUTMLinks();
     } catch (err) {
-      setModalError(err instanceof Error ? err.message : 'Failed to generate link.');
+      const msg = err instanceof Error ? err.message : 'Failed to generate link.';
+      if (msg.includes('401') || msg.includes('Unauthorized') || msg.includes('403')) {
+        setModalError('Please sign in again to generate tracking links.');
+      } else {
+        setModalError(msg);
+      }
     } finally {
       setModalLoading(false);
     }
+  };
+
+  const handleSavePostUrl = async () => {
+    if (modalResult && modalPostUrl.trim()) {
+      try {
+        await patchUTMLink(modalResult.id, { content_post_url: modalPostUrl.trim() });
+      } catch { /* non-critical */ }
+    }
+    closeModal();
   };
 
   const handleCopy = (url: string) => {
@@ -550,108 +623,340 @@ export default function MerchantDashboard() {
         </main>
       </div>
 
-      {/* Create Tracking Link Modal */}
+      {/* Create Tracking Link Modal — Step-by-step flow */}
       {showModal && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-          {/* Backdrop */}
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={closeModal} />
 
-          {/* Modal panel */}
-          <div className="relative w-full max-w-md bg-[#151518] border border-white/10 rounded-xl shadow-2xl p-6 space-y-5">
-            <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-white">Create Tracking Link</h2>
-              <button onClick={closeModal} className="text-gray-500 hover:text-white transition-colors text-lg leading-none">✕</button>
+          <div className="relative w-full max-w-lg max-h-[85vh] bg-[#151518] border border-white/[0.08] rounded-xl p-6 overflow-y-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-3">
+                {modalStep > 1 && modalStep < 8 && (
+                  <button onClick={() => setModalStep(modalStep - 1)} className="text-gray-500 hover:text-white transition-colors">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                  </button>
+                )}
+                <h2 className="text-base font-semibold text-white">Create Tracking Link</h2>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-[11px] text-gray-600 font-mono">{modalStep < 8 ? `${modalStep}/7` : 'Done'}</span>
+                <button onClick={closeModal} className="text-gray-500 hover:text-white transition-colors text-lg leading-none">&#x2715;</button>
+              </div>
             </div>
 
-            {/* Product URL */}
-            <div className="space-y-1.5">
-              <label className="text-[11px] text-gray-500 uppercase tracking-wider">Product URL</label>
-              <input
-                type="url"
-                value={modalProductUrl}
-                onChange={e => setModalProductUrl(e.target.value)}
-                placeholder="https://yourstore.myshopify.com/products/..."
-                className="w-full bg-[#0A0A0B] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-zilla-neon/50 transition-colors font-mono"
-              />
-            </div>
-
-            {/* Platform */}
-            <div className="space-y-1.5">
-              <label className="text-[11px] text-gray-500 uppercase tracking-wider">Platform</label>
-              <select
-                value={modalPlatform}
-                onChange={e => setModalPlatform(e.target.value as 'instagram' | 'tiktok' | 'youtube')}
-                className="w-full bg-[#0A0A0B] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-zilla-neon/50 transition-colors"
-              >
-                <option value="instagram">📸 Instagram</option>
-                <option value="tiktok">🎵 TikTok</option>
-                <option value="youtube">▶️ YouTube</option>
-              </select>
-            </div>
-
-            {/* Hook */}
-            <div className="space-y-1.5">
-              <label className="text-[11px] text-gray-500 uppercase tracking-wider">Hook</label>
-              <input
-                type="text"
-                value={modalHook}
-                onChange={e => setModalHook(e.target.value)}
-                placeholder="e.g. Transform your skin in 7 days"
-                className="w-full bg-[#0A0A0B] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-zilla-neon/50 transition-colors"
-              />
-            </div>
-
-            {/* CTA */}
-            <div className="space-y-1.5">
-              <label className="text-[11px] text-gray-500 uppercase tracking-wider">CTA</label>
-              <input
-                type="text"
-                value={modalCta}
-                onChange={e => setModalCta(e.target.value)}
-                placeholder="e.g. Shop now - link in bio"
-                className="w-full bg-[#0A0A0B] border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-zilla-neon/50 transition-colors"
-              />
-            </div>
+            {/* Step progress bar */}
+            {modalStep < 8 && (
+              <div className="flex gap-1 mb-5">
+                {[1,2,3,4,5,6,7].map(s => (
+                  <div key={s} className={`h-0.5 flex-1 rounded-full transition-colors ${s <= modalStep ? 'bg-[#00FF94]' : 'bg-white/[0.06]'}`} />
+                ))}
+              </div>
+            )}
 
             {/* Error */}
             {modalError && (
-              <p className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">{modalError}</p>
+              <p className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2 mb-4">{modalError}</p>
             )}
 
-            {/* Generated link */}
-            {modalResult && (
-              <div className="bg-[#0A0A0B] border border-zilla-neon/20 rounded-lg p-3 space-y-2">
-                <p className="text-[11px] text-zilla-neon uppercase tracking-wider font-mono">Link generated</p>
-                <div className="flex items-center gap-2">
-                  <span className="flex-1 text-xs text-gray-300 font-mono truncate">{modalResult.full_url}</span>
-                  <button
-                    onClick={() => handleCopy(modalResult.full_url)}
-                    className="flex-shrink-0 text-xs px-3 py-1.5 rounded-md bg-zilla-neon/10 text-zilla-neon border border-zilla-neon/20 hover:bg-zilla-neon/20 transition-colors font-mono"
-                  >
-                    {copied ? 'Copied!' : 'Copy'}
-                  </button>
+            {/* STEP 1: Product picker */}
+            {modalStep === 1 && (
+              <div className="space-y-3">
+                <label className="text-[11px] text-gray-500 uppercase tracking-wider block">Select a Product</label>
+                {modalProductsLoading ? (
+                  <div className="flex items-center justify-center py-12 gap-2">
+                    <div className="w-4 h-4 border-2 rounded-full animate-spin" style={{ borderColor: '#00FF94', borderTopColor: 'transparent' }} />
+                    <span className="text-sm text-gray-500">Loading products...</span>
+                  </div>
+                ) : modalProducts.length === 0 ? (
+                  <p className="text-sm text-gray-500 text-center py-8">No products found. Make sure your store is synced.</p>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-[50vh] overflow-y-auto pr-1">
+                    {modalProducts.map(product => (
+                      <button
+                        key={product.id}
+                        onClick={() => { setModalSelectedProduct(product); setModalStep(2); }}
+                        className={`text-left rounded-lg p-3 transition-all border ${
+                          modalSelectedProduct?.id === product.id
+                            ? 'bg-[#00FF94]/[0.04] border-[#00FF94]/40'
+                            : 'bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.04] hover:border-white/[0.08]'
+                        }`}
+                      >
+                        <div className="aspect-square rounded-md bg-white/[0.03] border border-white/[0.06] flex items-center justify-center mb-2 overflow-hidden">
+                          {product.featured_image_url ? (
+                            <img src={product.featured_image_url} alt={product.title} className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="text-2xl font-semibold text-gray-700">{product.title.charAt(0)}</span>
+                          )}
+                        </div>
+                        <p className="text-[13px] text-white font-medium leading-tight truncate">{product.title}</p>
+                        <div className="flex items-center justify-between mt-1">
+                          <span className="text-[12px] text-white font-mono">
+                            ${product.price_min % 1 === 0 ? product.price_min.toFixed(0) : product.price_min.toFixed(2)}
+                          </span>
+                          <span className="text-[10px] text-gray-600 font-mono">{product.total_inventory} in stock</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* STEP 2: Platform */}
+            {modalStep === 2 && (
+              <div className="space-y-3">
+                <label className="text-[11px] text-gray-500 uppercase tracking-wider block">Choose Platform</label>
+                <div className="space-y-2">
+                  {([
+                    { id: 'youtube' as const, label: 'YouTube', icon: '▶️' },
+                    { id: 'tiktok' as const, label: 'TikTok', icon: '🎵' },
+                    { id: 'instagram' as const, label: 'Instagram', icon: '📸' },
+                  ]).map(p => (
+                    <button
+                      key={p.id}
+                      onClick={() => { setModalPlatform(p.id); setModalContentType(''); setModalStep(3); }}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg border transition-colors text-left ${
+                        modalPlatform === p.id
+                          ? 'bg-[#00FF94]/[0.04] border-[#00FF94]/40'
+                          : 'bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.04] hover:border-white/[0.08]'
+                      }`}
+                    >
+                      <span className="text-lg">{p.icon}</span>
+                      <span className="text-sm font-medium text-white">{p.label}</span>
+                    </button>
+                  ))}
                 </div>
               </div>
             )}
 
-            {/* Generate button */}
-            {!modalResult && (
-              <button
-                onClick={handleGenerateUTM}
-                disabled={modalLoading}
-                className="w-full py-2.5 rounded-lg bg-zilla-neon text-zilla-black font-semibold text-sm hover:bg-zilla-neon/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {modalLoading ? 'Generating...' : 'Generate Link'}
-              </button>
+            {/* STEP 3: Content Type */}
+            {modalStep === 3 && (
+              <div className="space-y-3">
+                <label className="text-[11px] text-gray-500 uppercase tracking-wider block">Content Type</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {(PLATFORM_CONTENT_TYPES[modalPlatform] || []).map(ct => (
+                    <button
+                      key={ct.id}
+                      onClick={() => { setModalContentType(ct.id); setModalStep(4); }}
+                      className={`px-4 py-3 rounded-lg border transition-colors text-sm font-medium ${
+                        modalContentType === ct.id
+                          ? 'bg-[#00FF94]/[0.04] border-[#00FF94]/40 text-white'
+                          : 'bg-white/[0.02] border-white/[0.06] text-gray-400 hover:bg-white/[0.04] hover:border-white/[0.08] hover:text-white'
+                      }`}
+                    >
+                      {ct.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
             )}
 
-            {modalResult && (
-              <button
-                onClick={closeModal}
-                className="w-full py-2.5 rounded-lg border border-white/10 text-gray-400 text-sm hover:text-white hover:border-white/20 transition-colors"
-              >
-                Done
-              </button>
+            {/* STEP 4: Creator Handle */}
+            {modalStep === 4 && (
+              <div className="space-y-3">
+                <label className="text-[11px] text-gray-500 uppercase tracking-wider block">Creator Handle</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 text-sm">@</span>
+                  <input
+                    type="text"
+                    value={modalCreator}
+                    onChange={e => setModalCreator(e.target.value.replace(/^@/, ''))}
+                    placeholder="creator_handle"
+                    autoFocus
+                    className="w-full pl-8 pr-3 py-2.5 bg-[#0A0A0B] border border-white/[0.08] rounded-lg text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#00FF94]/30 transition-colors font-mono"
+                  />
+                </div>
+                <button
+                  onClick={() => { if (modalCreator.trim()) setModalStep(5); }}
+                  disabled={!modalCreator.trim()}
+                  className="w-full py-2.5 rounded-lg bg-[#00FF94] text-[#0A0A0B] font-semibold text-sm hover:bg-[#00FF94]/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  Continue
+                </button>
+              </div>
+            )}
+
+            {/* STEP 5: Hook */}
+            {modalStep === 5 && (
+              <div className="space-y-3">
+                <label className="text-[11px] text-gray-500 uppercase tracking-wider block">Choose a Hook</label>
+                <div className="space-y-1.5">
+                  {HOOK_PRESETS.map(h => (
+                    <button
+                      key={h}
+                      onClick={() => { setModalHook(h); setModalStep(6); }}
+                      className={`w-full text-left px-4 py-2.5 rounded-lg border transition-colors text-sm ${
+                        modalHook === h
+                          ? 'bg-[#00FF94]/[0.04] border-[#00FF94]/40 text-white'
+                          : 'bg-white/[0.02] border-white/[0.06] text-gray-400 hover:bg-white/[0.04] hover:text-white'
+                      }`}
+                    >
+                      {h}
+                    </button>
+                  ))}
+                  {/* Custom option */}
+                  <button
+                    onClick={() => setModalHook('__custom__')}
+                    className={`w-full text-left px-4 py-2.5 rounded-lg border transition-colors text-sm ${
+                      modalHook === '__custom__'
+                        ? 'bg-[#00FF94]/[0.04] border-[#00FF94]/40 text-white'
+                        : 'bg-white/[0.02] border-white/[0.06] text-gray-500 hover:bg-white/[0.04] hover:text-white'
+                    }`}
+                  >
+                    Custom...
+                  </button>
+                  {modalHook === '__custom__' && (
+                    <div className="space-y-2 pt-1">
+                      <input
+                        type="text"
+                        value={modalHookCustom}
+                        onChange={e => setModalHookCustom(e.target.value)}
+                        placeholder="Write your custom hook..."
+                        autoFocus
+                        className="w-full bg-[#0A0A0B] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#00FF94]/30 transition-colors"
+                      />
+                      <button
+                        onClick={() => { if (modalHookCustom.trim()) setModalStep(6); }}
+                        disabled={!modalHookCustom.trim()}
+                        className="w-full py-2 rounded-lg bg-[#00FF94] text-[#0A0A0B] font-semibold text-sm disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        Continue
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* STEP 6: CTA */}
+            {modalStep === 6 && (
+              <div className="space-y-3">
+                <label className="text-[11px] text-gray-500 uppercase tracking-wider block">Choose a CTA</label>
+                <div className="space-y-1.5">
+                  {CTA_PRESETS.map(c => (
+                    <button
+                      key={c}
+                      onClick={() => { setModalCta(c); setModalStep(7); }}
+                      className={`w-full text-left px-4 py-2.5 rounded-lg border transition-colors text-sm ${
+                        modalCta === c
+                          ? 'bg-[#00FF94]/[0.04] border-[#00FF94]/40 text-white'
+                          : 'bg-white/[0.02] border-white/[0.06] text-gray-400 hover:bg-white/[0.04] hover:text-white'
+                      }`}
+                    >
+                      {c}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => setModalCta('__custom__')}
+                    className={`w-full text-left px-4 py-2.5 rounded-lg border transition-colors text-sm ${
+                      modalCta === '__custom__'
+                        ? 'bg-[#00FF94]/[0.04] border-[#00FF94]/40 text-white'
+                        : 'bg-white/[0.02] border-white/[0.06] text-gray-500 hover:bg-white/[0.04] hover:text-white'
+                    }`}
+                  >
+                    Custom...
+                  </button>
+                  {modalCta === '__custom__' && (
+                    <div className="space-y-2 pt-1">
+                      <input
+                        type="text"
+                        value={modalCtaCustom}
+                        onChange={e => setModalCtaCustom(e.target.value)}
+                        placeholder="Write your custom CTA..."
+                        autoFocus
+                        className="w-full bg-[#0A0A0B] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#00FF94]/30 transition-colors"
+                      />
+                      <button
+                        onClick={() => { if (modalCtaCustom.trim()) setModalStep(7); }}
+                        disabled={!modalCtaCustom.trim()}
+                        className="w-full py-2 rounded-lg bg-[#00FF94] text-[#0A0A0B] font-semibold text-sm disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        Continue
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* STEP 7: Review & Generate */}
+            {modalStep === 7 && (
+              <div className="space-y-4">
+                <label className="text-[11px] text-gray-500 uppercase tracking-wider block">Review & Generate</label>
+                <div className="space-y-2 bg-[#0A0A0B] rounded-lg border border-white/[0.06] p-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] text-gray-500">Product</span>
+                    <span className="text-[13px] text-white truncate max-w-[260px]">{modalSelectedProduct?.title}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] text-gray-500">Platform</span>
+                    <span className="text-[13px] text-white capitalize">{modalPlatform}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] text-gray-500">Content Type</span>
+                    <span className="text-[13px] text-white capitalize">{modalContentType}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] text-gray-500">Creator</span>
+                    <span className="text-[13px] text-white font-mono">@{modalCreator}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] text-gray-500">Hook</span>
+                    <span className="text-[13px] text-white truncate max-w-[260px]">{modalHook === '__custom__' ? modalHookCustom : modalHook}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] text-gray-500">CTA</span>
+                    <span className="text-[13px] text-white truncate max-w-[260px]">{modalCta === '__custom__' ? modalCtaCustom : modalCta}</span>
+                  </div>
+                </div>
+                <button
+                  onClick={handleGenerateUTM}
+                  disabled={modalLoading}
+                  className="w-full py-2.5 rounded-lg bg-[#00FF94] text-[#0A0A0B] font-semibold text-sm hover:bg-[#00FF94]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {modalLoading ? 'Generating...' : 'Generate Tracking Link'}
+                </button>
+              </div>
+            )}
+
+            {/* STEP 8: Result + Post URL */}
+            {modalStep === 8 && modalResult && (
+              <div className="space-y-4">
+                <div className="bg-[#0A0A0B] border border-[#00FF94]/20 rounded-lg p-4 space-y-3">
+                  <p className="text-[11px] text-[#00FF94] uppercase tracking-wider font-mono">Link Generated</p>
+                  <div className="flex items-center gap-2">
+                    <span className="flex-1 text-xs text-gray-300 font-mono truncate">{modalResult.full_url}</span>
+                    <button
+                      onClick={() => handleCopy(modalResult.full_url)}
+                      className="flex-shrink-0 text-xs px-3 py-1.5 rounded-md bg-[#00FF94]/10 text-[#00FF94] border border-[#00FF94]/20 hover:bg-[#00FF94]/20 transition-colors font-mono"
+                    >
+                      {copied ? 'Copied!' : 'Copy'}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[11px] text-gray-500 uppercase tracking-wider">
+                    Published Post URL <span className="text-gray-600 normal-case">(optional)</span>
+                  </label>
+                  <input
+                    type="url"
+                    value={modalPostUrl}
+                    onChange={e => setModalPostUrl(e.target.value)}
+                    placeholder="https://tiktok.com/@creator/video/..."
+                    className="w-full bg-[#0A0A0B] border border-white/[0.08] rounded-lg px-3 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-[#00FF94]/30 transition-colors font-mono"
+                  />
+                  <p className="text-[10px] text-gray-600">Paste the URL of the published post to connect attribution data</p>
+                </div>
+
+                <button
+                  onClick={handleSavePostUrl}
+                  className="w-full py-2.5 rounded-lg border border-white/[0.08] text-gray-400 text-sm hover:text-white hover:border-white/[0.15] transition-colors"
+                >
+                  {modalPostUrl.trim() ? 'Save & Close' : 'Done'}
+                </button>
+              </div>
             )}
           </div>
         </div>

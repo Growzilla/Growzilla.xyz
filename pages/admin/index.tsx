@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { PlusIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, ChartBarIcon } from '@heroicons/react/24/outline';
 import type { ShopDetails } from '@/types/admin';
 import LoginGate from '@/components/admin/LoginGate';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -105,6 +106,15 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
         </div>
 
         <div className="flex items-center gap-3">
+          <Link
+            href="/admin/adcreator-leads"
+            className="text-sm py-2.5 px-4 flex items-center gap-2 rounded-md border border-white/10 text-gray-300 hover:text-white hover:border-zilla-neon/40 transition-colors"
+            title="Adcreator funnel leads"
+          >
+            <ChartBarIcon className="w-4 h-4" />
+            <span className="hidden sm:inline">Adcreator leads</span>
+          </Link>
+
           {shops.length > 0 && (
             <MerchantLauncher
               shops={shops.map((s) => ({ domain: s.domain, shop_id: s.shop_id, label: s.label }))}

@@ -12,3 +12,12 @@ export type { VibeSelectorProps, VibeOption } from './VibeSelector';
 
 export { TrackingLinkDisplay } from './TrackingLinkDisplay';
 export type { TrackingLinkDisplayProps } from './TrackingLinkDisplay';
+
+export { AngleBadge, ANGLE_PALETTE } from './AngleBadge';
+export type { AngleBadgeProps } from './AngleBadge';
+
+export { LongevityBadge, LONGEVITY_PALETTE } from './LongevityBadge';
+export type { LongevityBadgeProps, LongevityFlag } from './LongevityBadge';
+
+export { StickyPDFButton } from './StickyPDFButton';
+export type { StickyPDFButtonProps } from './StickyPDFButton';

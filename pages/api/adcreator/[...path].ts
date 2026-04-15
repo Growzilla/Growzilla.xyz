@@ -94,8 +94,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS)
 
-  // If the client disconnects mid-stream, abort the upstream fetch too.
-  req.on('close', () => controller.abort())
+  // If the client genuinely disconnects mid-stream, abort the upstream fetch too.
+  // Guard against firing on normal request completion (req 'close' fires then too in
+  // Next.js), which was cancelling every proxied request and surfacing as 502s.
+  req.on('close', () => {
+    if (!res.writableEnded && !controller.signal.aborted) controller.abort()
+  })
 
   let upstream: Response
   try {

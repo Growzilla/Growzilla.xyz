@@ -87,11 +87,14 @@ export default function SetupPage() {
   const router = useRouter()
   // hmac arrives in the URL too but is verified by the Shopify install
   // handler upstream; /setup itself doesn't re-check it.
-  const { shop, token } = router.query as {
+  // Accept either ?token= (legacy) or ?accessToken= (Remix's native param name).
+  const { shop, token: queryToken, accessToken: queryAccessToken } = router.query as {
     shop?: string
     hmac?: string
     token?: string
+    accessToken?: string
   }
+  const token = queryToken || queryAccessToken
 
   const [orgName, setOrgName] = useState('')
   const [ownerName, setOwnerName] = useState('')

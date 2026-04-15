@@ -3,7 +3,20 @@
  *
  * Typed client for the ecomdash-api backend.
  * Handles JWT auth for merchant sessions and admin-key auth for admin operations.
+ *
+ * Error contract (closes I5):
+ *   - Every request sends `X-Request-Id` (uuid) so backend logs can be
+ *     correlated to a single browser action.
+ *   - On non-2xx, `apiFetch` parses the backend envelope and throws `ApiError`.
+ *     The envelope shape is shared with `<ErrorCard>` so any caller can `catch`
+ *     the error and render `<ErrorCard envelope={err.envelope} />` directly.
+ *   - Network/CORS failures synthesize a `network` envelope so callers handle
+ *     one error class.
  */
+
+import type { ErrorEnvelope } from '@/components/ErrorCard.types';
+
+export type { ErrorEnvelope } from '@/components/ErrorCard.types';
 
 const API_BASE = process.env.ECOMDASH_API_URL || 'https://ecomdash-api.onrender.com';
 
@@ -33,6 +46,64 @@ export function getToken(): string | null {
 }
 
 // ---------------------------------------------------------------------------
+// ApiError — wraps the backend envelope so callers can render <ErrorCard>
+// ---------------------------------------------------------------------------
+
+/**
+ * Thrown by `apiFetch` on every non-2xx response and on network/CORS failure.
+ * `envelope` matches the backend `{error: {id, code, message, ...}}` contract
+ * (or a synthesized `network` envelope on fetch rejection).
+ *
+ * Use cases:
+ *   try { ... } catch (e) {
+ *     if (e instanceof ApiError) {
+ *       if (e.isTransient()) retry();
+ *       else render(<ErrorCard envelope={e.envelope} />);
+ *     }
+ *   }
+ */
+export class ApiError extends Error {
+  envelope: ErrorEnvelope;
+  status: number;
+
+  constructor(envelope: ErrorEnvelope, status: number) {
+    super(envelope.error.message || `API ${status}`);
+    this.name = 'ApiError';
+    this.envelope = envelope;
+    this.status = status;
+    // Preserve prototype across transpilation targets (ES5 emit safety)
+    Object.setPrototypeOf(this, ApiError.prototype);
+  }
+
+  /** True for 5xx + network errors (safe to retry with backoff). */
+  isTransient(): boolean {
+    return this.status === 0 || this.status >= 500;
+  }
+
+  /** Short error id for support / `/api/_debug/errors/{id}` lookup. */
+  getErrorId(): string | null {
+    return this.envelope.error.id ?? null;
+  }
+}
+
+// Type-guard for an envelope-shaped JSON body.
+function isErrorEnvelope(value: unknown): value is ErrorEnvelope {
+  if (!value || typeof value !== 'object') return false;
+  const err = (value as { error?: unknown }).error;
+  if (!err || typeof err !== 'object') return false;
+  const e = err as Record<string, unknown>;
+  return typeof e.code === 'string' && typeof e.message === 'string';
+}
+
+function makeRequestId(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  // Fallback for older runtimes (test envs, very old browsers).
+  return 'gz-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+}
+
+// ---------------------------------------------------------------------------
 // Core fetch wrapper
 // ---------------------------------------------------------------------------
 
@@ -51,8 +122,10 @@ async function apiFetch<T>(path: string, opts: FetchOpts = {}): Promise<T> {
     url += '?' + new URLSearchParams(params).toString();
   }
 
+  const requestId = makeRequestId();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    'X-Request-Id': requestId,
   };
 
   const token = getToken();
@@ -63,15 +136,65 @@ async function apiFetch<T>(path: string, opts: FetchOpts = {}): Promise<T> {
     headers['X-Admin-Key'] = adminKey;
   }
 
-  const res = await fetch(url, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  } catch (e) {
+    // Network / CORS / DNS failure — synthesize an envelope so callers
+    // handle one error class.
+    const message = e instanceof Error ? e.message : 'Network request failed';
+    const envelope: ErrorEnvelope = {
+      error: {
+        id: null,
+        code: 'network',
+        message,
+        path,
+        method,
+        trace_id: requestId,
+      },
+    };
+    throw new ApiError(envelope, 0);
+  }
 
   if (!res.ok) {
-    const text = await res.text().catch(() => 'Unknown error');
-    throw new Error(`API ${res.status}: ${text}`);
+    // Try to parse the backend envelope; fall back to a synthetic one if the
+    // body isn't JSON or doesn't match the contract.
+    let envelope: ErrorEnvelope;
+    try {
+      const parsed: unknown = await res.json();
+      envelope = isErrorEnvelope(parsed)
+        ? parsed
+        : {
+            error: {
+              id: null,
+              code: `http_${res.status}`,
+              message:
+                (parsed && typeof parsed === 'object' && 'detail' in parsed
+                  ? String((parsed as { detail: unknown }).detail)
+                  : `API ${res.status}`),
+              path,
+              method,
+              trace_id: requestId,
+            },
+          };
+    } catch {
+      const text = await res.text().catch(() => '');
+      envelope = {
+        error: {
+          id: null,
+          code: `http_${res.status}`,
+          message: text || `API ${res.status}`,
+          path,
+          method,
+          trace_id: requestId,
+        },
+      };
+    }
+    throw new ApiError(envelope, res.status);
   }
 
   return res.json();

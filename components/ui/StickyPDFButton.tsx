@@ -1,61 +1,106 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { motion } from 'framer-motion'
 
 /**
- * StickyPDFButton — top-right floating "Download PDF" button with green glow.
- * Pulses every 4s. Renders via portal to <body> so it can't be clipped.
+ * StickyPDFButton — top-right floating CTA button.
+ * Renders via portal to <body> so it can't be clipped by overflow ancestors.
+ *
+ * - variant="primary"   → solid brand green (#00FF94), black text, pulsing glow
+ * - variant="secondary" → zinc-900 fill, green border, green text, no pulse
+ * - `href` takes precedence over `onClick` — renders as <a>
+ * - `visible=false` returns null (for conditional mount via prop instead of parent unmount)
  */
 
+export type StickyPDFButtonVariant = 'primary' | 'secondary'
+
 export interface StickyPDFButtonProps {
-  jobId: string
-  onClick: (jobId: string) => void
-  loading?: boolean
   label?: string
+  onClick?: () => void
+  href?: string
+  variant?: StickyPDFButtonVariant
+  visible?: boolean
+  loading?: boolean
+  icon?: ReactNode
   className?: string
 }
 
 export function StickyPDFButton({
-  jobId,
-  onClick,
-  loading = false,
   label = 'Download PDF',
+  onClick,
+  href,
+  variant = 'primary',
+  visible = true,
+  loading = false,
+  icon,
   className = '',
 }: StickyPDFButtonProps) {
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
 
-  if (!mounted) return null
+  if (!mounted || !visible) return null
 
-  const node = (
-    <div className={`fixed top-4 right-4 z-50 ${className}`}>
-      <motion.button
-        type="button"
-        onClick={() => !loading && onClick(jobId)}
-        disabled={loading}
-        animate={{
-          scale: loading ? 1 : [1, 1.04, 1],
-          boxShadow: loading
-            ? '0 0 0 1px rgba(0,255,148,0.3), 0 8px 24px rgba(0,0,0,0.4)'
-            : [
-                '0 0 0 1px rgba(0,255,148,0.3), 0 0 24px rgba(0,255,148,0.18), 0 8px 24px rgba(0,0,0,0.4)',
-                '0 0 0 1px rgba(0,255,148,0.6), 0 0 36px rgba(0,255,148,0.32), 0 8px 24px rgba(0,0,0,0.4)',
-                '0 0 0 1px rgba(0,255,148,0.3), 0 0 24px rgba(0,255,148,0.18), 0 8px 24px rgba(0,0,0,0.4)',
-              ],
-        }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-        whileHover={{ scale: loading ? 1 : 1.06 }}
-        whileTap={{ scale: loading ? 1 : 0.97 }}
-        className="inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-[13px] font-semibold text-black disabled:cursor-wait disabled:opacity-70"
-        style={{ background: '#00FF94' }}
-      >
-        {loading ? <SpinnerIcon /> : <DownloadIcon />}
-        <span>{loading ? 'Generating…' : label}</span>
-      </motion.button>
-    </div>
+  const isPrimary = variant === 'primary'
+  const leadIcon = loading ? <SpinnerIcon /> : icon ?? <DownloadIcon />
+  const textNode = loading ? 'Generating…' : label
+
+  const sharedClass =
+    'inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-[13px] font-semibold disabled:cursor-wait disabled:opacity-70'
+  const primaryClass = `${sharedClass} text-black`
+  const secondaryClass = `${sharedClass} text-[#00FF94]`
+
+  const primaryStyle = { background: '#00FF94' }
+  const secondaryStyle = {
+    background: 'rgba(17,17,17,0.92)',
+    boxShadow: 'inset 0 0 0 1px rgba(0,255,148,0.45)',
+  }
+
+  const pulseAnim = loading
+    ? { scale: 1, boxShadow: '0 0 0 1px rgba(0,255,148,0.3), 0 8px 24px rgba(0,0,0,0.4)' }
+    : {
+        scale: [1, 1.04, 1],
+        boxShadow: [
+          '0 0 0 1px rgba(0,255,148,0.3), 0 0 24px rgba(0,255,148,0.18), 0 8px 24px rgba(0,0,0,0.4)',
+          '0 0 0 1px rgba(0,255,148,0.6), 0 0 36px rgba(0,255,148,0.32), 0 8px 24px rgba(0,0,0,0.4)',
+          '0 0 0 1px rgba(0,255,148,0.3), 0 0 24px rgba(0,255,148,0.18), 0 8px 24px rgba(0,0,0,0.4)',
+        ],
+      }
+
+  const inner = href ? (
+    <motion.a
+      href={href}
+      target={href.startsWith('http') ? '_blank' : undefined}
+      rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
+      animate={isPrimary ? pulseAnim : undefined}
+      transition={isPrimary ? { duration: 4, repeat: Infinity, ease: 'easeInOut' } : undefined}
+      whileHover={{ scale: loading ? 1 : 1.06 }}
+      whileTap={{ scale: loading ? 1 : 0.97 }}
+      className={isPrimary ? primaryClass : secondaryClass}
+      style={isPrimary ? primaryStyle : secondaryStyle}
+    >
+      {leadIcon}
+      <span>{textNode}</span>
+    </motion.a>
+  ) : (
+    <motion.button
+      type="button"
+      onClick={() => !loading && onClick?.()}
+      disabled={loading}
+      animate={isPrimary ? pulseAnim : undefined}
+      transition={isPrimary ? { duration: 4, repeat: Infinity, ease: 'easeInOut' } : undefined}
+      whileHover={{ scale: loading ? 1 : 1.06 }}
+      whileTap={{ scale: loading ? 1 : 0.97 }}
+      className={isPrimary ? primaryClass : secondaryClass}
+      style={isPrimary ? primaryStyle : secondaryStyle}
+    >
+      {leadIcon}
+      <span>{textNode}</span>
+    </motion.button>
   )
+
+  const node = <div className={`fixed top-4 right-4 z-50 ${className}`}>{inner}</div>
 
   return createPortal(node, document.body)
 }

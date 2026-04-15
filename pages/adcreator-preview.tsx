@@ -111,7 +111,7 @@ export default function AdcreatorPreviewPage() {
         <meta name="robots" content="noindex" />
       </Head>
 
-      <StickyPDFButton jobId="job-mock-001" onClick={(id) => console.log('pdf', id)} />
+      <StickyPDFButton label="Download PDF" onClick={() => console.log('pdf: job-mock-001')} />
 
       <main
         className="min-h-screen pb-32"

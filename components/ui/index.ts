@@ -19,5 +19,11 @@ export type { AngleBadgeProps } from './AngleBadge';
 export { LongevityBadge, LONGEVITY_PALETTE } from './LongevityBadge';
 export type { LongevityBadgeProps, LongevityFlag } from './LongevityBadge';
 
+export { StatusBadge, STATUS_PALETTE } from './StatusBadge';
+export type { StatusBadgeProps, StatusVariant } from './StatusBadge';
+
 export { StickyPDFButton } from './StickyPDFButton';
-export type { StickyPDFButtonProps } from './StickyPDFButton';
+export type { StickyPDFButtonProps, StickyPDFButtonVariant } from './StickyPDFButton';
+
+export { CostMeter } from './CostMeter';
+export type { CostMeterProps } from './CostMeter';

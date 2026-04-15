@@ -35,6 +35,9 @@ import { useOnboardingTracker } from '@/hooks/useEventTracker';
 import DevModePanel from './DevModePanel';
 import MomentumBanner, { MOCK_MOMENTUM_WITH_DATA } from './MomentumBanner';
 import FirstSaleToast from './FirstSaleToast';
+import LiveSaleToast from '@/components/dashboard/FirstSaleToast';
+import CreateLinkModal, { type SyncStatusShape } from '@/components/dashboard/CreateLinkModal';
+import { useLiveConversions } from '@/hooks/useLiveConversions';
 import { getActiveShop, type ShopInfo } from './StoreSelector';
 import { getMetaFunnel, type SankeyData } from '@/lib/api-client';
 import type { FemFitSankeyNode, FemFitSankeyLink } from '@/types/whop';
@@ -617,6 +620,35 @@ const WhopDashboardShell: React.FC = () => {
   const [lastCreatedLinkId, setLastCreatedLinkId] = useState<string | null>(null);
   const tracker = useOnboardingTracker(shopIdForTracking || 'dashboard');
 
+  // --- Install→Demo pipeline (S32) ---
+  // Live-conversion polling: dispatches `gz:conversion` window events that the
+  // <LiveSaleToast> below listens to. Silent no-op until a shop is bound.
+  useLiveConversions(activeShopInfo?.id);
+
+  // Create-link modal state. Until fe-ui ships <SyncStatusDock>/useSyncStatus
+  // we feed a permissive default so the I3 gate doesn't block merchants who
+  // already finished sync on a previous session. Will be replaced with the
+  // real hook once available.
+  const [showCreateLink, setShowCreateLink] = useState(false);
+  const stubSyncStatus: SyncStatusShape = {
+    products: { status: 'done', count: 0, total: 0 },
+  };
+
+  // Cmd/Ctrl+K opens the Create-link modal. Avoids the cost of a full command
+  // palette while giving keyboard-first merchants the same affordance.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    function onKey(e: KeyboardEvent) {
+      const isMod = e.metaKey || e.ctrlKey;
+      if (isMod && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        setShowCreateLink((v) => !v);
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
   // Detect if user just finished onboarding
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -798,6 +830,45 @@ const WhopDashboardShell: React.FC = () => {
     <WhopLayout activeView={activeView} onViewChange={setActiveView} onShopChange={handleShopChange}>
       {/* First sale toast — polls for conversions after link creation */}
       <FirstSaleToast linkId={lastCreatedLinkId} onDismiss={() => setLastCreatedLinkId(null)} />
+
+      {/* Live-conversion toast — listens to `gz:conversion` from useLiveConversions.
+          Sits alongside the per-link FirstSaleToast above so we don't break the
+          existing post-link flow. (S32 install→demo aha moment.) */}
+      <LiveSaleToast />
+
+      {/* Create-link modal — opens via floating FAB (below) or Cmd/Ctrl+K. */}
+      <CreateLinkModal
+        open={showCreateLink}
+        onClose={() => setShowCreateLink(false)}
+        shopId={activeShopInfo?.id || ''}
+        syncStatus={stubSyncStatus}
+        onCreated={(link) => setLastCreatedLinkId(link.id)}
+      />
+
+      {/* Floating FAB — "Create tracking link". Only when a shop is bound. */}
+      {activeShopInfo?.id && (
+        <button
+          type="button"
+          onClick={() => setShowCreateLink(true)}
+          aria-label="Create tracking link"
+          className="fixed bottom-6 right-6 z-[150] flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-colors"
+          style={{
+            background: '#00FF94',
+            color: '#0A0A0B',
+            border: '1px solid rgba(0,0,0,0.15)',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.35)',
+          }}
+        >
+          <span style={{ fontSize: 16, lineHeight: 1 }}>+</span>
+          <span>Create link</span>
+          <span
+            className="hidden sm:inline px-1.5 py-0.5 rounded text-[10px] font-mono"
+            style={{ background: 'rgba(0,0,0,0.18)' }}
+          >
+            ⌘K
+          </span>
+        </button>
+      )}
 
       {/* Momentum banner — shows on overview tab */}
       {activeView === 'overview' && (

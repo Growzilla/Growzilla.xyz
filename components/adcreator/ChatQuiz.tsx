@@ -33,6 +33,12 @@ export interface ChatQuizProps {
   /** ms the typing indicator shows before the next bot bubble appears. */
   typingMs?: number
   className?: string
+  /**
+   * Fired each time the user submits an answer (before the bot responds).
+   * Non-breaking optional extension for analytics wiring.
+   * Implementations must be fire-and-forget — they run inside the submit path.
+   */
+  onAnswer?: (answer: ChatQuizAnswer, stepIndex: number) => void
 }
 
 type Bubble =
@@ -46,6 +52,7 @@ export function ChatQuiz({
   greeting,
   typingMs = 800,
   className = '',
+  onAnswer,
 }: ChatQuizProps) {
   const [bubbles, setBubbles] = useState<Bubble[]>([])
   const [currentIdx, setCurrentIdx] = useState(0)
@@ -102,10 +109,19 @@ export function ChatQuiz({
     const trimmed = value.trim()
     if (!trimmed || !acceptingInput) return
     const q = questions[currentIdx]
-    const nextAnswers = [...answers, { questionId: q.id, value: trimmed }]
+    const answer = { questionId: q.id, value: trimmed }
+    const nextAnswers = [...answers, answer]
     setAnswers(nextAnswers)
     setDraft('')
     setAcceptingInput(false)
+    // Fire-and-forget analytics hook; callback must never throw into this path.
+    if (onAnswer) {
+      try {
+        onAnswer(answer, currentIdx)
+      } catch {
+        /* ignore analytics failures */
+      }
+    }
 
     setBubbles((prev) => [
       ...prev,

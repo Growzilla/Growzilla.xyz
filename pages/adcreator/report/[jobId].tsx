@@ -2,14 +2,16 @@ import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   AdCard,
   BriefCard,
   BrandSnapshot,
   CompetitorCard,
+  PhaseChecklist,
   type BriefCardProps,
   type LongevityDistribution,
+  type PhaseItem,
 } from '@/components/adcreator'
 import { StickyPDFButton } from '@/components/ui/StickyPDFButton'
 import type { LongevityFlag } from '@/components/ui/LongevityBadge'
@@ -17,13 +19,14 @@ import type { LongevityFlag } from '@/components/ui/LongevityBadge'
 /**
  * /adcreator/report/[jobId] — the viral artifact.
  *
- * - Sticky header (logo + title + StickyPDFButton).
- * - 5 sections: BrandSnapshot, Competitive Landscape, Winning Ads, 5 Briefs, Dual CTA, Footer.
- * - `?pdf=1` → PDF-mode stylesheet (no sticky, no animations, A4-safe, watermark + page numbers).
- * - 404 from backend → "Report still generating" w/ auto-redirect to /run/{jobId}.
+ * Four semantic states map to backend /api/adcreator/result/{job_id} HTTP statuses:
+ *   - 200 COMPLETE  → full report renders.
+ *   - 409 PROCESSING (RUNNING/PENDING/QUEUED) → PhaseChecklist + 5s auto-refresh.
+ *   - 422 ERROR     → error card + collapsible error_text.
+ *   - 404 MISSING   → "cannot find that report" + CTA to /adcreator.
  *
+ * `?pdf=1` → PDF-mode stylesheet (no sticky, no animations, A4-safe, watermark).
  * AdCard cap of 60 prevents catastrophic render on edge cases (100+ ads).
- * Briefs always render fully (max 5 by contract).
  */
 
 interface ReportData {
@@ -62,12 +65,23 @@ interface ReportData {
 }
 
 const AD_RENDER_CAP = 60
+const POLL_INTERVAL_MS = 5000
+
+const DEFAULT_PHASE_ITEMS: PhaseItem[] = [
+  { id: 'intake', label: 'Intake & brand lookup', status: 'running' },
+  { id: 'discovery', label: 'Competitor discovery', status: 'pending' },
+  { id: 'scrape', label: 'Scraping Meta Ad Library', status: 'pending' },
+  { id: 'synthesis', label: 'Tagging ads & building angle map', status: 'pending' },
+  { id: 'briefs', label: 'Generating 5 ready-to-run briefs', status: 'pending' },
+  { id: 'persist', label: 'Finalizing PDF artifact', status: 'pending' },
+]
 
 type FetchState =
   | { kind: 'loading' }
-  | { kind: 'ok'; data: ReportData }
-  | { kind: 'pending'; retryAt: number }
-  | { kind: 'error'; message: string }
+  | { kind: 'complete'; data: ReportData }
+  | { kind: 'processing'; startedAt: number; now: number }
+  | { kind: 'errored'; message: string; errorText?: string }
+  | { kind: 'missing' }
 
 export default function AdcreatorReportPage() {
   const router = useRouter()
@@ -79,47 +93,101 @@ export default function AdcreatorReportPage() {
   const [showAllAds, setShowAllAds] = useState(false)
   const [pdfLoading, setPdfLoading] = useState(false)
   const [pdfError, setPdfError] = useState<string | null>(null)
+  const processingStartRef = useRef<number | null>(null)
 
-  // Fetch report data — re-runs on jobId.
+  // Fetch report data — re-runs on jobId. Polls every 5s while in processing state.
   useEffect(() => {
     if (!jobId) return
     let cancelled = false
+    let pollTimer: ReturnType<typeof setTimeout> | null = null
+    let elapsedTimer: ReturnType<typeof setInterval> | null = null
 
     async function load() {
       try {
         const r = await fetch(`/api/adcreator/result/${encodeURIComponent(jobId)}`)
         if (cancelled) return
+
         if (r.status === 404) {
-          // Still being built — auto-redirect to /run after 4s.
-          setFetchState({ kind: 'pending', retryAt: Date.now() + 4000 })
-          setTimeout(() => {
-            if (!cancelled) router.replace(`/adcreator/run/${encodeURIComponent(jobId)}`)
-          }, 4000)
+          setFetchState({ kind: 'missing' })
           return
         }
+
+        if (r.status === 409) {
+          // Still processing — re-poll every 5s and track elapsed time from first entry.
+          if (processingStartRef.current == null) processingStartRef.current = Date.now()
+          setFetchState({
+            kind: 'processing',
+            startedAt: processingStartRef.current,
+            now: Date.now(),
+          })
+          pollTimer = setTimeout(() => {
+            if (!cancelled) load()
+          }, POLL_INTERVAL_MS)
+          return
+        }
+
+        if (r.status === 422) {
+          // Job errored out.
+          let errorText: string | undefined
+          let message = 'Something went wrong generating your report.'
+          try {
+            const body = (await r.json()) as {
+              detail?: string
+              error?: { error_text?: string; code?: string } | string
+              error_text?: string
+              message?: string
+            }
+            if (typeof body.error === 'object' && body.error?.error_text) {
+              errorText = body.error.error_text
+            } else if (typeof body.error === 'string') {
+              errorText = body.error
+            } else if (body.error_text) {
+              errorText = body.error_text
+            } else if (typeof body.detail === 'string') {
+              errorText = body.detail
+            }
+            if (body.message) message = body.message
+          } catch {
+            /* body may not be JSON — ignore */
+          }
+          setFetchState({ kind: 'errored', message, errorText })
+          return
+        }
+
         if (!r.ok) {
           throw new Error(`Result fetch failed: ${r.status}`)
         }
+
         const data = (await r.json()) as ReportData
-        setFetchState({ kind: 'ok', data })
+        setFetchState({ kind: 'complete', data })
       } catch (err) {
         if (cancelled) return
         setFetchState({
-          kind: 'error',
+          kind: 'errored',
           message: err instanceof Error ? err.message : 'Failed to load report',
         })
       }
     }
 
     load()
+    // Tick elapsed counter every 1s while processing, independent of network poll.
+    elapsedTimer = setInterval(() => {
+      if (cancelled) return
+      setFetchState((prev) =>
+        prev.kind === 'processing' ? { ...prev, now: Date.now() } : prev
+      )
+    }, 1000)
+
     return () => {
       cancelled = true
+      if (pollTimer) clearTimeout(pollTimer)
+      if (elapsedTimer) clearInterval(elapsedTimer)
     }
-  }, [jobId, router])
+  }, [jobId])
 
   // Group ads by angle for visual coherence.
   const adsByAngle = useMemo(() => {
-    if (fetchState.kind !== 'ok') return new Map<string, ReportData['ads']>()
+    if (fetchState.kind !== 'complete') return new Map<string, ReportData['ads']>()
     const map = new Map<string, ReportData['ads']>()
     const ads = showAllAds ? fetchState.data.ads : fetchState.data.ads.slice(0, AD_RENDER_CAP)
     for (const ad of ads) {
@@ -172,7 +240,8 @@ export default function AdcreatorReportPage() {
     </ReportShell>
   }
 
-  if (fetchState.kind === 'pending') {
+  // MISSING — 404 from backend. Job never existed or was deleted.
+  if (fetchState.kind === 'missing') {
     return (
       <ReportShell pdfMode={pdfMode}>
         <div
@@ -183,31 +252,10 @@ export default function AdcreatorReportPage() {
           }}
         >
           <div className="text-[14px] font-semibold" style={{ color: 'rgba(255,255,255,0.95)' }}>
-            Report still generating
-          </div>
-          <p className="mt-1 text-[13px]" style={{ color: 'rgba(255,255,255,0.55)' }}>
-            Reconnecting you to the live status…
-          </p>
-        </div>
-      </ReportShell>
-    )
-  }
-
-  if (fetchState.kind === 'error') {
-    return (
-      <ReportShell pdfMode={pdfMode}>
-        <div
-          className="rounded-lg p-6 text-center"
-          style={{
-            background: 'rgba(244,114,114,0.05)',
-            boxShadow: 'inset 0 0 0 1px rgba(244,114,114,0.25)',
-          }}
-        >
-          <div className="text-[14px] font-semibold" style={{ color: '#F87171' }}>
-            Couldn&apos;t load this report
+            We cannot find that report
           </div>
           <p className="mt-1 text-[13px]" style={{ color: 'rgba(255,255,255,0.72)' }}>
-            {fetchState.message}
+            It may have been deleted. Start a new one.
           </p>
           <p className="mt-2 text-[11px] tabular-nums" style={{ color: 'rgba(255,255,255,0.40)' }}>
             Job ID: {jobId}
@@ -219,6 +267,106 @@ export default function AdcreatorReportPage() {
           >
             Start a new report
           </Link>
+        </div>
+      </ReportShell>
+    )
+  }
+
+  // PROCESSING — 409 from backend (RUNNING|PENDING|QUEUED). Auto-refresh every 5s.
+  if (fetchState.kind === 'processing') {
+    const elapsedMs = Math.max(0, fetchState.now - fetchState.startedAt)
+    // Estimated total ~180s (3 min landing promise). Never negative.
+    const estimatedTotalMs = 180_000
+    const estimatedRemainingMs = Math.max(0, estimatedTotalMs - elapsedMs)
+    return (
+      <ReportShell pdfMode={pdfMode}>
+        <div className="space-y-4">
+          <div
+            className="rounded-lg p-5 text-center"
+            style={{
+              background: 'rgba(0,255,148,0.04)',
+              boxShadow: 'inset 0 0 0 1px rgba(0,255,148,0.18)',
+            }}
+          >
+            <div className="text-[14px] font-semibold" style={{ color: 'rgba(255,255,255,0.95)' }}>
+              Your report is still processing
+            </div>
+            <p className="mt-1 text-[13px]" style={{ color: 'rgba(255,255,255,0.72)' }}>
+              This page will auto-refresh when ready.
+            </p>
+            <p className="mt-2 text-[11px] tabular-nums" style={{ color: 'rgba(255,255,255,0.40)' }}>
+              Job ID: {jobId}
+            </p>
+          </div>
+          <PhaseChecklist
+            items={DEFAULT_PHASE_ITEMS}
+            elapsedMs={elapsedMs}
+            estimatedRemainingMs={estimatedRemainingMs}
+          />
+          <Link
+            href={`/adcreator/run/${encodeURIComponent(jobId)}`}
+            className="inline-block text-[12px] font-semibold underline-offset-2 hover:underline"
+            style={{ color: 'rgba(0,255,148,0.85)' }}
+          >
+            Watch live progress ↗
+          </Link>
+        </div>
+      </ReportShell>
+    )
+  }
+
+  // ERROR — 422 from backend or unrecoverable fetch failure.
+  if (fetchState.kind === 'errored') {
+    return (
+      <ReportShell pdfMode={pdfMode}>
+        <div
+          className="rounded-lg p-6"
+          style={{
+            background: 'rgba(244,114,114,0.05)',
+            boxShadow: 'inset 0 0 0 1px rgba(244,114,114,0.25)',
+          }}
+        >
+          <div className="text-[14px] font-semibold text-center" style={{ color: '#F87171' }}>
+            Something went wrong generating your report
+          </div>
+          <p className="mt-2 text-[13px] text-center" style={{ color: 'rgba(255,255,255,0.72)' }}>
+            {fetchState.message} We have logged it.{' '}
+            <a
+              href="mailto:hello@growzilla.xyz?subject=Adcreator%20error"
+              className="underline-offset-2 hover:underline"
+              style={{ color: 'rgba(0,255,148,0.85)' }}
+            >
+              Please email us
+            </a>{' '}
+            or try again.
+          </p>
+          <p className="mt-2 text-[11px] tabular-nums text-center" style={{ color: 'rgba(255,255,255,0.40)' }}>
+            Job ID: {jobId}
+          </p>
+          {fetchState.errorText && (
+            <details className="mt-5 text-[12px]" style={{ color: 'rgba(255,255,255,0.55)' }}>
+              <summary className="cursor-pointer hover:text-white/80">Technical details</summary>
+              <pre
+                className="mt-2 p-3 rounded-md text-[11px] overflow-x-auto whitespace-pre-wrap"
+                style={{
+                  background: 'rgba(0,0,0,0.25)',
+                  color: 'rgba(255,255,255,0.72)',
+                  fontFamily: 'JetBrains Mono, SF Mono, Menlo, monospace',
+                }}
+              >
+                {fetchState.errorText}
+              </pre>
+            </details>
+          )}
+          <div className="mt-5 text-center">
+            <Link
+              href="/adcreator"
+              className="inline-block rounded-md px-4 py-2 text-[13px] font-semibold text-black"
+              style={{ background: '#00FF94' }}
+            >
+              Start a new report
+            </Link>
+          </div>
         </div>
       </ReportShell>
     )

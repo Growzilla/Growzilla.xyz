@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ChatQuiz, type ChatQuizAnswer, type QuizQuestion } from '@/components/adcreator'
 
@@ -56,7 +56,56 @@ export default function AdcreatorLandingPage() {
   // Honeypot — real users won't see or fill this.
   const [hpCompany, setHpCompany] = useState('')
 
+  // Session id for funnel analytics — generated once per page load, persisted in
+  // sessionStorage so step-level drop-off can be correlated. Fire-and-forget.
+  const quizSessionId = useMemo(() => {
+    if (typeof window === 'undefined') return ''
+    try {
+      const existing = window.sessionStorage.getItem('adcreator_quiz_session_id')
+      if (existing) return existing
+      const id =
+        typeof crypto !== 'undefined' && 'randomUUID' in crypto
+          ? crypto.randomUUID()
+          : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
+      window.sessionStorage.setItem('adcreator_quiz_session_id', id)
+      return id
+    } catch {
+      return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`
+    }
+  }, [])
+
+  // Fire an `adcreator_quiz_step` event per question. Fail-silent.
+  function fireStepEvent(stepIndex: number, stepName: string, value?: string) {
+    fetch('/api/events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event: 'adcreator_quiz_step',
+        step: stepIndex,
+        step_name: stepName,
+        session_id: quizSessionId,
+        value_length: value ? value.length : 0,
+        ts: Date.now(),
+      }),
+      keepalive: true,
+    }).catch(() => {
+      /* broken analytics must not block UX */
+    })
+  }
+
+  // Fire quiz_started once when the user enters the quiz stage.
+  useEffect(() => {
+    if (stage !== 'quiz') return
+    fireStepEvent(-1, 'quiz_started')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stage])
+
+  function onQuizAnswer(answer: ChatQuizAnswer, stepIndex: number) {
+    fireStepEvent(stepIndex, answer.questionId, answer.value)
+  }
+
   async function startJob(answers: ChatQuizAnswer[]) {
+    fireStepEvent(answers.length, 'submit')
     if (hpCompany.trim().length > 0) {
       // Looks like a bot. Bounce silently to the success state — no error info.
       router.replace('/adcreator/run/honeypot-bounced')
@@ -108,7 +157,7 @@ export default function AdcreatorLandingPage() {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={ogTitle} />
         <meta name="twitter:description" content={ogDescription} />
-        <meta name="twitter:image" content={'https://growzilla.xyz/twitter/adcreator.png'} />
+        <meta name="twitter:image" content="https://growzilla.xyz/og/adcreator-twitter.png" />
         <script
           type="application/ld+json"
           // schema.org SoftwareApplication for free SEO snippet
@@ -257,6 +306,7 @@ export default function AdcreatorLandingPage() {
                 greeting="Hi — let's build your competitor ad report. 6 quick questions, takes about 1 minute."
                 questions={QUESTIONS}
                 onComplete={startJob}
+                onAnswer={onQuizAnswer}
               />
             </div>
 

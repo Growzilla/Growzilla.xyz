@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /customapp_launcher
+Disallow: /setup
+Disallow: /login
+Disallow: /signin
+
+# Note: /adcreator/run/* and /adcreator/report/* are transient job pages;
+# they carry a <meta name="robots" content="noindex"> tag inline. The main
+# /adcreator landing page is intentionally indexable.
+
+Sitemap: https://growzilla.xyz/sitemap.xml

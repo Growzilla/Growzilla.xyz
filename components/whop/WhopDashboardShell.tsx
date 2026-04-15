@@ -36,8 +36,9 @@ import DevModePanel from './DevModePanel';
 import MomentumBanner, { MOCK_MOMENTUM_WITH_DATA } from './MomentumBanner';
 import FirstSaleToast from './FirstSaleToast';
 import LiveSaleToast from '@/components/dashboard/FirstSaleToast';
-import CreateLinkModal, { type SyncStatusShape } from '@/components/dashboard/CreateLinkModal';
+import CreateLinkModal from '@/components/dashboard/CreateLinkModal';
 import { useLiveConversions } from '@/hooks/useLiveConversions';
+import { useSyncStatus } from '@/hooks/useSyncStatus';
 import { getActiveShop, type ShopInfo } from './StoreSelector';
 import { getMetaFunnel, type SankeyData } from '@/lib/api-client';
 import type { FemFitSankeyNode, FemFitSankeyLink } from '@/types/whop';
@@ -625,14 +626,11 @@ const WhopDashboardShell: React.FC = () => {
   // <LiveSaleToast> below listens to. Silent no-op until a shop is bound.
   useLiveConversions(activeShopInfo?.id);
 
-  // Create-link modal state. Until fe-ui ships <SyncStatusDock>/useSyncStatus
-  // we feed a permissive default so the I3 gate doesn't block merchants who
-  // already finished sync on a previous session. Will be replaced with the
-  // real hook once available.
+  // Create-link modal state. Sync status is polled live from be-api's S32
+  // endpoint (`GET /api/shops/{id}/sync/status`) — the I3 gate now reflects
+  // real install progress instead of a permissive stub.
   const [showCreateLink, setShowCreateLink] = useState(false);
-  const stubSyncStatus: SyncStatusShape = {
-    products: { status: 'done', count: 0, total: 0 },
-  };
+  const { status: liveSyncStatus } = useSyncStatus(activeShopInfo?.id);
 
   // Cmd/Ctrl+K opens the Create-link modal. Avoids the cost of a full command
   // palette while giving keyboard-first merchants the same affordance.
@@ -841,7 +839,7 @@ const WhopDashboardShell: React.FC = () => {
         open={showCreateLink}
         onClose={() => setShowCreateLink(false)}
         shopId={activeShopInfo?.id || ''}
-        syncStatus={stubSyncStatus}
+        syncStatus={liveSyncStatus}
         onCreated={(link) => setLastCreatedLinkId(link.id)}
       />
 

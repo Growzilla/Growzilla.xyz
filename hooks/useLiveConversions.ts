@@ -31,6 +31,48 @@ export interface LiveConversion {
   created_at: string;
 }
 
+/**
+ * Wire shape returned by `GET /api/utm/live-conversions/{shop_id}` (S32 spec).
+ * Field names diverge from the toast-ready `LiveConversion` above — we adapt
+ * once in `adaptLiveConversion` so the rest of the pipeline stays stable.
+ */
+interface BackendLiveConversion {
+  conversion_id: string;
+  utm_link_id?: string | null;
+  short_code?: string | null;
+  order_id?: string | null;
+  order_name?: string | null;
+  revenue: number | string;
+  currency: string;
+  matched_at: string;
+  creator_username?: string | null;
+  creator_handle?: string | null;
+  // Optional enrichments backend may add later — accept defensively.
+  product?: { id?: string | null; title?: string | null; image_url?: string | null } | null;
+  platform?: string | null;
+  hook?: string | null;
+}
+
+function adaptLiveConversion(r: BackendLiveConversion): LiveConversion {
+  const amount = typeof r.revenue === 'string' ? parseFloat(r.revenue) : r.revenue;
+  return {
+    id: r.conversion_id,
+    amount: Number.isFinite(amount) ? amount : 0,
+    currency: r.currency || 'USD',
+    product: {
+      id: r.product?.id ?? r.utm_link_id ?? r.conversion_id,
+      // Order name (`#1042`) is the most useful fallback we have until product
+      // join lands — better than rendering a literal "Product".
+      title: r.product?.title ?? r.order_name ?? 'Order',
+      image_url: r.product?.image_url ?? null,
+    },
+    creator: r.creator_username ?? r.creator_handle ?? null,
+    platform: r.platform ?? '',
+    hook: r.hook ?? null,
+    created_at: r.matched_at,
+  };
+}
+
 const POLL_MS = 10_000;
 const LOOKBACK_MS = 60 * 60 * 1000; // 1 hour on first load if no cursor stored
 
@@ -86,14 +128,21 @@ export function useLiveConversions(shopId: string | null | undefined): void {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
         const json = await res.json();
-        // Be lenient — accept either `[...]` or `{rows:[...]}` / `{conversions:[...]}`
-        const rows: LiveConversion[] = Array.isArray(json)
+        // Backend (S32) returns `LiveConversionItem[]` directly. Stay lenient:
+        // also accept `{rows:[...]}` / `{conversions:[...]}` for forward-compat.
+        const raw: BackendLiveConversion[] = Array.isArray(json)
           ? json
           : Array.isArray(json?.rows)
           ? json.rows
           : Array.isArray(json?.conversions)
           ? json.conversions
           : [];
+
+        // Map backend wire shape → toast-ready shape. Backend uses
+        // `conversion_id`/`revenue`/`matched_at`/`creator_username`; our toast
+        // wants `id`/`amount`/`created_at`/`creator`. Single point of mapping —
+        // contract change touches only this block.
+        const rows: LiveConversion[] = raw.map(adaptLiveConversion);
 
         if (rows.length) {
           // Dispatch oldest → newest so toast stack ordering matches arrival order.

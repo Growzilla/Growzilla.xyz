@@ -39,19 +39,25 @@ export type Platform = 'instagram' | 'tiktok' | 'youtube' | 'x';
 export type ContentFormat = 'reel' | 'post' | 'story' | 'short';
 export type CTA = 'ShopNow' | 'OrderNow' | 'LearnMore' | 'GetOffer';
 
+/**
+ * Mirrors backend `GET /api/shops/{shop_id}/sync/status` (S32 spec §6.1).
+ * Status values are be-api's union (`pending|running|done|error`); legacy
+ * `'idle'` accepted defensively for any pre-S32 caller — treated as 'pending'.
+ */
 export interface SyncStatusShape {
   products: {
-    status: 'idle' | 'running' | 'done' | 'error';
+    status: 'pending' | 'running' | 'done' | 'error' | 'idle';
     count: number;
-    total: number;
+    total: number | null;
     syncedAt?: string | null;
   };
-  // orders status not needed for the I3 gate, but accepted for forward-compat
   orders?: {
-    status: 'idle' | 'running' | 'done' | 'error';
+    status: 'pending' | 'running' | 'done' | 'error' | 'idle';
     count: number;
-    total: number;
+    total: number | null;
+    syncedAt?: string | null;
   };
+  error?: { id: string; code: string; message: string } | null;
 }
 
 export interface ProductOption {

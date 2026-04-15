@@ -10,7 +10,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { requireAuth } from '@/lib/admin/auth';
 
-const BACKEND_URL = process.env.ECOMDASH_API_URL;
+// Prefer ADCREATOR_API_URL, fall back to ECOMDASH_API_URL (current deployment).
+const BACKEND_URL = process.env.ADCREATOR_API_URL || process.env.ECOMDASH_API_URL;
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

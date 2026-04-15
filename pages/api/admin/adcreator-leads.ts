@@ -5,13 +5,19 @@
  *
  * Behavior:
  *   - Requires admin session cookie (uses lib/admin/auth.requireAuth).
- *   - If ECOMDASH_API_URL + ADMIN_API_KEY are present AND the upstream call succeeds,
- *     proxies the response from `${ECOMDASH_API_URL}/api/adcreator/admin/leads`.
- *   - Otherwise (dev / be-api Task 1 not yet shipped) falls back to deterministic mock
- *     data so the UI is fully testable today.
+ *   - If ADCREATOR_API_URL (or legacy ECOMDASH_API_URL) + ADMIN_API_KEY are present
+ *     AND the upstream call succeeds, proxies the response from
+ *     `${BACKEND_URL}/api/adcreator/admin/leads` and adapts it to the frontend shape.
+ *   - Otherwise (no env set / upstream unreachable / non-2xx) falls back to
+ *     deterministic mock data so the UI stays testable locally.
  *
- * Switches to real backend automatically the moment be-api ships the upstream route —
- * no frontend redeploy required.
+ * Backend wire shape (api-contract 2026-04-15):
+ *   { leads: [{job_id, email, domain, country, status, fallback_used,
+ *              calendly_clicked_at?, created_at}], totals: {...} }
+ * Frontend shape (AdcreatorLead) has richer fields (brand_name, market, spend_bucket,
+ * pain, result_preview, ...). The adapter fills intake-answer fields with safe
+ * defaults ('unknown' / 'other') until be-api extends the admin response to include
+ * QuizLead.answers.
  */
 
 import type { NextApiRequest, NextApiResponse } from 'next';
@@ -19,12 +25,32 @@ import { requireAuth } from '@/lib/admin/auth';
 import type {
   AdcreatorLead,
   AdcreatorLeadsResponse,
+  LeadStatus,
   PainPoint,
   SpendBucket,
 } from '@/types/adcreator';
 
-const BACKEND_URL = process.env.ECOMDASH_API_URL;
+// Prefer a dedicated ADCREATOR_API_URL (if adcreator ever moves off ecomdash),
+// fall back to ECOMDASH_API_URL which is the current deployment.
+const BACKEND_URL = process.env.ADCREATOR_API_URL || process.env.ECOMDASH_API_URL;
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY;
+
+// Backend lead row — matches api-contract 2026-04-15.
+interface BackendLead {
+  job_id: string;
+  email: string;
+  domain: string;
+  country?: string;
+  status: string;
+  fallback_used?: boolean;
+  calendly_clicked_at?: string | null;
+  created_at: string;
+}
+
+interface BackendLeadsResponse {
+  leads?: BackendLead[];
+  totals?: Record<string, number>;
+}
 
 export default async function handler(
   req: NextApiRequest,
@@ -49,15 +75,12 @@ export default async function handler(
       );
 
       if (upstream.ok) {
-        const json = await upstream.json();
-        const data: AdcreatorLead[] = Array.isArray(json?.data)
-          ? json.data
-          : Array.isArray(json)
-          ? json
-          : [];
+        const json = (await upstream.json()) as BackendLeadsResponse;
+        const backendLeads = Array.isArray(json?.leads) ? json.leads : [];
+        const data: AdcreatorLead[] = backendLeads.map(adaptBackendLead);
         return res.status(200).json({
           data,
-          total: typeof json?.total === 'number' ? json.total : data.length,
+          total: data.length,
           source: 'backend',
         });
       }
@@ -69,9 +92,69 @@ export default async function handler(
     }
   }
 
-  // 2. Mock fallback (dev / pre-backend).
+  // 2. Mock fallback (dev / pre-backend / upstream unreachable).
   const data = buildMockLeads();
   return res.status(200).json({ data, total: data.length, source: 'mock' });
+}
+
+// -- Backend → Frontend adapter ------------------------------------------------
+// Backend admin response currently lacks intake-answer fields (spend, goal, market
+// niceties) and PDF paths. Fill with safe 'unknown'/'other' defaults so the table
+// renders — T3 can layer cost + extra columns once be-api extends the shape.
+
+function adaptBackendLead(b: BackendLead): AdcreatorLead {
+  const status = normalizeStatus(b.status);
+  const calendlyClicked = Boolean(b.calendly_clicked_at);
+  return {
+    id: b.job_id,
+    email: b.email,
+    brand_name: brandNameFromDomain(b.domain),
+    domain: b.domain,
+    market: (b.country || '').toUpperCase() || 'unknown',
+    spend_bucket: 'unknown',
+    pain: 'other',
+    created_at: b.created_at,
+    status,
+    pdf_url: status === 'ready' ? `/adcreator/report/${encodeURIComponent(b.job_id)}?pdf=1` : undefined,
+    pdf_downloaded_at: null,
+    calendly_clicked: calendlyClicked,
+    calendly_clicked_at: b.calendly_clicked_at ?? null,
+    booked: false, // not tracked on backend yet; operator-editable via [id] PATCH
+  };
+}
+
+function normalizeStatus(s: string): LeadStatus {
+  switch ((s || '').toLowerCase()) {
+    case 'done':
+    case 'ready':
+      return 'ready';
+    case 'error':
+    case 'failed':
+      return 'failed';
+    case 'running':
+    case 'rendering':
+    case 'intake':
+    case 'discovery':
+    case 'scrape':
+    case 'synthesis':
+    case 'briefs':
+    case 'persist':
+      return 'rendering';
+    default:
+      return 'pending';
+  }
+}
+
+function brandNameFromDomain(domain: string): string {
+  if (!domain) return 'Unknown';
+  // "scentandco.com" → "Scentandco"; "glow-nordic.com" → "Glow Nordic"
+  const bare = domain.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0];
+  const root = bare.split('.')[0] || bare;
+  return root
+    .split(/[-_]+/)
+    .filter(Boolean)
+    .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+    .join(' ');
 }
 
 // -- Mock data -----------------------------------------------------------------

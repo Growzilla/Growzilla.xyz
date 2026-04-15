@@ -85,13 +85,16 @@ function fireSetupEvent(step: ChainStep) {
 
 export default function SetupPage() {
   const router = useRouter()
-  const { shop, hmac, token } = router.query as {
+  // hmac arrives in the URL too but is verified by the Shopify install
+  // handler upstream; /setup itself doesn't re-check it.
+  const { shop, token } = router.query as {
     shop?: string
     hmac?: string
     token?: string
   }
 
-  const [name, setName] = useState('')
+  const [orgName, setOrgName] = useState('')
+  const [ownerName, setOwnerName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -111,7 +114,8 @@ export default function SetupPage() {
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   const passwordValid = password.length >= 8
   const formValid =
-    name.trim().length > 0 &&
+    orgName.trim().length > 0 &&
+    ownerName.trim().length > 0 &&
     emailValid &&
     passwordValid &&
     answers.goal.trim().length > 0 &&
@@ -122,7 +126,10 @@ export default function SetupPage() {
     answers.biggest_problem.trim().length > 0
 
   // Invalid setup link → ErrorCard with App Store reinstall CTA.
-  const linkInvalid = router.isReady && (!shop || !hmac || !token)
+  // hmac is verified upstream by the Shopify install handler; provision
+  // itself only needs `shop` (domain) + `token` (accessToken). We accept
+  // either ?token= or ?accessToken= so we tolerate both Remix shapes.
+  const linkInvalid = router.isReady && (!shop || !token)
 
   function toggleChannel(value: string) {
     setAnswers((prev) => {
@@ -138,18 +145,24 @@ export default function SetupPage() {
 
   async function runChain(e: React.FormEvent) {
     e.preventDefault()
-    if (!formValid || !shop || !hmac || !token) return
+    if (!formValid || !shop || !token) return
     setError(null)
 
     // STEP 1 — provision. Closes I1: we never fetch the shop before this POST.
+    // Backend: POST /api/shops/provision { domain, accessToken, scopes?, currency? }
+    //          -> { id, domain, healed }
     setStage({ kind: 'running', step: 'provision' })
     let shopId: string
     try {
-      const provisioned = await api.post<{ id: string }>('/api/shops/provision', {
-        shop,
-        hmac,
-        token,
-      })
+      const provisioned = await api.post<{ id: string; domain: string; healed: boolean }>(
+        '/api/shops/provision',
+        {
+          domain: shop,
+          accessToken: token,
+          // hmac is verified by the Shopify install handler upstream of /setup;
+          // the provision endpoint itself only needs domain + accessToken.
+        },
+      )
       shopId = provisioned.id
       fireSetupEvent('provision')
     } catch (err) {
@@ -158,15 +171,19 @@ export default function SetupPage() {
     }
 
     // STEP 2 — signup + JWT.
+    // Backend: POST /api/auth/signup
+    //   { shop_domain, org_name, owner_name, owner_email, owner_password }
+    //   -> { token, user, org }
     setStage({ kind: 'running', step: 'signup' })
     try {
-      const { jwt } = await api.post<{ jwt: string }>('/api/auth/signup', {
-        shopId,
-        email: email.trim(),
-        password,
-        name: name.trim(),
+      const signupRes = await api.post<{ token: string }>('/api/auth/signup', {
+        shop_domain: shop,
+        org_name: orgName.trim(),
+        owner_name: ownerName.trim(),
+        owner_email: email.trim(),
+        owner_password: password,
       })
-      api.setJwt(jwt)
+      api.setJwt(signupRes.token)
       fireSetupEvent('signup')
     } catch (err) {
       handleStepError(err)
@@ -287,13 +304,23 @@ export default function SetupPage() {
       <form onSubmit={runChain} className="space-y-5" aria-busy={isRunning}>
         <fieldset disabled={isRunning} className="space-y-5">
           <Section title="Your account">
-            <Field label="Business name">
+            <Field label="Brand / company name">
               <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={orgName}
+                onChange={(e) => setOrgName(e.target.value)}
                 placeholder="Acme Skincare"
                 autoComplete="organization"
                 autoFocus
+                className="setup-input"
+              />
+            </Field>
+
+            <Field label="Your name">
+              <input
+                value={ownerName}
+                onChange={(e) => setOwnerName(e.target.value)}
+                placeholder="Jane Doe"
+                autoComplete="name"
                 className="setup-input"
               />
             </Field>

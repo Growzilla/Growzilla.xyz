@@ -1,0 +1,74 @@
+/* === Claude Theme === */
+/* Activates on `[data-theme="claude"]` (page or section scope). */
+/* Tokens: see /growzillaAssets/design/DESIGN-claude.md */
+
+[data-theme='claude'] {
+  /* Surfaces */
+  --claude-cream: #f4f3ee;
+  --claude-pampas: #f0eee6;
+  --claude-fog: #e8e6dc;
+  --claude-olive: #141413;
+
+  /* Text */
+  --claude-ink: #1f1e1c;
+  --claude-graphite: #3a3936;
+  --claude-stone: #5e5d59;
+  --claude-cloudy: #87867f;
+
+  /* Accent */
+  --claude-terracotta: #c96442;
+  --claude-rust: #ae5630;
+
+  /* Apply baseline */
+  background-color: var(--claude-cream);
+  color: var(--claude-graphite);
+  font-family: 'Source Serif 4', 'Tiempos', 'Charter', 'Georgia', serif;
+  font-feature-settings: 'liga' 1, 'kern' 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0;
+}
+
+/* Section-scope claude inside a zilla page */
+section[data-theme='claude'],
+div[data-theme='claude'] {
+  background-color: var(--claude-cream);
+  color: var(--claude-graphite);
+}
+
+/* Default heading family for claude scope */
+[data-theme='claude'] h1,
+[data-theme='claude'] h2,
+[data-theme='claude'] h3 {
+  font-family: 'Instrument Serif', 'Source Serif 4', 'Tiempos', 'Charter', 'Georgia', serif;
+  color: var(--claude-ink);
+  letter-spacing: -0.015em;
+}
+
+/* Selection styling */
+[data-theme='claude'] ::selection {
+  background-color: rgba(201, 100, 66, 0.18); /* terracotta @ 18% */
+  color: var(--claude-ink);
+}
+
+/* Anchor default (links inherit terracotta) */
+[data-theme='claude'] a {
+  color: var(--claude-terracotta);
+  text-decoration-color: rgba(201, 100, 66, 0.4);
+  text-underline-offset: 3px;
+  transition: color 150ms ease-out, text-decoration-color 150ms ease-out;
+}
+[data-theme='claude'] a:hover {
+  color: var(--claude-rust);
+  text-decoration-color: var(--claude-rust);
+}
+
+/* Reduced motion: disable any non-essential animation under claude */
+@media (prefers-reduced-motion: reduce) {
+  [data-theme='claude'] *,
+  [data-theme='claude'] *::before,
+  [data-theme='claude'] *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

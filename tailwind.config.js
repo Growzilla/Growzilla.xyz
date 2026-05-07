@@ -36,10 +36,29 @@ module.exports = {
           plasma: '#7FFF00',
           warning: '#FFD700',
         },
+
+        // Claude theme — editorial / long-form. Activates on [data-theme="claude"]
+        // Spec: /growzillaAssets/design/DESIGN-claude.md
+        claude: {
+          cream: '#f4f3ee',         // primary background
+          pampas: '#f0eee6',        // borders, dividers, subtle elevation
+          fog: '#e8e6dc',           // hover states, secondary cards
+          olive: '#141413',         // editorial dark mode (rare)
+
+          ink: '#1f1e1c',           // primary text (warm near-black)
+          graphite: '#3a3936',      // body text
+          stone: '#5e5d59',         // muted text, captions
+          cloudy: '#87867f',        // disabled, footnotes
+
+          terracotta: '#c96442',    // primary accent
+          rust: '#ae5630',          // hover/pressed accent
+        },
       },
       fontFamily: {
         sans: ['Satoshi', 'system-ui', 'sans-serif'],
-        display: ['Clash Display', 'system-ui', 'sans-serif'],
+        display: ['Clash Display', 'Satoshi', 'system-ui', 'sans-serif'],
+        serif: ['Instrument Serif', 'Source Serif 4', 'Tiempos', 'Charter', 'Georgia', 'serif'],
+        editorial: ['Source Serif 4', 'Tiempos', 'Charter', 'Georgia', 'serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
       },
       animation: {

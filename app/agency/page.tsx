@@ -6,6 +6,7 @@ import StackStrip from '@/components/agency/StackStrip'
 import CaseStudy from '@/components/agency/CaseStudy'
 import CreativesShelf from '@/components/agency/CreativesShelf'
 import Offer from '@/components/agency/Offer'
+import Pricing from '@/components/agency/Pricing'
 import Timeline from '@/components/agency/Timeline'
 import AboutTeaser from '@/components/agency/AboutTeaser'
 import CtaAudit from '@/components/agency/CtaAudit'
@@ -21,6 +22,7 @@ export default function AgencyPage() {
       <CaseStudy />
       <CreativesShelf />
       <Offer />
+      <Pricing />
       <Timeline />
       <AboutTeaser />
       <CtaAudit />

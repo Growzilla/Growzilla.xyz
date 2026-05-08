@@ -5,6 +5,7 @@ import Hero from '@/components/agency/Hero'
 import StackStrip from '@/components/agency/StackStrip'
 import CaseStudy from '@/components/agency/CaseStudy'
 import CreativesShelf from '@/components/agency/CreativesShelf'
+import LeadMagnets from '@/components/agency/LeadMagnets'
 import Offer from '@/components/agency/Offer'
 import Pricing from '@/components/agency/Pricing'
 import Timeline from '@/components/agency/Timeline'
@@ -21,6 +22,7 @@ export default function AgencyPage() {
       <StackStrip />
       <CaseStudy />
       <CreativesShelf />
+      <LeadMagnets />
       <Offer />
       <Pricing />
       <Timeline />

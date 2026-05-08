@@ -22,23 +22,23 @@ const MAGNETS: Magnet[] = [
   {
     glyph: '◆',
     title: 'Competitor Ads Pull',
-    body: 'We pull every ad your top three competitors ran in the last 30 days. You read it tonight.',
+    body: 'Drop your domain. We pull every ad your top competitors ran in the last 30 days, tag the angles, and write five briefs you can ship this week.',
     time: '~4 min',
-    href: '/agency/vault/competitor-ads',
+    href: '/adcreator',
   },
   {
     glyph: '⚡',
     title: 'Hook Mine',
-    body: '100 hooks ranked by spend, scraped from the brands beating you.',
-    time: '~6 min',
-    href: '/agency/vault/hook-mine',
+    body: 'The hooks our scraper extracts from the brands beating you, ranked by ad spend and longevity.',
+    time: 'Inside the report',
+    href: '/adcreator',
   },
   {
     glyph: '✦',
-    title: 'PSI Audit',
-    body: 'Mobile-speed audit + the fix order, prioritized. Free.',
-    time: '~3 min',
-    href: '/agency/vault/psi-audit',
+    title: 'PSI + Funnel Audit',
+    body: 'Mobile-speed audit + funnel leak map + the fix order. We walk it with you on a 30-min call.',
+    time: '30 min',
+    href: 'https://calendly.com/albert-growzilla/growzilla-install',
   },
 ]
 

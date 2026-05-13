@@ -37,6 +37,16 @@ module.exports = {
           warning: '#FFD700',
         },
 
+        // Morsdag campaign palette — soft rose on black for /morsdag + site-wide banner
+        // 2026-05-13 → 2026-05-31. Premium dusty pink, not florist.
+        morsdag: {
+          ivory: '#F6E7E8',
+          rose: '#E8B4BC',
+          blush: '#D89BA5',
+          deep: '#B07485',
+          ink: '#2A1A1F',
+        },
+
         // Claude theme — editorial / long-form. Activates on [data-theme="claude"]
         // Spec: /growzillaAssets/design/DESIGN-claude.md
         claude: {

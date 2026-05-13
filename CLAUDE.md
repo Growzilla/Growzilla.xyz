@@ -76,6 +76,7 @@ EliteLayout + max-w-4xl, natural scroll, numbered sections. No animations, no gl
 - Sankey: single "Traffic" entry bar, creators as sub-labels not separate column
 - Document pages (deck, privacy) use EliteLayout + max-w-4xl — no animations, no glow
 - Do NOT use App Router for pages that should be in Pages Router (most pages use Pages Router)
+- Stop-gate `git status` check doesn't distinguish ownership. When multiple agents work in the same worktree in parallel on a shared branch (S46 2026-05-13: fe-growth + quiz + ads on `feat/morsdag-launch`), the gate fires "uncommitted changes" even after the owning agent has committed its surface — because untracked files from sibling agents and dev tooling (.claude/, .cmux/, .playwright-mcp/, tsconfig.tsbuildinfo) remain in the worktree. Resolution: commit your own files explicitly by path, never `git add -A`. Leave sibling agents' work for them. Per the gate's own instructions for unfixable cases, record here + status BLOCKED + exit. Long-term: gate needs an ownership-aware filter (e.g. domain-guard.sh regex applied to status output).
 
 ### Agency landing premium revamp lessons (Session 43, 2026-05-07)
 The `/agency` route is **brand landing**, not SaaS landing. Different visual register, different copy register, different proof patterns. Mistakes captured below — never repeat:

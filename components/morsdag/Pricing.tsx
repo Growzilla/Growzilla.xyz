@@ -88,6 +88,16 @@ export default function Pricing() {
                 →
               </span>
             </Link>
+
+            <Link
+              href="/checkout-card"
+              className="group mt-3 inline-flex w-full items-center justify-center gap-2 h-11 px-6 rounded-full border border-morsdag-rose/35 text-morsdag-rose text-[13px] font-medium tracking-[0.01em] transition-all duration-150 hover:bg-morsdag-rose/[0.06] hover:border-morsdag-rose/60"
+            >
+              Eller betala direkt
+              <span className="transition-transform duration-150 group-hover:translate-x-0.5">
+                →
+              </span>
+            </Link>
           </div>
 
           <p className="mt-8 italic text-sm text-white/55 text-center max-w-md mx-auto leading-relaxed">

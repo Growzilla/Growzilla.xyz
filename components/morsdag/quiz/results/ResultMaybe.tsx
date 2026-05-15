@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { trackInitiateCheckout } from '@/lib/morsdag/pixel';
 
 export default function ResultMaybe() {
   return (
@@ -20,6 +21,24 @@ export default function ResultMaybe() {
         <p className="text-[14px] text-white/80 leading-relaxed">
           Tack — vi granskar caset och återkommer om det finns en tydlig möjlighet.
         </p>
+      </div>
+
+      <div className="mt-8 rounded-lg border border-morsdag-rose/20 bg-morsdag-rose/[0.04] px-5 py-5">
+        <p className="text-[13px] uppercase tracking-[0.18em] font-mono text-morsdag-rose">
+          Säker på ert case?
+        </p>
+        <p className="mt-2 text-[14px] text-white/75 leading-relaxed">
+          Om ni redan vet att ni vill köra kan ni säkra er plats direkt — vi börjar då
+          inom 24 timmar.
+        </p>
+        <Link
+          href="/checkout-card"
+          onClick={() => trackInitiateCheckout({ value: 20000, currency: 'SEK', variant: 'card' })}
+          className="mt-4 inline-flex items-center gap-2 text-[13px] text-morsdag-rose hover:text-morsdag-ivory transition-colors font-medium"
+        >
+          Säkra plats — 20 000 kr
+          <span aria-hidden>→</span>
+        </Link>
       </div>
 
       <div className="mt-10 pt-6 border-t border-white/[0.08]">

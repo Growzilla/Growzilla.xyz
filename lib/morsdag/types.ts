@@ -24,4 +24,6 @@ export interface MorsdagQuizData {
 export interface MorsdagLeadPayload extends MorsdagQuizData {
   score: number;
   route: ResultRoute;
+  kind?: 'final';
+  id?: string;
 }

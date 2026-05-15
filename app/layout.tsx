@@ -1,6 +1,8 @@
 import '@/styles/globals.css'
 import type { Metadata } from 'next'
 import MorsdagPromoBanner from '@/components/MorsdagPromoBanner'
+import MetaPixel from '@/components/MetaPixel'
+import MetaPixelAppPageviews from '@/components/MetaPixelAppPageviews'
 
 export const metadata: Metadata = {
   title: 'Growzilla',
@@ -15,6 +17,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="theme-color" content="#0A0A0B" />
       </head>
       <body className="bg-zilla-black text-white antialiased">
+        <MetaPixel />
+        <MetaPixelAppPageviews />
         <MorsdagPromoBanner />
         {children}
       </body>

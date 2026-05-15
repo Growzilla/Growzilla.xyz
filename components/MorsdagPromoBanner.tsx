@@ -13,6 +13,8 @@ const HIDDEN_PREFIXES = [
   '/admin',
   '/whop',
   '/checkout',
+  '/checkout-card',
+  '/checkout-bank',
   '/organicdashboard',
   '/dashboard',
   '/login',

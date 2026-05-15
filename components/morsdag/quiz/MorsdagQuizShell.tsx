@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -8,6 +8,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import type { MorsdagQuizData, ResultRoute } from '@/lib/morsdag/types';
 import { scoreLead } from '@/lib/morsdag/scoreLead';
 import { submitLead } from '@/lib/morsdag/submitLead';
+import {
+  trackDisqualified,
+  trackLead,
+  trackPartialLead,
+  trackQuizStart,
+} from '@/lib/morsdag/pixel';
 
 import MorsdagQuizProgress from './MorsdagQuizProgress';
 import Step1Contact from './steps/Step1Contact';
@@ -70,12 +76,56 @@ function MorsdagQuizShellInner() {
     }
   }, [searchParams]);
 
+  // Pixel: fire MorsdagQuizStart once on mount
+  useEffect(() => {
+    trackQuizStart();
+  }, []);
+
   const update = useCallback((partial: Partial<MorsdagQuizData>) => {
     setData((prev) => ({ ...prev, ...partial }));
   }, []);
 
-  const next = useCallback(() => setStep((s) => Math.min(s + 1, TOTAL_STEPS)), []);
+  // Stable lead id — same id is sent on partial (Step 1) and final (Step 9) so the
+  // operator can dedupe. Generated client-side; persisted in sessionStorage so a
+  // refresh mid-quiz reuses it.
+  const [leadId] = useState<string>(() => {
+    if (typeof window === 'undefined') return '';
+    const existing = sessionStorage.getItem('morsdag-lead-id');
+    if (existing) return existing;
+    const fresh =
+      typeof crypto !== 'undefined' && 'randomUUID' in crypto
+        ? crypto.randomUUID()
+        : `lead-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+    sessionStorage.setItem('morsdag-lead-id', fresh);
+    return fresh;
+  });
+  const partialFiredRef = useRef(false);
+
+  const next = useCallback(() => {
+    setStep((s) => Math.min(s + 1, TOTAL_STEPS));
+  }, []);
   const prev = useCallback(() => setStep((s) => Math.max(1, s - 1)), []);
+
+  // Fire partial lead capture once, when transitioning off Step 1 with valid contact info.
+  // This means a drop-off mid-quiz still surfaces a real lead in the inbox.
+  const firePartial = useCallback(
+    (currentData: MorsdagQuizData) => {
+      if (partialFiredRef.current) return;
+      if (!currentData.contact.email || !currentData.contact.foretag || !currentData.contact.namn) return;
+      partialFiredRef.current = true;
+      trackPartialLead(leadId);
+      void submitLead({ ...currentData, kind: 'partial', id: leadId });
+    },
+    [leadId],
+  );
+
+  const nextWithPartial = useCallback(() => {
+    setStep((s) => {
+      const newStep = Math.min(s + 1, TOTAL_STEPS);
+      if (s === 1) firePartial(data);
+      return newStep;
+    });
+  }, [data, firePartial]);
 
   const handleSubmit = useCallback(async () => {
     if (submitting) return;
@@ -83,11 +133,15 @@ function MorsdagQuizShellInner() {
     const submittedAt = new Date().toISOString();
     const finalData: MorsdagQuizData = { ...data, submittedAt };
     const { score, route } = scoreLead(finalData);
-    // Fire and forget — submitLead never throws, returns {ok:false} on failure
-    await submitLead({ ...finalData, score, route });
+    if (route === 'bad') {
+      trackDisqualified(score);
+    } else {
+      trackLead(route, score, leadId);
+    }
+    await submitLead({ ...finalData, score, route, kind: 'final', id: leadId });
     setResult(route);
     setSubmitting(false);
-  }, [data, submitting]);
+  }, [data, submitting, leadId]);
 
   const showProgress = result === null;
 
@@ -99,7 +153,7 @@ function MorsdagQuizShellInner() {
     }
     switch (step) {
       case 1:
-        return <Step1Contact data={data} update={update} next={next} />;
+        return <Step1Contact data={data} update={update} next={nextWithPartial} />;
       case 2:
         return <Step2Platform data={data} update={update} next={next} prev={prev} />;
       case 3:
@@ -127,7 +181,7 @@ function MorsdagQuizShellInner() {
       default:
         return null;
     }
-  }, [step, data, update, next, prev, submitting, handleSubmit, result]);
+  }, [step, data, update, next, nextWithPartial, prev, submitting, handleSubmit, result]);
 
   // Key changes whenever we transition between meaningfully different screens
   const motionKey = result ? `result-${result}` : `step-${step}`;

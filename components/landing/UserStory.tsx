@@ -29,7 +29,7 @@ const UserStory: React.FC = () => {
           <div className="absolute left-0 top-8 bottom-8 w-1 rounded-full bg-zilla-neon/40" />
 
           {/* Corner badge */}
-          <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-zilla-charcoal/80 border border-gray-700/50">
+          <div className="hidden sm:block absolute top-4 right-4 px-3 py-1 rounded-full bg-zilla-charcoal/80 border border-gray-700/50">
             <span className="text-[11px] text-gray-400 font-medium tracking-wide">Generalized User Story</span>
           </div>
 
@@ -59,7 +59,7 @@ const UserStory: React.FC = () => {
           </div>
 
           {/* Results */}
-          <div className="mt-8 grid grid-cols-3 gap-4">
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
               { label: 'ROAS', value: '+142%', sub: 'Return on ad spend' },
               { label: 'Blended CAC', value: '-38%', sub: 'Cost per customer' },

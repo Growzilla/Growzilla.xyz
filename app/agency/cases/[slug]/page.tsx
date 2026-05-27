@@ -14,14 +14,7 @@ const CASES: Record<
     monogram: string
     canonical: boolean
   }
-> = {
-  'scandinavian-poster': {
-    brand: 'Scandinavian Poster',
-    collection: 'Custom posters · Sweden',
-    monogram: 'SP',
-    canonical: true,
-  },
-}
+> = {}
 
 export default function CasePage({ params }: { params: Promise<Params> }) {
   const { slug } = use(params)

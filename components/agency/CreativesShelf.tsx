@@ -1,11 +1,10 @@
 'use client'
 
 /**
- * /agency CreativesShelf — horizontal strip of 6 ad-creative thumbnails
- * shipped for Scandinavian Poster. Mobile uses scroll-snap, desktop
- * fits the row inline.
+ * /agency CreativesShelf — horizontal strip of 6 ad-creative thumbnails.
+ * Mobile uses scroll-snap, desktop fits the row inline.
  *
- * Sources: /public/agency/creatives/scandinavianposter/01.jpg .. 06.jpg
+ * Sources: /public/agency/creatives/01.jpg .. 06.jpg
  * Files won't exist yet — render neutral placeholders so the layout
  * reads now. Swap to <Image> once files land.
  */
@@ -66,7 +65,7 @@ export default function CreativesShelf() {
               >
                 {ASSETS_READY ? (
                   <img
-                    src={`/agency/creatives/scandinavianposter/${slug}.jpg`}
+                    src={`/agency/creatives/${slug}.jpg`}
                     alt={`Creative ${slug}`}
                     className="w-full h-full object-cover"
                   />

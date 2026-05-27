@@ -6,19 +6,22 @@ import { useRef } from 'react'
 import AllGreenBars from './AllGreenBars'
 
 /**
- * Single-brand proof section — Scandinavian Poster.
+ * Single-brand proof section.
  * Earns the rest of the page. ~9% neon surface (the most of any section).
  *
  * Spec: AGENCY_REVAMP_PLAN.md §3.3.
  *
  * Operator inputs to confirm before launch:
  *   - Lighthouse a11y/best/SEO real captured numbers (currently defaults).
- *     Real PSI 18→69 confirmed S42 (2026-05-05, Moto G Power, slow 4G).
- *   - Wordmark SVG drop slot at /public/agency/cases/scandinavian-poster/wordmark.svg
+ *   - Wordmark SVG drop slot per-case.
  */
 
 type CaseHeroProps = {
-  /** Real PSI capture confirmed S42 2026-05-05 — do not change without re-capture */
+  brand?: string
+  collection?: string
+  region?: string
+  duration?: string
+  caseSlug?: string
   psiBefore?: number
   psiAfter?: number
   capturedAt?: string
@@ -30,6 +33,11 @@ type CaseHeroProps = {
 }
 
 export default function CaseHero({
+  brand = 'Case study.',
+  collection = 'Category',
+  region = 'Region',
+  duration = '90 days',
+  caseSlug,
   psiBefore = 18,
   psiAfter = 69,
   capturedAt = 'May 5, 2026',
@@ -65,7 +73,7 @@ export default function CaseHero({
           transition={{ duration: 0.55, ease: 'easeOut', delay: 0.06 }}
           className="font-display font-semibold text-[44px] sm:text-[60px] lg:text-[80px] leading-[1.0] tracking-[-0.025em] text-white/95 max-w-4xl"
         >
-          Scandinavian Poster.
+          {brand}
         </motion.h2>
 
         <motion.div
@@ -75,11 +83,11 @@ export default function CaseHero({
           transition={{ duration: 0.5, ease: 'easeOut', delay: 0.12 }}
           className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[12px] tracking-[0.06em] text-white/45"
         >
-          <span>Custom posters</span>
+          <span>{collection}</span>
           <span className="w-1 h-1 rounded-full bg-white/30" />
-          <span>Sweden</span>
+          <span>{region}</span>
           <span className="w-1 h-1 rounded-full bg-white/30" />
-          <span>90 days · sessions 25–39</span>
+          <span>{duration}</span>
         </motion.div>
 
         <div className="mt-14 lg:mt-20 grid lg:grid-cols-[1.05fr_1fr] gap-12 lg:gap-16 items-start">
@@ -109,15 +117,17 @@ export default function CaseHero({
               Captured {capturedAt} · {capturedDevice}
             </p>
 
-            <Link
-              href="/agency/cases/scandinavian-poster"
-              className="group inline-flex items-center gap-2 mt-10 text-[14px] font-medium text-white/85 hover:text-white transition-colors"
-            >
-              Read the full case
-              <span className="text-zilla-neon transition-transform duration-150 group-hover:translate-x-1">
-                →
-              </span>
-            </Link>
+            {caseSlug ? (
+              <Link
+                href={`/agency/cases/${caseSlug}`}
+                className="group inline-flex items-center gap-2 mt-10 text-[14px] font-medium text-white/85 hover:text-white transition-colors"
+              >
+                Read the full case
+                <span className="text-zilla-neon transition-transform duration-150 group-hover:translate-x-1">
+                  →
+                </span>
+              </Link>
+            ) : null}
           </motion.div>
 
           {/* Right — bars + lighthouse rings */}

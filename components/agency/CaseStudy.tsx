@@ -3,8 +3,7 @@
 /**
  * /agency CaseStudy — two cards, 50/50, full content-width.
  *
- * Left: Scandinavian Poster, in-progress 2026, pageload 20s -> <2s
- *       Gelato workaround story, no vanity stats.
+ * Left: Case in progress, 2026 — pageload 20s -> <2s, custom print-app workaround.
  * Right: Next partner, by invitation. Quarterly intake.
  *
  * No software UI. No charts. Editorial cards only.
@@ -32,7 +31,7 @@ export default function CaseStudy() {
       className="relative bg-zilla-black"
     >
       <div className="max-w-6xl mx-auto px-6 py-20 grid grid-cols-1 md:grid-cols-2 gap-6 md:items-stretch">
-        {/* Left card — Scandinavian Poster */}
+        {/* Left card — case in progress */}
         <motion.article
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -40,7 +39,7 @@ export default function CaseStudy() {
           transition={{ duration: 0.5, ease: 'easeOut' }}
           className="bg-[#0F0F10] border border-white/[0.08] rounded-lg overflow-hidden flex flex-col"
         >
-          <LogoSlot label="Scandinavian Poster" />
+          <LogoSlot label="Case · 01 · 2026" />
 
           <div className="p-8 flex flex-col gap-4 flex-1">
             <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-zilla-neon">
@@ -53,8 +52,8 @@ export default function CaseStudy() {
 
             <p className="text-[15px] leading-relaxed text-white/70">
               When we took over, ~99% of mobile Facebook traffic bounced before
-              the page rendered. We built a custom Gelato workaround the
-              standard app couldn&apos;t do without breaking personalization.
+              the page rendered. We built a custom print-app workaround the
+              standard tooling couldn&apos;t do without breaking personalization.
               First creative signal landed in week one — we&apos;re now scaling
               against the new baseline.
             </p>

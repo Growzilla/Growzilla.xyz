@@ -62,30 +62,31 @@ export default function EmailBuyPage() {
                 <li>
                   <span className="text-white font-medium">Email converts 1–3% in ecommerce.</span>{' '}
                   <span className="text-white/64">
-                    On a list of 10,000 dormant subscribers that's 100–300 buyers waiting to be
-                    asked properly.
+                    Klaviyo's 2025 benchmark on win-back. On a list of 10,000 dormant
+                    subscribers that's 100–300 buyers waiting to be asked properly.
                   </span>
                 </li>
                 <li>
-                  <span className="text-white font-medium">Acquisition cost is zero.</span>{' '}
+                  <span className="text-white font-medium">You already paid for them.</span>{' '}
                   <span className="text-white/64">
-                    They already bought once. You don't have to pay Meta to find them again.
+                    Klaviyo bills you for every dormant profile every month. Reactivation turns
+                    paid storage into paid customers — zero new acquisition spend.
+                  </span>
+                </li>
+                <li>
+                  <span className="text-white font-medium">Klaviyo segments compound.</span>{' '}
+                  <span className="text-white/64">
+                    Tier-asymmetric sends to VIP / CORE / LOW / LEADS outperform batch blasts
+                    3–5×. The segments stay in your Klaviyo after Day 30 — you keep using them.
                   </span>
                 </li>
                 <li>
                   <span className="text-white font-medium">
-                    Retargeting compounds the lift 2–4×.
+                    Reactivated buyers re-enter your Shopify funnel.
                   </span>{' '}
                   <span className="text-white/64">
-                    Subscribers who open or click during the sprint become a warm Meta audience.
-                    We hand you the export — you keep stacking after Day 30.
-                  </span>
-                </li>
-                <li>
-                  <span className="text-white font-medium">It keeps compounding.</span>{' '}
-                  <span className="text-white/64">
-                    A reactivated buyer re-enters your normal flows and converts at 8–12% over
-                    the next 90 days. The sprint pays back twice.
+                    They flow back through abandoned cart, browse, and post-purchase sequences
+                    and convert at 8–12% over the next 90 days. The sprint pays twice.
                   </span>
                 </li>
               </ul>
@@ -97,11 +98,12 @@ export default function EmailBuyPage() {
                 ◆ WHAT LANDS IN YOUR INBOX
               </div>
               <ul className="text-sm text-white/72 leading-relaxed space-y-2">
-                <li>· Klaviyo audit + segmentation (Day 1)</li>
-                <li>· Full sequence build, 5–13 emails (Day 2–7)</li>
-                <li>· Live sends with deliverability health gates (Day 8–21)</li>
-                <li>· Day-30 attribution report + clean handover</li>
-                <li>· Retargeting audience export for Meta — yours to keep</li>
+                <li>· Klaviyo audit + 4-tier segmentation (Day 1)</li>
+                <li>· Tier-asymmetric sequence build, 5–13 emails (Day 2–7)</li>
+                <li>· Deliverability hardening: SPF / DKIM / DMARC + sender warm-up</li>
+                <li>· Live sends with Day-2 + Day-7 health gates (Day 8–21)</li>
+                <li>· Day-30 Klaviyo attribution report + clean handover</li>
+                <li>· All segments, flows, and deliverability fixes stay in your Klaviyo</li>
               </ul>
             </div>
 

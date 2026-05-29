@@ -40,18 +40,56 @@ export default function EmailBuyPage() {
           {/* Left rail — trust + reminder */}
           <div>
             <div className="text-xs tracking-[0.25em] font-mono text-zilla-neon mb-6">
-              ◆ KLAVIYO REACTIVATION SPRINT · 30 DAYS
+              ◆ EMAIL REACTIVATION · 30 DAYS
             </div>
             <h1 className="font-display text-3xl sm:text-5xl leading-[1.05] tracking-tight mb-5">
-              Lock your slot.
+              Email Reactivation.
               <br />
-              <span className="text-zilla-neon">$500 today. 10% if it works.</span>
+              <span className="text-zilla-neon">30 days.</span>
             </h1>
             <p className="text-white/72 leading-relaxed mb-8 max-w-md">
-              Founding rate — five slots at this price, then $625 standard. Floor Guarantee:
-              if 30 days end and Klaviyo-attributed revenue hasn't hit your floor, we keep
-              building until it does. No new invoice.
+              Your dormant Klaviyo list is the highest-leverage revenue channel in your store.
+              We rebuild your reactivation flow, re-engage the people who already trusted
+              you once, and ship inside 30 days.
             </p>
+
+            {/* Why this works */}
+            <div className="bg-zilla-surface border border-zilla-neon/20 rounded-lg p-5 mb-6">
+              <div className="text-[11px] font-mono uppercase tracking-[0.2em] text-zilla-neon mb-3">
+                ◆ WHY THIS WORKS
+              </div>
+              <ul className="text-sm text-white/80 leading-relaxed space-y-3">
+                <li>
+                  <span className="text-white font-medium">Email converts 1–3% in ecommerce.</span>{' '}
+                  <span className="text-white/64">
+                    On a list of 10,000 dormant subscribers that's 100–300 buyers waiting to be
+                    asked properly.
+                  </span>
+                </li>
+                <li>
+                  <span className="text-white font-medium">Acquisition cost is zero.</span>{' '}
+                  <span className="text-white/64">
+                    They already bought once. You don't have to pay Meta to find them again.
+                  </span>
+                </li>
+                <li>
+                  <span className="text-white font-medium">
+                    Retargeting compounds the lift 2–4×.
+                  </span>{' '}
+                  <span className="text-white/64">
+                    Subscribers who open or click during the sprint become a warm Meta audience.
+                    We hand you the export — you keep stacking after Day 30.
+                  </span>
+                </li>
+                <li>
+                  <span className="text-white font-medium">It keeps compounding.</span>{' '}
+                  <span className="text-white/64">
+                    A reactivated buyer re-enters your normal flows and converts at 8–12% over
+                    the next 90 days. The sprint pays back twice.
+                  </span>
+                </li>
+              </ul>
+            </div>
 
             {/* What lands */}
             <div className="bg-zilla-surface border border-white/[0.06] rounded-lg p-5 mb-6">
@@ -63,7 +101,20 @@ export default function EmailBuyPage() {
                 <li>· Full sequence build, 5–13 emails (Day 2–7)</li>
                 <li>· Live sends with deliverability health gates (Day 8–21)</li>
                 <li>· Day-30 attribution report + clean handover</li>
+                <li>· Retargeting audience export for Meta — yours to keep</li>
               </ul>
+            </div>
+
+            {/* Floor Guarantee — mechanism only, no $ */}
+            <div className="border-l-2 border-zilla-neon pl-5 py-1 mb-8">
+              <div className="text-[11px] font-mono uppercase tracking-[0.2em] text-zilla-neon mb-2">
+                ◆ THE FLOOR GUARANTEE
+              </div>
+              <p className="text-sm text-white/72 leading-relaxed">
+                We quote a floor anchored to Klaviyo's 2025 benchmark against your real list
+                and AOV. If 30 days end and attributed revenue hasn't hit that floor, we keep
+                building until it does. No new invoice.
+              </p>
             </div>
 
             {/* Mini founder */}
@@ -112,7 +163,7 @@ export default function EmailBuyPage() {
               <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
                 <span className="text-sm font-medium text-white">Complete your purchase</span>
                 <span className="text-xs text-zilla-neon font-mono bg-zilla-neon/10 px-2.5 py-1 rounded-full">
-                  <span className="line-through text-white/40 mr-1">$625</span>$500
+                  30-day sprint
                 </span>
               </div>
               <div className="min-h-[520px] bg-white">
@@ -128,8 +179,8 @@ export default function EmailBuyPage() {
               </div>
             </div>
             <p className="text-[11px] text-white/48 mt-3 font-mono leading-relaxed">
-              Payment processed by Whop. After purchase you'll be redirected to your welcome
-              page with kickoff instructions. Refund window: 7 days from payment.
+              Payment processed by Whop. After checkout you land on your welcome page with the
+              kickoff call link and Klaviyo invite instructions. Refund window: 7 days.
             </p>
           </div>
         </div>

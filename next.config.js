@@ -5,7 +5,7 @@ const nextConfig = {
   async rewrites() {
     return {
       beforeFiles: [
-        { source: '/', destination: '/agency' },
+        { source: '/', destination: '/email' },
       ],
     }
   },

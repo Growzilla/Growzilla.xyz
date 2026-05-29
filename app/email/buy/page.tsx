@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { WhopCheckoutEmbed } from '@whop/checkout/react';
 import { trackEmailInitiateCheckout } from '@/lib/email/pixel';
 
-const PLAN_ID = process.env.NEXT_PUBLIC_EMAIL_WHOP_PRODUCT_ID || 'prod_CjNCYeg1AM7ZO';
+const PLAN_ID = process.env.NEXT_PUBLIC_EMAIL_WHOP_PRODUCT_ID || 'plan_pkXeAbAdDSRQk';
 const RETURN_URL = 'https://growzilla.xyz/email/welcome?success=true';
 
 export default function EmailBuyPage() {

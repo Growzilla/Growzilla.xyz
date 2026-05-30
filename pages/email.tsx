@@ -408,6 +408,9 @@ const EmailOfferPage: React.FC = () => {
         {/* ─────── WHO IS GROWZILLA ─────── */}
         <WhoIsGrowzilla />
 
+        {/* ─────── OPTIONAL WALKTHROUGH (click-to-reveal, lazy) ─────── */}
+        <WalkthroughVideo />
+
         {/* ─────── FAQ ─────── */}
         <section className="border-t border-white/[0.06]">
           <div className="max-w-3xl mx-auto px-6 py-20">
@@ -557,6 +560,69 @@ const Qualifier: React.FC<{ num: string; text: string }> = ({ num, text }) => (
     <p className="text-white/80 leading-relaxed">{text}</p>
   </div>
 );
+
+// Quiet, opt-in walkthrough. Facade by default (no YouTube iframe loaded until
+// click — keeps the page fast and the rough video out of people's faces). The
+// "raw / unpolished" framing makes the roughness read as honest, not sloppy.
+const WalkthroughVideo: React.FC = () => {
+  const [playing, setPlaying] = useState(false);
+  return (
+    <section className="border-t border-white/[0.06] bg-zilla-dark">
+      <div className="max-w-3xl mx-auto px-6 py-20">
+        <div className="text-xs tracking-[0.2em] text-white/48 font-mono mb-4">
+          ◆ OPTIONAL · RAW WALKTHROUGH
+        </div>
+        <h2 className="font-display text-2xl md:text-3xl leading-tight mb-3">
+          Want to hear it straight from me?
+        </h2>
+        <p className="text-white/56 text-sm max-w-xl mb-8 leading-relaxed">
+          An unpolished walkthrough of how the sprint actually runs — no edit, no
+          script, just the work. Skip it if the numbers above already did the job.
+        </p>
+
+        <div className="relative rounded-lg overflow-hidden border border-white/[0.08] bg-zilla-surface aspect-video">
+          {playing ? (
+            <iframe
+              className="absolute inset-0 w-full h-full"
+              src="https://www.youtube-nocookie.com/embed/EZ4m1aiX4bA?autoplay=1&rel=0&modestbranding=1"
+              title="Growzilla — raw walkthrough"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          ) : (
+            <button
+              type="button"
+              onClick={() => setPlaying(true)}
+              aria-label="Play the walkthrough video"
+              className="group absolute inset-0 w-full h-full"
+            >
+              {/* Thumbnail held back behind a heavy overlay so the rough frame
+                  never dominates — protects the aura. */}
+              <img
+                src="https://i.ytimg.com/vi/EZ4m1aiX4bA/hqdefault.jpg"
+                alt=""
+                aria-hidden
+                loading="lazy"
+                className="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:opacity-40 transition-opacity duration-200"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-zilla-black/80 via-zilla-black/40 to-transparent" />
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+                <span className="flex items-center justify-center w-16 h-16 rounded-full bg-zilla-neon text-zilla-black shadow-zilla-glow group-hover:scale-105 transition-transform duration-200">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </span>
+                <span className="text-xs font-mono tracking-[0.18em] text-white/64 uppercase">
+                  Play · ~2 min
+                </span>
+              </div>
+            </button>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+};
 
 const FAQItem: React.FC<{ q: string; a: string }> = ({ q, a }) => (
   <details className="border-b border-white/[0.06] group">

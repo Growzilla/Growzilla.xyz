@@ -1,82 +1,95 @@
 import React from 'react';
 import Head from 'next/head';
-import Script from 'next/script';
-import EliteLayout from '../components/EliteLayout';
-import Hero from '../components/landing/Hero';
-import SocialProofBar from '../components/landing/SocialProofBar';
-import UserStory from '../components/landing/UserStory';
-import VideoPlaceholder from '../components/landing/VideoPlaceholder';
-import HowItWorks from '../components/landing/HowItWorks';
-import Benefits from '../components/landing/Benefits';
-import TheOffer from '../components/landing/TheOffer';
-import BookInstall from '../components/landing/BookInstall';
-import FAQ from '../components/landing/FAQ';
-import FinalCTA from '../components/landing/FinalCTA';
+import { Bebas_Neue, DM_Sans, Syne } from 'next/font/google';
 
-const GrowzillaPage: React.FC = () => {
+import Navbar from '../components/reactivation/Navbar';
+import Hero from '../components/reactivation/Hero';
+import Problem from '../components/reactivation/Problem';
+import About from '../components/reactivation/About';
+import StatsBand from '../components/reactivation/StatsBand';
+import SocialProof from '../components/reactivation/SocialProof';
+import TheOffer from '../components/reactivation/TheOffer';
+import Contact from '../components/reactivation/Contact';
+import FAQ from '../components/reactivation/FAQ';
+import HowItWorks from '../components/reactivation/HowItWorks';
+import LateCTA from '../components/reactivation/LateCTA';
+import Footer from '../components/reactivation/Footer';
+
+// Fonts wired as CSS variables the reactivation components reference:
+//   --font-syne        → display headlines (Bebas Neue)
+//   --font-geist-sans  → body copy (DM Sans)
+//   --font-syne-brand  → nav wordmark (Syne)
+const bebasNeue = Bebas_Neue({ variable: '--font-syne', subsets: ['latin'], weight: '400', display: 'swap' });
+const dmSans = DM_Sans({
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  display: 'swap',
+});
+const syne = Syne({ variable: '--font-syne-brand', subsets: ['latin'], weight: ['700', '800'], display: 'swap' });
+
+/**
+ * Growzilla homepage — email-reactivation agency landing (ported from Darian's
+ * build). The previous Shopify-attribution homepage now lives at /attribution.
+ *
+ * All section components live in components/reactivation/ and read their colors,
+ * fonts and animations from the scoped `.reactivation-home` wrapper + the font
+ * CSS variables applied here. The Contact form posts to /api/lead-notify.
+ */
+const Home: React.FC = () => {
   return (
     <>
       <Head>
-        <title>Growzilla | See Which Content Actually Converts — Shopify Attribution</title>
+        <title>Growzilla — Email Reactivation Agency</title>
         <meta
           name="description"
-          content="Growzilla shows Shopify brands which creator content, UGC, and ads drive real sales. Full attribution via Sankey diagrams. Free to install."
+          content="We reactivate dormant email subscribers and turn cold lists into revenue. Get your free audit today."
         />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="robots" content="index, follow" />
 
         {/* Open Graph */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://growzilla.xyz" />
-        <meta property="og:title" content="Growzilla | See Which Content Actually Converts" />
+        <meta property="og:title" content="Growzilla — Email Reactivation Agency" />
         <meta
           property="og:description"
-          content="Content attribution for Shopify brands. See which creator content drives sales. Cut losers. Scale winners."
+          content="We reactivate dormant email subscribers and turn cold lists into revenue. Get your free audit today."
         />
-        <meta property="og:image" content="/og-image.png" />
 
-        {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Growzilla | Content Attribution for Shopify" />
+        <meta name="twitter:title" content="Growzilla — Email Reactivation Agency" />
         <meta
           name="twitter:description"
-          content="See which creator content, UGC, and ads drive real Shopify sales. Full Sankey attribution."
+          content="We reactivate dormant email subscribers and turn cold lists into revenue. Get your free audit today."
         />
-        <meta name="twitter:image" content="/twitter-image.png" />
 
-        {/* Favicon */}
+        <meta name="theme-color" content="#080808" />
         <link rel="icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-
-        {/* Theme color */}
-        <meta name="theme-color" content="#0A0A0B" />
-
-        {/* Preconnect to fonts */}
-        <link rel="preconnect" href="https://api.fontshare.com" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </Head>
 
-      {/* Calendly widget script */}
-      <Script
-        src="https://assets.calendly.com/assets/external/widget.js"
-        strategy="lazyOnload"
-      />
-
-      <EliteLayout>
-        <Hero />
-        <SocialProofBar />
-        <UserStory />
-        <VideoPlaceholder />
-        <HowItWorks />
-        <Benefits />
-        <TheOffer />
-        <BookInstall />
-        <FAQ />
-        <FinalCTA />
-      </EliteLayout>
+      <div
+        className={`${bebasNeue.variable} ${dmSans.variable} ${syne.variable} reactivation-home`}
+        style={{ fontFamily: 'var(--font-geist-sans)', background: '#080808', color: '#ededed' }}
+      >
+        <Navbar />
+        <main>
+          <Hero />
+          <Problem />
+          <About />
+          <div className="md:hidden">
+            <StatsBand />
+          </div>
+          <SocialProof />
+          <TheOffer />
+          <Contact />
+          <FAQ />
+          <HowItWorks />
+          <LateCTA />
+        </main>
+        <Footer />
+      </div>
     </>
   );
 };
 
-export default GrowzillaPage;
+export default Home;

@@ -400,3 +400,88 @@ a {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ===========================================================================
+   REACTIVATION HOMEPAGE (ported from Darian's Growzilla landing)
+   Tokens are SCOPED to .reactivation-home so they can't collide with the host
+   zilla theme (host green #00FF94 vs this landing's #00FF66). Keyframes are
+   global but uniquely named. Used by components/reactivation/* and pages/index.
+   =========================================================================== */
+.reactivation-home {
+  --green: #00ff66;
+  --green-dim: rgba(0, 255, 102, 0.08);
+  --green-glow: rgba(0, 255, 102, 0.15);
+  --green-border: rgba(0, 255, 102, 0.2);
+  --slate: #7b8fa8;
+  --slate-border: rgba(123, 143, 168, 0.15);
+  --bg: #080808;
+  --bg-card: #0e0e0e;
+  --text: #ededed;
+  --text-muted: #7b8fa8;
+}
+
+.reactivation-home ::selection {
+  background: rgba(0, 255, 102, 0.2);
+  color: #fff;
+}
+
+.reactivation-home input:focus,
+.reactivation-home textarea:focus {
+  outline: none;
+  border-color: rgba(0, 255, 102, 0.35) !important;
+}
+
+@keyframes reactFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes gridDrift {
+  from {
+    background-position-y: 0px;
+  }
+  to {
+    background-position-y: 90px;
+  }
+}
+
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.reactivation-home .fade-up {
+  animation: reactFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.reactivation-home .fade-up-delay-1 {
+  animation: reactFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+.reactivation-home .fade-up-delay-2 {
+  animation: reactFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+.reactivation-home .fade-up-delay-3 {
+  animation: reactFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+}
+.reactivation-home .glow-pulse {
+  animation: glowPulse 2.5s ease-in-out infinite;
+}

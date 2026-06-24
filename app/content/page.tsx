@@ -424,17 +424,30 @@ function CaseStudy() {
       <div className="max-w-5xl mx-auto px-5 sm:px-8">
         <Reveal>
           <Eyebrow>The case study</Eyebrow>
+
+          <div className="mt-5">
+            <span className="inline-flex items-center gap-2 rounded-full border border-zilla-neon/25 bg-zilla-neon/[0.06] px-3.5 py-1.5">
+              <span className="h-1.5 w-1.5 rounded-full bg-zilla-neon animate-pulse" aria-hidden />
+              <span className="text-[12px] font-mono uppercase tracking-[0.12em] text-white/75">
+                Longsword Digital · case study in progress
+              </span>
+            </span>
+          </div>
+
           <h2 className="mt-6 font-display font-medium text-[36px] sm:text-[54px] lg:text-[64px] leading-[1.02] tracking-[-0.025em] text-white/95">
             200K views. 24 hours. One reel.
           </h2>
           <div className="mt-8 space-y-5 text-[16px] sm:text-[17px] leading-[1.7] text-white/65 max-w-2xl">
             <p>
-              We posted a single reel. Inside 24 hours it crossed 200,000 views and sent a wave of new
-              traffic straight to the site.
+              We’re running the sprint for{' '}
+              <span className="text-white/90">Longsword Digital</span> right now. The first reel we
+              posted crossed 200,000 views inside 24 hours and sent a wave of new traffic straight to
+              their site.
             </p>
             <p className="text-white/85">
               That is the whole point of what we do. We know how to get views, and we know how to turn
-              those views into people landing on your page.
+              those views into people landing on your page. The rest of this case study is being
+              written as we ship.
             </p>
           </div>
         </Reveal>
@@ -462,7 +475,7 @@ function CaseStudy() {
               ))}
             </div>
             <p className="mt-8 text-center text-[13px] text-white/40 font-mono">
-              Result from a single Growzilla-produced reel.
+              Longsword Digital · a single Growzilla-produced reel.
             </p>
           </div>
         </Reveal>

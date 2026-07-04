@@ -4,7 +4,6 @@ import Head from 'next/head'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Clarity from '@microsoft/clarity'
-import MorsdagPromoBanner from '@/components/MorsdagPromoBanner'
 import MetaPixel from '@/components/MetaPixel'
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -37,7 +36,6 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
       </Head>
       <MetaPixel />
-      <MorsdagPromoBanner />
       <Component {...pageProps} />
     </>
   )

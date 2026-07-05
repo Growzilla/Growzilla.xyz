@@ -19,6 +19,7 @@ type Props = {
   storeRequired?: boolean
   hideEyebrow?: boolean
   compact?: boolean
+  wide?: boolean
   submitLabel?: string
 }
 
@@ -54,6 +55,7 @@ export default function LeadForm({
   storeRequired = false,
   hideEyebrow = false,
   compact = false,
+  wide = false,
   submitLabel,
 }: Props) {
   const [name, setName] = useState('')
@@ -134,15 +136,16 @@ export default function LeadForm({
     )
   }
 
-  const showHeader = !compact && (heading || subheading)
+  const showHeader = !compact && !wide && (heading || subheading)
+  const isTight = compact && !wide
 
   return (
     <div
-      className={`rounded-lg border border-white/[0.08] bg-zilla-surface/80 ${
-        compact ? 'p-5 sm:p-6' : 'p-6 sm:p-8'
+      className={`rounded-xl border border-white/[0.08] bg-zilla-surface/80 ${
+        wide ? 'p-8 sm:p-10' : isTight ? 'p-5 sm:p-6' : 'p-6 sm:p-8'
       }`}
     >
-      {!hideEyebrow && !compact && (
+      {!hideEyebrow && !isTight && !wide && (
         <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-zilla-neon/80 mb-4">
           Get in touch
         </div>
@@ -156,7 +159,14 @@ export default function LeadForm({
         <p className="mt-3 text-[15px] leading-[1.6] text-white/60">{subheading}</p>
       )}
 
-      <form onSubmit={onSubmit} noValidate className={showHeader ? 'mt-7' : 'mt-0'}>
+      <form
+        onSubmit={onSubmit}
+        noValidate
+        className={[
+          showHeader ? 'mt-7' : 'mt-0',
+          wide ? 'grid sm:grid-cols-2 gap-x-6' : '',
+        ].join(' ')}
+      >
         {/* Honeypot — visually hidden */}
         <div
           aria-hidden="true"
@@ -180,7 +190,7 @@ export default function LeadForm({
           />
         </div>
 
-        <Field label="Your name" htmlFor="lf-name">
+        <Field label="Your name" htmlFor="lf-name" className={wide ? 'sm:col-span-1' : undefined}>
           <input
             id="lf-name"
             type="text"
@@ -192,7 +202,7 @@ export default function LeadForm({
           />
         </Field>
 
-        <Field label="Your email" htmlFor="lf-email">
+        <Field label="Your email" htmlFor="lf-email" className={wide ? 'sm:col-span-1' : undefined}>
           <input
             id="lf-email"
             type="email"
@@ -204,7 +214,7 @@ export default function LeadForm({
           />
         </Field>
 
-        {!compact && (
+        {!isTight && (
           <Field label="Phone / WhatsApp" htmlFor="lf-phone" helper="Optional">
             <input
               id="lf-phone"
@@ -221,6 +231,7 @@ export default function LeadForm({
           label={storeLabel}
           htmlFor="lf-store"
           helper={storeRequired ? undefined : 'Optional'}
+          className={wide ? 'sm:col-span-1' : undefined}
         >
           <input
             id="lf-store"
@@ -234,7 +245,12 @@ export default function LeadForm({
         </Field>
 
         {storeRequired && (
-          <Field label="Website" htmlFor="lf-site" helper="Optional">
+          <Field
+            label="Website"
+            htmlFor="lf-site"
+            helper="Optional"
+            className={wide ? 'sm:col-span-1' : undefined}
+          >
             <input
               id="lf-site"
               type="text"
@@ -247,14 +263,15 @@ export default function LeadForm({
         )}
 
         <Field
-          label={compact ? 'About your startup' : 'Anything we should know?'}
+          label={isTight ? 'About your startup' : 'Anything we should know?'}
           htmlFor="lf-message"
           helper="Optional"
+          className={wide ? 'sm:col-span-2' : undefined}
         >
           <textarea
             id="lf-message"
-            rows={compact ? 2 : 3}
-            placeholder={compact ? 'One line is enough…' : 'A line or two about what you need…'}
+            rows={wide ? 4 : isTight ? 2 : 3}
+            placeholder={isTight ? 'One line is enough…' : 'A line or two about what you need…'}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             className={`${inputClass} h-auto py-3 resize-y`}
@@ -262,7 +279,10 @@ export default function LeadForm({
         </Field>
 
         {error && (
-          <p role="alert" className="mt-4 text-[13px] text-red-400/90 font-medium">
+          <p
+            role="alert"
+            className={`mt-4 text-[13px] text-red-400/90 font-medium ${wide ? 'sm:col-span-2' : ''}`}
+          >
             {error}
           </p>
         )}
@@ -270,13 +290,15 @@ export default function LeadForm({
         <button
           type="submit"
           disabled={submitting}
-          className="group mt-7 w-full h-12 rounded-md bg-zilla-neon text-black text-[14px] font-semibold tracking-[0.01em] hover:brightness-105 transition-all duration-150 hover:translate-y-[-1px] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className={`landing-btn-primary group mt-7 w-full h-12 sm:h-14 rounded-lg text-[15px] sm:text-[16px] tracking-[0.01em] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:transform-none disabled:hover:filter-none flex items-center justify-center gap-2 ${
+            wide ? 'sm:col-span-2' : ''
+          }`}
         >
           {submitting ? (
             'Sending…'
           ) : (
             <>
-              {submitLabel ?? (compact ? 'Apply' : 'Send')}
+              {submitLabel ?? (isTight ? 'Apply' : 'Send')}
               <span className="transition-transform duration-150 group-hover:translate-x-0.5">
                 →
               </span>
@@ -292,15 +314,17 @@ function Field({
   label,
   htmlFor,
   helper,
+  className,
   children,
 }: {
   label: string
   htmlFor: string
   helper?: string
+  className?: string
   children: React.ReactNode
 }) {
   return (
-    <div className="mt-5 first:mt-0">
+    <div className={`mt-5 first:mt-0 ${className ?? ''}`}>
       <label
         htmlFor={htmlFor}
         className="block font-mono text-[10px] uppercase tracking-[0.16em] text-white/55 mb-2"

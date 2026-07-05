@@ -17,6 +17,9 @@ export default function Mechanism() {
           A system built for startups. Consistent views. Inbound that compounds.
           Content designed to go viral.
         </p>
+        <p className="mt-4 font-mono text-[11px] sm:text-[12px] uppercase tracking-[0.14em] text-zilla-neon/55">
+          Instagram · Facebook · TikTok · one reel a day
+        </p>
       </div>
 
       <div className="mt-12 sm:mt-14 grid md:grid-cols-3 gap-4 sm:gap-5 max-w-5xl mx-auto">

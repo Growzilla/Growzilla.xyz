@@ -69,3 +69,166 @@ details summary::-webkit-details-marker {
 .pilot-card-glow {
   animation: pilot-glow 3.5s ease-in-out infinite;
 }
+
+@keyframes landing-word-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.landing-word-cycle {
+  animation: landing-word-in 0.45s ease-out forwards;
+}
+
+@keyframes factory-flow {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 24px;
+  }
+}
+
+@keyframes factory-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+.factory-line-v {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 255, 148, 0.55) 0%,
+    rgba(0, 255, 148, 0.12) 55%,
+    rgba(0, 255, 148, 0.45) 100%
+  );
+  background-size: 100% 24px;
+  animation: factory-flow 1.2s linear infinite;
+}
+
+.factory-line-h {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 255, 148, 0.08) 0%,
+    rgba(0, 255, 148, 0.45) 50%,
+    rgba(0, 255, 148, 0.08) 100%
+  );
+}
+
+.factory-pulse-dot {
+  animation: factory-pulse 1.8s ease-in-out infinite;
+}
+
+.landing-scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.landing-scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Conversion hierarchy (Content Factory landing) ── */
+
+.landing-btn-primary {
+  background-color: #00ff94;
+  color: #000;
+  font-weight: 600;
+  box-shadow:
+    0 0 0 1px rgba(0, 255, 148, 0.4),
+    0 0 36px rgba(0, 255, 148, 0.32),
+    0 10px 28px rgba(0, 0, 0, 0.38);
+  transition:
+    filter 150ms ease-out,
+    box-shadow 150ms ease-out,
+    transform 150ms ease-out;
+}
+
+.landing-btn-primary:hover {
+  filter: brightness(1.1);
+  box-shadow:
+    0 0 0 1px rgba(0, 255, 148, 0.55),
+    0 0 52px rgba(0, 255, 148, 0.42),
+    0 14px 36px rgba(0, 0, 0, 0.42);
+  transform: translateY(-1px);
+}
+
+.landing-btn-secondary {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.58);
+  font-weight: 500;
+  box-shadow: none;
+  transition:
+    border-color 150ms ease-out,
+    color 150ms ease-out,
+    background-color 150ms ease-out;
+}
+
+.landing-btn-secondary:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.landing-proof-stat {
+  padding: 1rem 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(12, 12, 13, 0.85);
+}
+
+.landing-proof-stat-value {
+  font-family: var(--font-display, inherit);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: #00ff94;
+  text-shadow: 0 0 28px rgba(0, 255, 148, 0.28);
+}
+
+.landing-proof-phone {
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #0c0c0d;
+  box-shadow:
+    0 0 0 1px rgba(0, 255, 148, 0.06),
+    0 20px 56px rgba(0, 0, 0, 0.5),
+    0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.landing-logo-card {
+  transition:
+    transform 150ms ease-out,
+    filter 150ms ease-out;
+}
+
+@media (hover: hover) {
+  .landing-logo-card:hover {
+    transform: scale(1.05);
+  }
+}
+
+.landing-logo-card:active {
+  filter: drop-shadow(0 0 18px rgba(0, 255, 148, 0.22));
+}
+
+.landing-proof-reel {
+  border-radius: 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #0c0c0d;
+  box-shadow:
+    0 0 0 1px rgba(0, 255, 148, 0.08),
+    0 28px 88px rgba(0, 0, 0, 0.55),
+    0 12px 40px rgba(0, 0, 0, 0.4);
+}

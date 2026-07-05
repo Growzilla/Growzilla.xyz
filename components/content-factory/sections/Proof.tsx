@@ -43,6 +43,8 @@ export default function Proof() {
             </div>
           ))}
         </div>
+
+        <p className="mt-10 text-[14px] text-white/38">One reel. Then it spreads.</p>
       </div>
     </SectionRule>
   )

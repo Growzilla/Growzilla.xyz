@@ -62,22 +62,22 @@ export default function Offers() {
     <SectionRule id="offers" label="Partnerships">
       <div className="text-center max-w-2xl mx-auto">
         <h2 className="font-display font-medium text-[32px] sm:text-[44px] leading-[1.05] tracking-[-0.02em] text-white/95">
-          Partner with the firm behind startup content.
+          Want more views?
         </h2>
         <p className="mt-4 text-[15px] text-white/50">
           Three ways to work together. We take a small number of startup partners at a time.
         </p>
       </div>
 
-      <div className="mt-14 flex flex-col md:flex-row items-center justify-center gap-5 md:gap-4 lg:gap-6">
+      <div className="mt-16 sm:mt-20 flex flex-col md:flex-row items-center justify-center gap-6 md:gap-5 lg:gap-8">
         {PLANS.map((p) => (
           <article
             key={p.id}
             className={[
               'relative flex flex-col w-full max-w-[300px] aspect-square p-7 sm:p-8 rounded-xl transition-all duration-200',
               p.recommended
-                ? 'pilot-card-glow border border-zilla-neon/45 bg-zilla-neon/[0.04] md:-translate-y-3 z-10'
-                : 'border border-white/[0.08] bg-[#0C0C0D] hover:border-white/[0.14]',
+                ? 'pilot-card-glow border border-zilla-neon/55 bg-zilla-neon/[0.06] md:-translate-y-4 z-10'
+                : 'border border-white/[0.07] bg-[#0C0C0D]/90 hover:border-white/[0.12]',
             ].join(' ')}
           >
             {p.recommended && (
@@ -116,15 +116,44 @@ export default function Offers() {
               href={`#apply?plan=${p.id}`}
               className={
                 p.recommended
-                  ? 'group mt-5 flex items-center justify-center gap-2 h-11 rounded-md bg-zilla-neon text-black text-[13px] font-semibold hover:brightness-110 transition-all duration-150'
-                  : 'group mt-5 flex items-center justify-center gap-2 h-11 rounded-md border border-white/[0.12] text-[13px] font-medium text-white/75 hover:text-white hover:border-white/[0.2] transition-all duration-150'
+                  ? 'landing-btn-primary group mt-6 flex items-center justify-center gap-2 h-12 rounded-md text-[14px]'
+                  : 'landing-btn-secondary group mt-6 flex items-center justify-center gap-2 h-11 rounded-md text-[13px]'
               }
             >
-              {p.id === 'pilot' ? 'Partner on pilot' : 'Discuss partnership'}
+              {p.id === 'pilot' ? 'Start a pilot' : 'Discuss partnership'}
               <span className="transition-transform duration-150 group-hover:translate-x-0.5">→</span>
             </a>
           </article>
         ))}
+      </div>
+
+      <div className="mt-14 sm:mt-16 flex flex-col items-center">
+        <a
+          href="#apply"
+          className="landing-btn-primary group flex flex-col items-center justify-center text-center rounded-lg px-10 sm:px-12 py-4 sm:py-5 min-w-[280px] sm:min-w-[320px]"
+        >
+          <span className="font-display font-semibold text-[20px] sm:text-[22px] leading-none tracking-[-0.02em]">
+            Unsure?
+          </span>
+          <span className="mt-1.5 text-[12px] sm:text-[13px] font-medium leading-snug text-black/75">
+            See what program fits you best
+          </span>
+        </a>
+
+        <a
+          href="#proof"
+          className="mt-8 sm:mt-10 flex flex-col items-center gap-1.5 text-white/38 hover:text-white/60 transition-colors duration-150 group"
+        >
+          <span className="font-mono text-[10px] uppercase tracking-[0.14em]">
+            See our results
+          </span>
+          <span
+            className="text-zilla-neon/45 text-[15px] transition-transform duration-150 group-hover:translate-y-0.5"
+            aria-hidden
+          >
+            ↓
+          </span>
+        </a>
       </div>
     </SectionRule>
   )

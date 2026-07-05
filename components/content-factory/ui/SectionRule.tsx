@@ -17,7 +17,7 @@ export default function SectionRule({
     <section id={id} className={`border-t border-white/[0.06] ${className}`}>
       <div
         className={`max-w-6xl mx-auto px-5 sm:px-8 ${
-          compact ? 'py-20 sm:py-24' : 'py-24 sm:py-28 lg:py-32'
+          compact ? 'py-24 sm:py-28' : 'py-28 sm:py-32 lg:py-40'
         }`}
       >
         {label && (

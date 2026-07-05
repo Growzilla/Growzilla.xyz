@@ -13,12 +13,54 @@ export const TRUST_BRANDS = [
   { name: 'OpenAI', domain: 'openai.com' },
 ] as const
 
-export const SOCIAL_TOOLS = [
-  { name: 'Meta', domain: 'meta.com' },
+export const PLATFORM_PARTNERS = [
   { name: 'Instagram', domain: 'instagram.com' },
+  { name: 'Facebook', domain: 'facebook.com' },
   { name: 'TikTok', domain: 'tiktok.com' },
+  { name: 'Meta', domain: 'meta.com' },
   { name: 'CapCut', domain: 'capcut.com' },
 ] as const
+
+/** @deprecated Use PLATFORM_PARTNERS */
+export const SOCIAL_TOOLS = PLATFORM_PARTNERS
+
+const DEFAULT_CLIENT_ID = '1idEnrhL1OP0Mw2qbvS'
+
+export type HeroWheelLogo = BrandLogo & {
+  symbolSrc: string
+  iconSrc: string
+}
+
+export function resolveBrandfetchClientId(apiKey: string): string {
+  return apiKey || DEFAULT_CLIENT_ID
+}
+
+/** CDN URL — dark theme, transparent fallback, no white logo rects */
+export function brandfetchCdnUrl(
+  domain: string,
+  clientId: string,
+  opts?: { type?: 'symbol' | 'icon'; size?: number },
+): string {
+  const id = clientId || DEFAULT_CLIENT_ID
+  const type = opts?.type ?? 'symbol'
+  const size = opts?.size ?? 128
+  return `https://cdn.brandfetch.io/domain/${domain}/w/${size}/h/${size}/theme/dark/fallback/transparent/type/${type}?c=${id}`
+}
+
+/** Hero wheel: CDN dark symbols only (skip API v2 — often returns light PNGs) */
+export async function fetchHeroWheelLogos(apiKey: string): Promise<HeroWheelLogo[]> {
+  const clientId = resolveBrandfetchClientId(apiKey)
+  return PLATFORM_PARTNERS.map((brand) => {
+    const symbolSrc = brandfetchCdnUrl(brand.domain, clientId, { type: 'symbol', size: 128 })
+    const iconSrc = brandfetchCdnUrl(brand.domain, clientId, { type: 'icon', size: 128 })
+    return {
+      ...brand,
+      src: symbolSrc,
+      symbolSrc,
+      iconSrc,
+    }
+  })
+}
 
 async function fetchBrandLogo(domain: string, apiKey: string): Promise<string | null> {
   const clientId = apiKey || '1idEnrhL1OP0Mw2qbvS'
@@ -81,6 +123,21 @@ export async function fetchTrustLogos(apiKey: string): Promise<BrandLogo[]> {
   return fetchLogosForBrands(TRUST_BRANDS, apiKey)
 }
 
+export async function fetchPlatformPartnerLogos(apiKey: string): Promise<BrandLogo[]> {
+  return fetchLogosForBrands(PLATFORM_PARTNERS, apiKey)
+}
+
 export async function fetchSocialToolLogos(apiKey: string): Promise<BrandLogo[]> {
-  return fetchLogosForBrands(SOCIAL_TOOLS, apiKey)
+  return fetchPlatformPartnerLogos(apiKey)
+}
+
+export async function fetchGrowzillaSocialLogos(
+  brands: readonly { name: string; domain: string; href: string }[],
+  apiKey: string,
+): Promise<(BrandLogo & { href: string })[]> {
+  const logos = await fetchLogosForBrands(brands, apiKey)
+  return logos.map((logo, i) => ({
+    ...logo,
+    href: brands[i].href,
+  }))
 }

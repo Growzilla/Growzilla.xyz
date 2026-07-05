@@ -1,51 +1,57 @@
-import type { BrandLogo } from '@/lib/brandfetch'
-import LogoRail from '../ui/LogoRail'
+import type { HeroWheelLogo } from '@/lib/brandfetch'
+import HeroOutcomeCycle from '../ui/HeroOutcomeCycle'
+import LogoWheel from '../ui/LogoWheel'
 
 type Props = {
-  logos: BrandLogo[]
+  logos: HeroWheelLogo[]
 }
 
 export default function Hero({ logos }: Props) {
   return (
-    <section id="top" className="relative pt-28 sm:pt-32 lg:pt-40 pb-16 sm:pb-24 bg-zilla-black">
+    <section id="top" className="relative pt-28 sm:pt-32 lg:pt-40 pb-20 sm:pb-28 bg-zilla-black">
       <div className="max-w-6xl mx-auto px-5 sm:px-8 text-center landing-visible">
-        <h1 className="font-display font-semibold text-[clamp(2.75rem,11vw,6.5rem)] leading-[0.92] tracking-[-0.035em] text-white/95">
-          <span className="text-zilla-neon">Attention</span> is all you{' '}
-          <span className="text-zilla-neon">need</span>
+        <h1 className="font-display font-semibold text-[clamp(2.25rem,9vw,5.5rem)] leading-[1.02] tracking-[-0.035em] text-white/95 mx-auto w-max max-w-full px-2">
+          <span className="block text-center whitespace-nowrap">You built the product</span>
+          <span className="block text-left whitespace-nowrap mt-2 sm:mt-3 pl-7 sm:pl-10 md:pl-14 lg:pl-[4.25rem]">
+            We help you get{' '}
+            <span className="inline-block w-[5.25em] sm:w-[5.75em] md:w-[6.25em] text-left">
+              <HeroOutcomeCycle />
+            </span>
+          </span>
         </h1>
 
         <p className="mt-8 sm:mt-10 font-mono text-[12px] sm:text-[13px] uppercase tracking-[0.28em] text-white/45">
           Growzilla Content Factory
         </p>
 
-        <p className="mt-10 sm:mt-12 max-w-4xl mx-auto font-display font-medium text-[clamp(1.5rem,4.5vw,2.75rem)] leading-[1.12] tracking-[-0.02em] text-white/90">
-          We build the content engine behind
+        <p className="mt-10 sm:mt-12 font-display font-medium text-[clamp(1.5rem,4.5vw,2.75rem)] leading-[1.12] tracking-[-0.02em] text-white/90">
+          The content engine behind
           <br />
           successful startups.
         </p>
 
-        <div className="mt-12 sm:mt-14 flex flex-col sm:flex-row gap-4 justify-center items-stretch sm:items-center max-w-lg sm:max-w-none mx-auto">
+        <div className="mt-14 sm:mt-16 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center">
           <a
             href="#apply?plan=pilot"
-            className="group inline-flex items-center justify-center gap-2.5 h-14 sm:h-[3.75rem] px-9 sm:px-10 rounded-lg bg-zilla-neon text-black text-[16px] sm:text-[17px] font-semibold hover:brightness-105 transition-all duration-150 hover:translate-y-[-1px] shadow-[0_0_32px_rgba(0,255,148,0.25)]"
+            className="landing-btn-primary group inline-flex items-center justify-center gap-2.5 h-14 sm:h-16 px-10 sm:px-14 rounded-lg text-[17px] sm:text-[18px]"
           >
             Partner with us
-            <span className="text-[18px] transition-transform duration-150 group-hover:translate-x-0.5">
+            <span className="text-[19px] transition-transform duration-150 group-hover:translate-x-0.5">
               →
             </span>
           </a>
           <a
             href="#proof"
-            className="inline-flex items-center justify-center gap-2.5 h-14 sm:h-[3.75rem] px-9 sm:px-10 rounded-lg border-2 border-white/[0.18] text-[16px] sm:text-[17px] font-medium text-white/85 hover:text-white hover:border-white/[0.35] hover:bg-white/[0.04] transition-all duration-150"
+            className="landing-btn-secondary inline-flex items-center justify-center gap-2.5 h-12 sm:h-14 px-8 sm:px-10 rounded-lg text-[15px] sm:text-[16px]"
           >
             See the numbers
-            <span className="text-zilla-neon text-[18px]">↓</span>
+            <span className="text-white/35 text-[16px]">↓</span>
           </a>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-5 sm:px-8 mt-4">
-        <LogoRail logos={logos} />
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 mt-8 sm:mt-10 overflow-x-clip">
+        <LogoWheel logos={logos} />
       </div>
     </section>
   )

@@ -18,9 +18,6 @@ export default function Nav() {
           <a href="#proof" className="text-[13px] text-white/55 hover:text-white/90 transition-colors duration-150">
             Proof
           </a>
-          <a href="#compare" className="text-[13px] text-white/55 hover:text-white/90 transition-colors duration-150">
-            Compare
-          </a>
           <a href="#offers" className="text-[13px] text-white/55 hover:text-white/90 transition-colors duration-150">
             Partner
           </a>
@@ -28,7 +25,7 @@ export default function Nav() {
 
         <a
           href="#apply"
-          className="inline-flex items-center gap-1.5 h-9 px-4 rounded-md bg-zilla-neon text-black text-[13px] font-semibold hover:brightness-105 transition-all duration-150 hover:translate-y-[-1px]"
+          className="landing-btn-primary inline-flex items-center gap-1.5 h-10 px-5 rounded-md text-[13px] sm:text-[14px]"
         >
           Partner
           <span aria-hidden>→</span>

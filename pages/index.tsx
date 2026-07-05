@@ -7,32 +7,40 @@ import Nav from '@/components/content-factory/Nav'
 import Footer from '@/components/content-factory/Footer'
 import Hero from '@/components/content-factory/sections/Hero'
 import MillionViews from '@/components/content-factory/sections/MillionViews'
-import Mechanism from '@/components/content-factory/sections/Mechanism'
-import Proof from '@/components/content-factory/sections/Proof'
-import CaseStudies from '@/components/content-factory/sections/CaseStudies'
-import ZeroToOne from '@/components/content-factory/sections/ZeroToOne'
-import Problem from '@/components/content-factory/sections/Problem'
 import CmoComparison from '@/components/content-factory/sections/CmoComparison'
+import CombinedProof from '@/components/content-factory/sections/CombinedProof'
+import AuditTeaser from '@/components/content-factory/sections/AuditTeaser'
 import Offers from '@/components/content-factory/sections/Offers'
-import Process from '@/components/content-factory/sections/Process'
-import Team from '@/components/content-factory/sections/Team'
-import Apply from '@/components/content-factory/sections/Apply'
+import MeetTeamSection from '@/components/content-factory/sections/MeetTeamSection'
+import Inbound from '@/components/content-factory/sections/Inbound'
+import Close from '@/components/content-factory/sections/Close'
 
-import { fetchTrustLogos, type BrandLogo } from '@/lib/brandfetch'
+import { GROWZILLA_SOCIALS } from '@/lib/content-factory/socials'
+import {
+  fetchGrowzillaSocialLogos,
+  fetchHeroWheelLogos,
+  type HeroWheelLogo,
+} from '@/lib/brandfetch'
+import type { SocialLink } from '@/components/content-factory/ui/SocialStrip'
 
 type Props = {
-  logos: BrandLogo[]
+  logos: HeroWheelLogo[]
+  socials: SocialLink[]
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const logos = await fetchTrustLogos(process.env.BRANDFETCH_CLIENT_ID ?? '')
+  const apiKey = process.env.BRANDFETCH_CLIENT_ID ?? ''
+  const [logos, socials] = await Promise.all([
+    fetchHeroWheelLogos(apiKey),
+    fetchGrowzillaSocialLogos(GROWZILLA_SOCIALS, apiKey),
+  ])
   return {
-    props: { logos },
+    props: { logos, socials },
     revalidate: 86400,
   }
 }
 
-export default function Home({ logos }: Props) {
+export default function Home({ logos, socials }: Props) {
   return (
     <>
       <Head>
@@ -59,18 +67,15 @@ export default function Home({ logos }: Props) {
         <main>
           <Hero logos={logos} />
           <MillionViews />
-          <Mechanism />
-          <Proof />
-          <CaseStudies />
-          <ZeroToOne />
-          <Problem />
           <CmoComparison />
+          <AuditTeaser />
           <Offers />
-          <Process />
-          <Team />
-          <Apply />
+          <CombinedProof />
+          <MeetTeamSection />
+          <Inbound />
+          <Close />
         </main>
-        <Footer />
+        <Footer socials={socials} />
       </div>
     </>
   )

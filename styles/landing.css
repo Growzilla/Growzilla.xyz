@@ -223,6 +223,17 @@ details summary::-webkit-details-marker {
   filter: drop-shadow(0 0 18px rgba(0, 255, 148, 0.22));
 }
 
+.landing-mosaic-scroll {
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #000 8%,
+    #000 92%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(90deg, transparent 0%, #000 8%, #000 92%, transparent 100%);
+}
+
 .landing-proof-reel {
   border-radius: 0.875rem;
   border: 1px solid rgba(255, 255, 255, 0.1);

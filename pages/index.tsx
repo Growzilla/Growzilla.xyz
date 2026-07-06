@@ -62,7 +62,7 @@ export default function Home({ logos, socials }: Props) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="min-h-screen bg-zilla-black text-white selection:bg-zilla-neon/30">
+      <div className="min-h-screen bg-zilla-black text-white selection:bg-zilla-neon/30 overflow-x-clip">
         <Nav />
         <main>
           <Hero logos={logos} />

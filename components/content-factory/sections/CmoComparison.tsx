@@ -20,7 +20,7 @@ export default function CmoComparison() {
   return (
     <SectionRule id="compare" label="The math">
       <div className="w-full text-center">
-        <h2 className="font-display font-medium text-[clamp(1.125rem,2.6vw,2.125rem)] leading-[1.08] tracking-[-0.025em] text-white/95 whitespace-nowrap w-full text-center">
+        <h2 className="font-display font-medium text-[clamp(1.125rem,2.6vw,2.125rem)] leading-[1.08] tracking-[-0.025em] text-white/95 max-w-xl sm:max-w-none mx-auto px-2 sm:px-0 sm:whitespace-nowrap w-full text-center">
           The most <span className="text-red-400">expensive</span> mistake early startups make
         </h2>
         <p className="mt-5 font-display font-medium text-[18px] sm:text-[22px] lg:text-[26px] leading-[1.15] tracking-[-0.02em] text-white/82 max-w-2xl mx-auto">

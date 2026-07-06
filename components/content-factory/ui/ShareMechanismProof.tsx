@@ -7,7 +7,7 @@ import {
 function ShareCard({ src, alt, views, shares }: { src: string; alt: string; views: string; shares: string }) {
   return (
     <figure className="flex flex-col items-center">
-      <div className="landing-proof-phone w-full max-w-[220px] sm:max-w-[260px] lg:max-w-[300px] overflow-hidden aspect-[4/5]">
+      <div className="landing-proof-phone w-full max-w-[280px] sm:max-w-[260px] lg:max-w-[300px] mx-auto overflow-hidden aspect-[4/5]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={src}
@@ -81,7 +81,7 @@ export default function ShareMechanismProof({ showHeader = true }: Props) {
       </div>
 
       <div className="mt-16 sm:mt-20 pt-12 sm:pt-14 border-t border-white/[0.06] max-w-2xl mx-auto px-4">
-        <p className="font-display text-[28px] sm:text-[36px] lg:text-[42px] font-medium leading-[1.12] tracking-[-0.03em] text-white/95">
+        <p className="font-display text-[24px] sm:text-[36px] lg:text-[42px] font-medium leading-[1.12] tracking-[-0.03em] text-white/95">
           <span className="text-white/55">{views}</span>
           <span className="text-white/25 font-normal mx-2 sm:mx-3">views</span>
           <span className="text-white/20 font-normal hidden sm:inline">·</span>

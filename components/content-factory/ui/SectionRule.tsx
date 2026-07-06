@@ -14,10 +14,10 @@ export default function SectionRule({
   compact?: boolean
 }) {
   return (
-    <section id={id} className={`border-t border-white/[0.06] ${className}`}>
+    <section id={id} className={`scroll-mt-20 border-t border-white/[0.06] ${className}`}>
       <div
         className={`max-w-6xl mx-auto px-5 sm:px-8 ${
-          compact ? 'py-24 sm:py-28' : 'py-28 sm:py-32 lg:py-40'
+          compact ? 'py-16 sm:py-24' : 'py-20 sm:py-28 lg:py-40'
         }`}
       >
         {label && (

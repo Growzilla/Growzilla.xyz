@@ -37,10 +37,10 @@ export default function CombinedProof() {
           </div>
         </div>
 
-        <div className="mt-14 sm:mt-16 grid grid-cols-3 gap-3 sm:gap-5 max-w-lg mx-auto">
+        <div className="mt-14 sm:mt-16 grid grid-cols-3 gap-2 sm:gap-5 max-w-lg mx-auto">
           {STATS.map((s) => (
-            <div key={s.label} className="landing-proof-stat">
-              <div className="landing-proof-stat-value text-[24px] sm:text-[30px] lg:text-[34px] leading-none">
+            <div key={s.label} className="landing-proof-stat p-2 sm:p-4">
+              <div className="landing-proof-stat-value text-[18px] sm:text-[30px] lg:text-[34px] leading-none">
                 {s.value}
               </div>
               <div className="mt-2 font-mono text-[10px] uppercase tracking-[0.14em] text-white/38">
@@ -51,7 +51,7 @@ export default function CombinedProof() {
         </div>
       </div>
 
-      <p className="mt-16 sm:mt-20 max-w-2xl mx-auto text-center text-[14px] sm:text-[15px] leading-[1.65] text-white/40 px-4">
+      <p className="mt-16 sm:mt-20 max-w-2xl mx-auto text-center text-[13px] sm:text-[15px] leading-[1.65] text-white/40 px-3 sm:px-4">
         {VOLUME_STAT}
       </p>
 

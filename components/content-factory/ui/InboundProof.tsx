@@ -28,11 +28,11 @@ export default function InboundProof() {
           Daily inbound volume
         </p>
 
-        <div className="mt-5 flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
-          <span className="font-display font-medium text-[56px] sm:text-[72px] lg:text-[84px] leading-none tracking-[-0.04em] text-zilla-neon drop-shadow-[0_0_28px_rgba(0,255,148,0.35)]">
+        <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-y-1 sm:gap-x-3 sm:gap-y-0">
+          <span className="font-display font-medium text-[48px] sm:text-[72px] lg:text-[84px] leading-none tracking-[-0.04em] text-zilla-neon drop-shadow-[0_0_28px_rgba(0,255,148,0.35)]">
             {stat.value}
           </span>
-          <span className="font-display font-medium text-[28px] sm:text-[34px] lg:text-[40px] leading-none tracking-[-0.03em] text-white/90">
+          <span className="font-display font-medium text-[22px] sm:text-[34px] lg:text-[40px] leading-none tracking-[-0.03em] text-white/90">
             {stat.label}
           </span>
         </div>

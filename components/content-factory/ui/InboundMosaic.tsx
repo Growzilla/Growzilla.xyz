@@ -1,7 +1,28 @@
-import { INBOUND_MOSAIC_TILES } from '@/lib/content-factory/inbound-proof'
+import {
+  INBOUND_MOSAIC_MOBILE_TILES,
+  INBOUND_MOSAIC_TILES,
+} from '@/lib/content-factory/inbound-proof'
 
 const ROW_ONE = INBOUND_MOSAIC_TILES.slice(0, 10)
 const ROW_TWO = INBOUND_MOSAIC_TILES.slice(10)
+
+function MosaicTile({ src, className }: { src: string; className?: string }) {
+  return (
+    <div className={`overflow-hidden bg-[#0A0A0B] ${className ?? ''}`}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt=""
+        width={240}
+        height={427}
+        className="w-full h-full object-cover object-top scale-[1.06]"
+        loading="lazy"
+        decoding="async"
+        aria-hidden
+      />
+    </div>
+  )
+}
 
 function MosaicRow({ tiles }: { tiles: string[] }) {
   return (
@@ -10,20 +31,26 @@ function MosaicRow({ tiles }: { tiles: string[] }) {
       style={{ gridTemplateColumns: `repeat(${tiles.length}, minmax(0, 1fr))` }}
     >
       {tiles.map((src) => (
-        <div key={src} className="h-full overflow-hidden bg-[#0A0A0B]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={src}
-            alt=""
-            width={240}
-            height={427}
-            className="w-full h-full object-cover object-top scale-[1.06]"
-            loading="lazy"
-            decoding="async"
-            aria-hidden
-          />
-        </div>
+        <MosaicTile key={src} src={src} className="h-full" />
       ))}
+    </div>
+  )
+}
+
+function MobileScrollStrip() {
+  return (
+    <div className="landing-mosaic-scroll -mx-4 px-4">
+      <div className="overflow-x-auto landing-scrollbar-none snap-x snap-mandatory">
+        <div className="flex gap-2 w-max pb-1">
+          {INBOUND_MOSAIC_MOBILE_TILES.map((src) => (
+            <MosaicTile
+              key={src}
+              src={src}
+              className="h-[200px] w-[72px] shrink-0 snap-start rounded-md"
+            />
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
@@ -38,8 +65,13 @@ export default function InboundMosaic() {
         className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-zilla-neon/60 to-transparent"
         aria-hidden
       />
-      <MosaicRow tiles={ROW_ONE} />
-      <MosaicRow tiles={ROW_TWO} />
+      <div className="md:hidden py-3">
+        <MobileScrollStrip />
+      </div>
+      <div className="hidden md:block">
+        <MosaicRow tiles={ROW_ONE} />
+        <MosaicRow tiles={ROW_TWO} />
+      </div>
       <div
         className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[#0A0A0A] to-transparent"
         aria-hidden

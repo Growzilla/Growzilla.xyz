@@ -74,7 +74,7 @@ export default function Offers() {
           <article
             key={p.id}
             className={[
-              'relative flex flex-col w-full max-w-[300px] aspect-square p-7 sm:p-8 rounded-xl transition-all duration-200',
+              'relative flex flex-col w-full max-w-[300px] max-md:aspect-auto max-md:min-h-0 md:aspect-square p-7 sm:p-8 rounded-xl transition-all duration-200',
               p.recommended
                 ? 'pilot-card-glow border border-zilla-neon/55 bg-zilla-neon/[0.06] md:-translate-y-4 z-10'
                 : 'border border-white/[0.07] bg-[#0C0C0D]/90 hover:border-white/[0.12]',
@@ -130,7 +130,7 @@ export default function Offers() {
       <div className="mt-14 sm:mt-16 flex flex-col items-center">
         <a
           href="#apply"
-          className="landing-btn-primary group flex flex-col items-center justify-center text-center rounded-lg px-10 sm:px-12 py-4 sm:py-5 min-w-[280px] sm:min-w-[320px]"
+          className="landing-btn-primary group flex flex-col items-center justify-center text-center rounded-lg w-full max-w-[320px] sm:max-w-[360px] px-10 sm:px-12 py-4 sm:py-5"
         >
           <span className="font-display font-semibold text-[20px] sm:text-[22px] leading-none tracking-[-0.02em]">
             Unsure?

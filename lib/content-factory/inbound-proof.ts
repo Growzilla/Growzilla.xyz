@@ -32,6 +32,9 @@ export const INBOUND_MOSAIC_TILES: string[] = [
   TILE(14),
 ]
 
+/** First 8 tiles from desktop order — spaced dupes preserved for mobile scroll strip */
+export const INBOUND_MOSAIC_MOBILE_TILES = INBOUND_MOSAIC_TILES.slice(0, 8)
+
 export const INBOUND_STAT = {
   value: '20+',
   label: 'inbound DMs',

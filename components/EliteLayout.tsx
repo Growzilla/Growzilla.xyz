@@ -199,6 +199,14 @@ export const EliteLayout: React.FC<EliteLayoutProps> = ({ children }) => {
               </h3>
               <ul className="space-y-4">
                 <li>
+                  <Link
+                    href="/careers"
+                    className="text-gray-400 hover:text-white transition-colors duration-300 text-sm"
+                  >
+                    Careers
+                  </Link>
+                </li>
+                <li>
                   <a
                     href="/apply"
                     className="text-gray-400 hover:text-white transition-colors duration-300 text-sm"

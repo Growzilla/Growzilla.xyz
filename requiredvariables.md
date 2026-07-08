@@ -19,6 +19,11 @@
 | `WHOP_AIRTABLE_API_KEY` | Airtable API key for Whop data | Vercel |
 | `WHOP_AIRTABLE_BASE_ID` | Airtable base ID for Whop data | Vercel |
 
+## Careers / File Uploads
+| Variable | Description | Where |
+|----------|-------------|-------|
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob token for resume + video uploads | Local + Vercel |
+
 ## Admin Backend Access
 | Variable | Description | Where |
 |----------|-------------|-------|

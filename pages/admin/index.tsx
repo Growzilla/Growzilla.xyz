@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { PlusIcon, ChartBarIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, ChartBarIcon, UserGroupIcon } from '@heroicons/react/24/outline';
 import type { ShopDetails } from '@/types/admin';
 import LoginGate from '@/components/admin/LoginGate';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -106,6 +106,15 @@ function AdminDashboard({ onLogout }: { onLogout: () => void }) {
         </div>
 
         <div className="flex items-center gap-3">
+          <Link
+            href="/admin/applicants"
+            className="text-sm py-2.5 px-4 flex items-center gap-2 rounded-md border border-white/10 text-gray-300 hover:text-white hover:border-zilla-neon/40 transition-colors"
+            title="Job applicants"
+          >
+            <UserGroupIcon className="w-4 h-4" />
+            <span className="hidden sm:inline">Applicants</span>
+          </Link>
+
           <Link
             href="/admin/adcreator-leads"
             className="text-sm py-2.5 px-4 flex items-center gap-2 rounded-md border border-white/10 text-gray-300 hover:text-white hover:border-zilla-neon/40 transition-colors"

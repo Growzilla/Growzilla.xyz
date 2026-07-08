@@ -1,7 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { ArrowRightOnRectangleIcon, CircleStackIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowRightOnRectangleIcon,
+  CircleStackIcon,
+  UserGroupIcon,
+} from '@heroicons/react/24/outline';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -11,6 +15,7 @@ interface AdminLayoutProps {
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children, onLogout }) => {
   const router = useRouter();
   const isDbPage = router.pathname === '/admin/database';
+  const isApplicantsPage = router.pathname === '/admin/applicants';
 
   return (
     <div className="min-h-screen bg-zilla-black text-white">
@@ -33,6 +38,18 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, onLogout }) => {
             </Link>
 
             <div className="flex items-center gap-2">
+              <Link
+                href="/admin/applicants"
+                className={`flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                  isApplicantsPage
+                    ? 'text-zilla-neon bg-zilla-neon/10'
+                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <UserGroupIcon className="w-4 h-4" />
+                <span className="hidden sm:inline">Applicants</span>
+              </Link>
+
               <Link
                 href="/admin/database"
                 className={`flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg transition-colors ${

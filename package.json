@@ -12,7 +12,7 @@
     "@heroicons/react": "^2.0.18",
     "@microsoft/clarity": "^1.0.2",
     "@vercel/blob": "^2.6.0",
-    "@whop/checkout": "^0.0.52",
+    "@whop/checkout": "^0.3.0",
     "caniuse-lite": "^1.0.30001777",
     "framer-motion": "^12.23.26",
     "gsap": "^3.14.2",

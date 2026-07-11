@@ -9,7 +9,7 @@ export default function Process() {
         </h2>
 
         <a
-          href="#apply?plan=pilot"
+          href="/pilot"
           className="group inline-flex items-center justify-center gap-2.5 mt-10 h-14 px-9 rounded-lg bg-zilla-neon text-black text-[16px] font-semibold hover:brightness-105 transition-all duration-150 hover:translate-y-[-1px] shadow-[0_0_32px_rgba(0,255,148,0.25)]"
         >
           Start the pilot

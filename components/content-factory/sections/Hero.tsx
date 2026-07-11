@@ -32,7 +32,7 @@ export default function Hero({ logos }: Props) {
 
         <div className="mt-14 sm:mt-16 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center">
           <a
-            href="#apply?plan=pilot"
+            href="/pilot"
             className="landing-btn-primary group inline-flex w-full sm:w-auto items-center justify-center gap-2.5 h-14 sm:h-16 px-10 sm:px-14 rounded-lg text-[17px] sm:text-[18px]"
           >
             Partner with us

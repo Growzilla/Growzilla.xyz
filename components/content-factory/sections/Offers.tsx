@@ -113,7 +113,7 @@ export default function Offers() {
             </div>
 
             <a
-              href={`#apply?plan=${p.id}`}
+              href={p.id === 'pilot' ? '/pilot' : `#apply?plan=${p.id}`}
               className={
                 p.recommended
                   ? 'landing-btn-primary group mt-6 flex items-center justify-center gap-2 h-12 rounded-md text-[14px]'

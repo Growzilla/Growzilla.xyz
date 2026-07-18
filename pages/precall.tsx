@@ -13,16 +13,16 @@ const PrecallPage: React.FC = () => {
   return (
     <>
       <Head>
-        <title>Precall — Founder Pipeline OS | Growzilla</title>
+        <title>Precall — 5–10 Discovery Calls/Week from LinkedIn | Growzilla</title>
         <meta
           name="description"
-          content="Watch the Founder Pipeline OS precall video, then book a strategy call. For funded B2B AI startups ready to turn founder content and outbound into conversations."
+          content="Watch how to get 5–10 repeatable discovery calls every week from LinkedIn without posting or outreach yourself. Then book a strategy call."
         />
         <meta name="robots" content="noindex, nofollow" />
-        <meta property="og:title" content="Precall — Founder Pipeline OS | Growzilla" />
+        <meta property="og:title" content="Precall — LinkedIn Discovery Calls | Growzilla" />
         <meta
           property="og:description"
-          content="Watch before your strategy call. Then book with our closer."
+          content="5–10 discovery calls a week from LinkedIn. Watch the precall, then book."
         />
       </Head>
 

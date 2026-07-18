@@ -1,14 +1,13 @@
 import React from 'react';
 
 const CHAPTERS = [
-  { n: '01', title: 'Why watch this', time: '2 min' },
-  { n: '02', title: 'The problem', time: '5 min' },
-  { n: '03', title: 'The opportunity', time: '3 min' },
-  { n: '04', title: 'The framework', time: '8–10 min' },
-  { n: '05', title: 'Proof', time: '5 min' },
-  { n: '06', title: 'Expectations', time: '3 min' },
-  { n: '07', title: 'Who we help', time: '2 min' },
-  { n: '08', title: 'Next step', time: '1 min' },
+  { n: '01', title: 'Who we are & what we do', time: '2 min' },
+  { n: '02', title: 'Who this is for', time: '1 min' },
+  { n: '03', title: 'The problem', time: '3 min' },
+  { n: '04', title: 'The system', time: '3 min' },
+  { n: '05', title: 'Dream outcome', time: '2 min' },
+  { n: '06', title: 'First 30 days', time: '2 min' },
+  { n: '07', title: 'Pricing & next step', time: '2 min' },
 ];
 
 const PrecallAgenda: React.FC = () => {

@@ -6,7 +6,7 @@ const PrecallHero: React.FC = () => {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-zilla-neon/25 bg-zilla-neon/[0.06] text-zilla-neon text-xs font-medium tracking-wide mb-6">
           <span className="w-1.5 h-1.5 rounded-full bg-zilla-neon" />
-          Founder Pipeline OS · Funded B2B AI
+          LinkedIn system · 5–10 discovery calls / week
         </div>
 
         <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight leading-[1.15]">
@@ -14,8 +14,8 @@ const PrecallHero: React.FC = () => {
         </h1>
 
         <p className="mt-5 text-base sm:text-lg text-white/60 leading-relaxed max-w-2xl mx-auto">
-          How funded AI startups turn founder content + outbound into a conversation
-          machine — and whether we&apos;re the right partner for you.
+          How to get 5–10 repeatable discovery calls every week from LinkedIn — without
+          you doing the posting or outreach. Then decide if we&apos;re a fit.
         </p>
 
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -34,7 +34,7 @@ const PrecallHero: React.FC = () => {
         </div>
 
         <p className="mt-5 text-xs text-white/40">
-          ~20–30 min · No pitch · Diagnosis first
+          ~15–20 min · No pitch · Diagnosis first
         </p>
       </div>
     </section>

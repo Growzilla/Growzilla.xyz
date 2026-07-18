@@ -1,17 +1,17 @@
 import React from 'react';
 
 const GOOD = [
-  'AI / B2B SaaS',
-  'Product-market fit already showing',
-  'Funded (or budget ready to invest)',
-  'Want systematic growth — not random posts',
+  'B2B / SaaS / AI founders',
+  'Can invest in growth',
+  'Want conversations, not vanity metrics',
+  'Willing to show up to discovery calls',
 ];
 
 const BAD = [
-  'Looking for quick shortcuts',
-  'No budget / “just exploring free ideas”',
-  'Not ready to invest time or access',
-  'Want a pitch deck, not an operating system',
+  'Want tips, not a system',
+  'No budget / tire-kicking',
+  'Need magic with zero access',
+  'Want free closing without running the machine',
 ];
 
 const PrecallFit: React.FC = () => {

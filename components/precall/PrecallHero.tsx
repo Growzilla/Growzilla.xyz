@@ -2,7 +2,7 @@ import React from 'react';
 
 const PrecallHero: React.FC = () => {
   return (
-    <section className="pt-24 pb-10 sm:pt-28 sm:pb-12">
+    <section className="pt-24 pb-6 sm:pt-28 sm:pb-8">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-zilla-neon/25 bg-zilla-neon/[0.06] text-zilla-neon text-xs font-medium tracking-wide mb-6">
           <span className="w-1.5 h-1.5 rounded-full bg-zilla-neon" />
@@ -15,23 +15,8 @@ const PrecallHero: React.FC = () => {
 
         <p className="mt-5 text-base sm:text-lg text-white/60 leading-relaxed max-w-2xl mx-auto">
           How to get 5–10 repeatable discovery calls every week from LinkedIn — without
-          you doing the posting or outreach. Then decide if we&apos;re a fit.
+          you doing the posting or outreach. Then book below if we&apos;re a fit.
         </p>
-
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <a
-            href="#video"
-            className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-zilla-neon text-zilla-black font-semibold text-sm hover:bg-zilla-glow transition-colors w-full sm:w-auto"
-          >
-            Watch the precall video
-          </a>
-          <a
-            href="#book"
-            className="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-white/12 text-white/85 font-medium text-sm hover:border-white/25 hover:bg-white/[0.03] transition-colors w-full sm:w-auto"
-          >
-            Book the call →
-          </a>
-        </div>
 
         <p className="mt-5 text-xs text-white/40">
           ~15–20 min · No pitch · Diagnosis first

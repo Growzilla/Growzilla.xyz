@@ -15,7 +15,7 @@ const PrecallCalendly: React.FC = () => {
   }, []);
 
   return (
-    <section id="book" className="py-12 sm:py-16 border-t border-white/[0.06]">
+    <section id="book" className="py-10 sm:py-14 border-t border-white/[0.06]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-8">
           <p className="text-xs font-medium tracking-[0.14em] uppercase text-zilla-neon/80 mb-3">

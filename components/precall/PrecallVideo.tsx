@@ -1,16 +1,18 @@
 import React, { useMemo } from 'react';
 
+/** Local precall recording. Env override optional for Loom/YouTube later. */
+const LOCAL_PRECALL_VIDEO = '/precall/precall.mp4';
+
 function resolveVideoUrl(): string {
   if (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_PRECALL_VIDEO_URL) {
     return process.env.NEXT_PUBLIC_PRECALL_VIDEO_URL.trim();
   }
-  return '';
+  return LOCAL_PRECALL_VIDEO;
 }
 
 function toEmbedUrl(url: string): { type: 'iframe' | 'video' | 'none'; src: string } {
   if (!url) return { type: 'none', src: '' };
 
-  // YouTube
   const yt =
     url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{6,})/) ||
     url.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]{6,})/);
@@ -18,19 +20,16 @@ function toEmbedUrl(url: string): { type: 'iframe' | 'video' | 'none'; src: stri
     return { type: 'iframe', src: `https://www.youtube.com/embed/${yt[1]}?rel=0` };
   }
 
-  // Loom
   const loom = url.match(/loom\.com\/(?:share|embed)\/([a-zA-Z0-9]+)/);
   if (loom) {
     return { type: 'iframe', src: `https://www.loom.com/embed/${loom[1]}` };
   }
 
-  // Vimeo
   const vimeo = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
   if (vimeo) {
     return { type: 'iframe', src: `https://player.vimeo.com/video/${vimeo[1]}` };
   }
 
-  // Direct mp4 / public path
   if (url.endsWith('.mp4') || url.startsWith('/') || url.startsWith('http')) {
     return { type: 'video', src: url };
   }
@@ -43,14 +42,14 @@ const PrecallVideo: React.FC = () => {
   const embed = useMemo(() => toEmbedUrl(rawUrl), [rawUrl]);
 
   return (
-    <section id="video" className="pb-14 sm:pb-16">
+    <section id="video" className="pb-6 sm:pb-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <div className="rounded-xl border border-white/[0.08] bg-zilla-surface overflow-hidden">
           <div className="relative aspect-video bg-zilla-black">
             {embed.type === 'iframe' && (
               <iframe
                 src={embed.src}
-                title="Founder Pipeline OS — Precall video"
+                title="Precall — 5–10 discovery calls from LinkedIn"
                 className="absolute inset-0 w-full h-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
@@ -59,7 +58,7 @@ const PrecallVideo: React.FC = () => {
 
             {embed.type === 'video' && (
               <video
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-contain bg-zilla-black"
                 controls
                 playsInline
                 preload="metadata"
@@ -77,10 +76,6 @@ const PrecallVideo: React.FC = () => {
                 <p className="text-white font-medium text-base sm:text-lg">
                   Precall video loading soon
                 </p>
-                <p className="mt-2 text-sm text-white/45 max-w-md">
-                  Set <code className="text-zilla-neon/80 text-xs">NEXT_PUBLIC_PRECALL_VIDEO_URL</code>{' '}
-                  or drop an MP4 — booking below is open now.
-                </p>
                 <a
                   href="#book"
                   className="mt-6 inline-flex items-center text-sm font-medium text-zilla-neon hover:text-zilla-glow transition-colors"
@@ -92,9 +87,40 @@ const PrecallVideo: React.FC = () => {
           </div>
         </div>
 
-        <p className="mt-4 text-center text-sm text-white/45">
-          Still relevant after watching? Book below. The call is a diagnosis — not a pitch.
-        </p>
+        {/* Arrow → Calendly */}
+        <div className="flex flex-col items-center pt-8 pb-2">
+          <p className="text-sm sm:text-base text-white/55 text-center max-w-md mb-4">
+            Still relevant after watching? Book the call with our closer below.
+          </p>
+          <a
+            href="#book"
+            className="group flex flex-col items-center gap-2 text-zilla-neon hover:text-zilla-glow transition-colors"
+            aria-label="Scroll to book the call"
+          >
+            <span className="text-xs font-medium tracking-[0.14em] uppercase">
+              Book the call
+            </span>
+            <span className="flex h-11 w-11 items-center justify-center rounded-full border border-zilla-neon/40 bg-zilla-neon/[0.08] group-hover:border-zilla-neon/70 group-hover:bg-zilla-neon/[0.14] transition-colors">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="animate-bounce"
+                aria-hidden
+              >
+                <path
+                  d="M10 3v12m0 0l-5-5m5 5l5-5"
+                  stroke="currentColor"
+                  strokeWidth="1.75"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
+          </a>
+        </div>
       </div>
     </section>
   );

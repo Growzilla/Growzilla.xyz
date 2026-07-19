@@ -54,17 +54,17 @@ const PrecallPage: React.FC = () => {
         <main>
           <PrecallHero />
           <PrecallVideo />
+          <PrecallCalendly />
           <PrecallAgenda />
           <PrecallOffer />
           <PrecallFit />
           <PrecallExpectations />
-          <PrecallCalendly />
         </main>
 
         <footer className="border-t border-white/[0.06] py-10">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
             <p className="text-xs text-white/35">
-              Founder Pipeline OS · Growzilla · Strategy call is diagnostic, not a pitch.
+              LinkedIn discovery calls · Growzilla · Strategy call is diagnostic, not a pitch.
             </p>
           </div>
         </footer>

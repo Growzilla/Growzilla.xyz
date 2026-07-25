@@ -1,0 +1,405 @@
+/* Growzilla Engine landing — Remotion-guided color system, free of old templates */
+
+.engine {
+  --e-bg: #0a0a0b;
+  --e-surface: #121214;
+  --e-elevated: #18181b;
+  --e-border: rgba(255, 255, 255, 0.08);
+  --e-white: rgba(255, 255, 255, 0.96);
+  --e-soft: rgba(255, 255, 255, 0.55);
+  --e-mute: rgba(255, 255, 255, 0.35);
+  --e-faint: rgba(255, 255, 255, 0.18);
+
+  /* Remotion palette — each color has a job */
+  --e-neon: #00ff94; /* primary CTA, outcomes, progress */
+  --e-electric: #00d9ff; /* LinkedIn / connect / system */
+  --e-gold: #ffb84d; /* guarantee, money, trust seal */
+  --e-mint: #00d9aa; /* secondary highlights */
+
+  --e-neon-glow: rgba(0, 255, 148, 0.18);
+  --e-electric-glow: rgba(0, 217, 255, 0.16);
+  --e-gold-glow: rgba(255, 184, 77, 0.14);
+
+  background: var(--e-bg);
+  color: var(--e-white);
+  font-family: 'Satoshi', system-ui, sans-serif;
+  overflow-x: clip;
+}
+
+.engine ::selection {
+  background: rgba(0, 255, 148, 0.28);
+  color: #0a0a0b;
+}
+
+.engine-grain {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px;
+}
+
+.engine-layer {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Buttons ── */
+.engine-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 3.25rem;
+  padding: 0 1.5rem;
+  border-radius: 0.625rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: transform 160ms ease-out, box-shadow 160ms ease-out, filter 160ms ease-out,
+    border-color 160ms ease-out, background 160ms ease-out, color 160ms ease-out;
+}
+
+.engine-btn-neon {
+  background: var(--e-neon);
+  color: #0a0a0b;
+  /* Edge-led CTA: thin highlight ring, softer fill glow (~30% less pop) */
+  box-shadow: 0 0 0 1px rgba(0, 255, 148, 0.35), 0 6px 22px rgba(0, 255, 148, 0.12);
+}
+
+.engine-btn-neon:hover {
+  filter: brightness(1.04);
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px rgba(0, 255, 148, 0.5), 0 8px 28px rgba(0, 255, 148, 0.16);
+}
+
+.engine-btn-ghost {
+  background: transparent;
+  color: var(--e-soft);
+  border: 1px solid var(--e-border);
+}
+
+.engine-btn-ghost:hover {
+  color: var(--e-white);
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.engine-btn-electric {
+  background: rgba(0, 217, 255, 0.1);
+  color: var(--e-electric);
+  border: 1px solid rgba(0, 217, 255, 0.28);
+}
+
+.engine-btn-electric:hover {
+  background: rgba(0, 217, 255, 0.16);
+  box-shadow: 0 0 32px var(--e-electric-glow);
+}
+
+.engine-btn-lg {
+  height: 3.75rem;
+  padding: 0 1.85rem;
+  font-size: 1rem;
+}
+
+/* ── Type ── */
+.engine-eyebrow {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.engine-eyebrow-neon {
+  color: rgba(0, 255, 148, 0.85);
+}
+.engine-eyebrow-electric {
+  color: rgba(0, 217, 255, 0.85);
+}
+.engine-eyebrow-gold {
+  color: rgba(255, 184, 77, 0.9);
+}
+.engine-eyebrow-mute {
+  color: var(--e-mute);
+}
+
+.engine-display {
+  font-family: 'Clash Display', 'Satoshi', system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  color: var(--e-white);
+}
+
+.engine-body {
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--e-soft);
+}
+
+/* ── Surfaces ── */
+.engine-panel {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 40%),
+    var(--e-surface);
+  border: 1px solid var(--e-border);
+  border-radius: 1.25rem;
+}
+
+.engine-panel-neon {
+  border-color: rgba(0, 255, 148, 0.16);
+  box-shadow: 0 0 0 1px rgba(0, 255, 148, 0.05), 0 16px 48px rgba(0, 0, 0, 0.4);
+}
+
+.engine-panel-electric {
+  border-color: rgba(0, 217, 255, 0.16);
+  box-shadow: 0 0 0 1px rgba(0, 217, 255, 0.05), 0 16px 48px rgba(0, 0, 0, 0.38);
+}
+
+.engine-panel-gold {
+  border-color: rgba(255, 184, 77, 0.28);
+  background: linear-gradient(180deg, rgba(255, 184, 77, 0.06), transparent 50%),
+    var(--e-surface);
+  box-shadow: 0 0 0 1px rgba(255, 184, 77, 0.06), 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+/* ── Flow connectors (eye guidance) ── */
+.engine-flow-line {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 217, 255, 0.5),
+    rgba(0, 255, 148, 0.6),
+    transparent
+  );
+}
+
+.engine-dot-neon {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--e-neon);
+  box-shadow: 0 0 16px var(--e-neon-glow);
+}
+
+.engine-dot-electric {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--e-electric);
+  box-shadow: 0 0 16px var(--e-electric-glow);
+}
+
+.engine-dot-gold {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--e-gold);
+  box-shadow: 0 0 16px var(--e-gold-glow);
+}
+
+/* ── Layout ── */
+.engine-wrap {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .engine-wrap {
+    padding-inline: 2rem;
+  }
+}
+
+.engine-section {
+  padding-block: 6.5rem;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .engine-section {
+    padding-block: 8rem;
+  }
+}
+
+/* Hero atmosphere — restrained (~30% less intensity); edges do the pointing */
+.engine-hero-orb {
+  pointer-events: none;
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(90px);
+}
+
+.engine-hero-orb-neon {
+  background: rgba(0, 255, 148, 0.07);
+}
+.engine-hero-orb-electric {
+  background: rgba(0, 217, 255, 0.06);
+}
+.engine-hero-orb-gold {
+  background: rgba(255, 184, 77, 0.04);
+}
+
+/* LinkedIn connect stage — edge-led, less glow */
+.engine-stage {
+  position: relative;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    radial-gradient(ellipse 55% 45% at 28% 40%, rgba(0, 217, 255, 0.045), transparent 62%),
+    radial-gradient(ellipse 45% 38% at 75% 55%, rgba(0, 255, 148, 0.04), transparent 58%),
+    linear-gradient(180deg, #101012 0%, #0a0a0b 100%);
+  overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.engine-node {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1rem 1.15rem;
+  border-radius: 1rem;
+  background: rgba(10, 10, 11, 0.8);
+  border: 1px solid var(--e-border);
+  backdrop-filter: blur(12px);
+}
+
+.engine-node-linkedin {
+  border-color: rgba(0, 217, 255, 0.32);
+  box-shadow: inset 0 0 0 1px rgba(0, 217, 255, 0.06);
+}
+
+.engine-node-growzilla {
+  border-color: rgba(0, 255, 148, 0.32);
+  box-shadow: inset 0 0 0 1px rgba(0, 255, 148, 0.06);
+}
+
+.engine-beam {
+  height: 1px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(0, 217, 255, 0.55), rgba(0, 255, 148, 0.55));
+  box-shadow: none;
+  position: relative;
+  overflow: hidden;
+  opacity: 0.85;
+}
+
+.engine-beam::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  width: 35%;
+  animation: engine-beam-sweep 3.2s ease-in-out infinite;
+}
+
+@keyframes engine-beam-sweep {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(280%);
+  }
+}
+
+/* Check */
+.engine-check {
+  display: inline-flex;
+  width: 1.25rem;
+  height: 1.25rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(0, 255, 148, 0.12);
+  color: var(--e-neon);
+  font-size: 0.7rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Nav */
+.engine-nav {
+  position: fixed;
+  top: 0;
+  inset-inline: 0;
+  z-index: 50;
+  transition: background 200ms ease-out, border-color 200ms ease-out;
+  border-bottom: 1px solid transparent;
+}
+
+.engine-nav-scrolled {
+  background: rgba(10, 10, 11, 0.88);
+  backdrop-filter: blur(16px);
+  border-bottom-color: var(--e-border);
+}
+
+/* Soft grid */
+.engine-grid {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.016) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.016) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, black, transparent);
+}
+
+/* Qualify modal */
+.engine-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(5, 5, 6, 0.72);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.engine-modal {
+  width: 100%;
+  max-width: 28rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(180deg, #141416 0%, #0c0c0e 100%);
+  box-shadow: 0 0 0 1px rgba(0, 255, 148, 0.06), 0 24px 64px rgba(0, 0, 0, 0.55);
+  padding: 1.5rem 1.35rem 1.35rem;
+}
+
+@media (min-width: 640px) {
+  .engine-modal {
+    padding: 1.75rem 1.75rem 1.5rem;
+  }
+}
+
+.engine-option {
+  width: 100%;
+  text-align: left;
+  border-radius: 0.625rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(255, 255, 255, 0.78);
+  padding: 0.75rem 0.9rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
+}
+
+.engine-option:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.engine-option-active {
+  border-color: rgba(0, 255, 148, 0.45);
+  background: rgba(0, 255, 148, 0.06);
+  color: rgba(255, 255, 255, 0.95);
+  box-shadow: inset 0 0 0 1px rgba(0, 255, 148, 0.08);
+}

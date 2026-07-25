@@ -13,16 +13,16 @@ const PrecallPage: React.FC = () => {
   return (
     <>
       <Head>
-        <title>Precall — 5–10 Discovery Calls/Week from LinkedIn | Growzilla</title>
+        <title>Precall — 5–10 Qualified Meetings/Week on LinkedIn | Growzilla</title>
         <meta
           name="description"
-          content="Watch how to get 5–10 repeatable discovery calls every week from LinkedIn without posting or outreach yourself. Then book a strategy call."
+          content="How to book 5–10 qualified meetings every week on LinkedIn without posting or prospecting yourself. Watch the system, then book a fit call."
         />
         <meta name="robots" content="noindex, nofollow" />
-        <meta property="og:title" content="Precall — LinkedIn Discovery Calls | Growzilla" />
+        <meta property="og:title" content="Precall — 5–10 LinkedIn Meetings/Week | Growzilla" />
         <meta
           property="og:description"
-          content="5–10 discovery calls a week from LinkedIn. Watch the precall, then book."
+          content="5–10 qualified meetings a week from LinkedIn. Watch the precall, then book a fit call."
         />
       </Head>
 
@@ -44,7 +44,7 @@ const PrecallPage: React.FC = () => {
             </a>
             <a
               href="#book"
-              className="inline-flex items-center px-3.5 py-1.5 rounded-md bg-zilla-neon text-zilla-black text-xs sm:text-sm font-semibold hover:bg-zilla-glow transition-colors"
+              className="inline-flex items-center px-3.5 py-1.5 rounded-md border border-zilla-neon/40 bg-zilla-neon/10 text-zilla-neon text-xs sm:text-sm font-semibold hover:bg-zilla-neon/15 transition-colors"
             >
               Book the call →
             </a>
@@ -53,18 +53,19 @@ const PrecallPage: React.FC = () => {
 
         <main>
           <PrecallHero />
-          <PrecallVideo />
-          <PrecallCalendly />
+          {/* Prefer local recording; same asset as /call */}
+          <PrecallVideo forceLocal />
           <PrecallAgenda />
           <PrecallOffer />
           <PrecallFit />
           <PrecallExpectations />
+          <PrecallCalendly />
         </main>
 
         <footer className="border-t border-white/[0.06] py-10">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
             <p className="text-xs text-white/35">
-              LinkedIn discovery calls · Growzilla · Strategy call is diagnostic, not a pitch.
+              5–10 qualified meetings / week · Growzilla · Fit call is diagnostic, not a pitch.
             </p>
           </div>
         </footer>

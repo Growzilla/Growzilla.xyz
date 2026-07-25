@@ -1,82 +1,91 @@
-import Head from 'next/head'
-import type { GetStaticProps } from 'next'
+import { useState } from 'react';
+import Head from 'next/head';
+import type { GetStaticProps } from 'next';
+import '@/styles/engine.css';
 
-import '@/styles/landing.css'
-
-import Nav from '@/components/content-factory/Nav'
-import Footer from '@/components/content-factory/Footer'
-import Hero from '@/components/content-factory/sections/Hero'
-import MillionViews from '@/components/content-factory/sections/MillionViews'
-import CmoComparison from '@/components/content-factory/sections/CmoComparison'
-import CombinedProof from '@/components/content-factory/sections/CombinedProof'
-import AuditTeaser from '@/components/content-factory/sections/AuditTeaser'
-import Offers from '@/components/content-factory/sections/Offers'
-import MeetTeamSection from '@/components/content-factory/sections/MeetTeamSection'
-import Inbound from '@/components/content-factory/sections/Inbound'
-import Close from '@/components/content-factory/sections/Close'
-
-import { GROWZILLA_SOCIALS } from '@/lib/content-factory/socials'
 import {
-  fetchGrowzillaSocialLogos,
-  fetchHeroWheelLogos,
-  type HeroWheelLogo,
-} from '@/lib/brandfetch'
-import type { SocialLink } from '@/components/content-factory/ui/SocialStrip'
+  EngineNav,
+  EngineHero,
+  EngineAuthority,
+  EngineReality,
+  EngineOutcome,
+  EngineSystem,
+  EngineJourney,
+  EngineProof,
+  EnginePricing,
+  EngineFreedom,
+  EngineTeam,
+  EngineClose,
+  EngineFooter,
+  EngineQualifyModal,
+} from '@/components/engine';
+import { brandfetchCdnUrl, resolveBrandfetchClientId } from '@/lib/brandfetch';
+import { ENGINE } from '@/lib/engine/copy';
 
 type Props = {
-  logos: HeroWheelLogo[]
-  socials: SocialLink[]
-}
+  linkedinLogo: string;
+  growzillaLogo: string;
+};
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const apiKey = process.env.BRANDFETCH_CLIENT_ID ?? ''
-  const [logos, socials] = await Promise.all([
-    fetchHeroWheelLogos(apiKey),
-    fetchGrowzillaSocialLogos(GROWZILLA_SOCIALS, apiKey),
-  ])
+  const clientId = resolveBrandfetchClientId(process.env.BRANDFETCH_CLIENT_ID ?? '');
+  // Prefer Brandfetch symbol; EngineConnectStage falls back to inline SVG if CDN fails
   return {
-    props: { logos, socials },
+    props: {
+      linkedinLogo: brandfetchCdnUrl('linkedin.com', clientId, { type: 'symbol', size: 128 }),
+      growzillaLogo: '/growzillalogo.png',
+    },
     revalidate: 86400,
-  }
-}
+  };
+};
 
-export default function Home({ logos, socials }: Props) {
+export default function Home({ linkedinLogo, growzillaLogo }: Props) {
+  const [qualifyOpen, setQualifyOpen] = useState(false);
+  const openQualify = () => setQualifyOpen(true);
+
   return (
     <>
       <Head>
-        <title>Growzilla · Attention Is All You Need</title>
+        <title>{ENGINE.brand} · LinkedIn sales engine for B2B SaaS</title>
         <meta
           name="description"
-          content="We take startups from 0 to 1 on content and media buying. One reel a day. Meta, Instagram, TikTok. Build the engine before the CMO hire."
+          content="Book 5–10 qualified meetings every week from LinkedIn. Content + outreach as one engine. Min 5 calls in month 1 — risk-free guarantee. $500/mo."
         />
         <meta name="robots" content="index, follow" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://growzilla.xyz" />
-        <meta property="og:title" content="Growzilla Content Factory" />
-        <meta
-          property="og:description"
-          content="We build the content engine behind successful startups. 0 to 1 on content and media buying."
-        />
+        <meta property="og:title" content={`${ENGINE.brand} · LinkedIn sales engine`} />
+        <meta property="og:description" content={ENGINE.hero.sub} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="theme-color" content="#0A0A0B" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="min-h-screen bg-zilla-black text-white selection:bg-zilla-neon/30 overflow-x-clip">
-        <Nav />
-        <main>
-          <Hero logos={logos} />
-          <MillionViews />
-          <CmoComparison />
-          <AuditTeaser />
-          <Offers />
-          <CombinedProof />
-          <MeetTeamSection />
-          <Inbound />
-          <Close />
-        </main>
-        <Footer socials={socials} />
+      <div className="engine min-h-screen">
+        <div className="engine-grain" aria-hidden />
+        <div className="engine-layer">
+          <EngineNav onBookClick={openQualify} />
+          <main>
+            <EngineHero
+              linkedinLogo={linkedinLogo}
+              growzillaLogo={growzillaLogo}
+              onBookClick={openQualify}
+            />
+            <EngineAuthority />
+            <EngineReality />
+            <EngineOutcome />
+            <EngineSystem />
+            <EngineJourney />
+            <EngineProof />
+            <EnginePricing />
+            <EngineFreedom />
+            <EngineTeam />
+            <EngineClose onBookClick={openQualify} />
+          </main>
+          <EngineFooter />
+        </div>
+        <EngineQualifyModal open={qualifyOpen} onClose={() => setQualifyOpen(false)} />
       </div>
     </>
-  )
+  );
 }

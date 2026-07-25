@@ -39,3 +39,5 @@ Thumbs.db
 # Maestro traces
 .maestro-traces/
 .worktrees/
+
+.env*
